@@ -6,9 +6,10 @@ import cgitb; cgitb.enable()
 
 import time
 
+port = 8080
+
 server = BaseHTTPServer.HTTPServer
 handler = CGIHTTPServer.CGIHTTPRequestHandler
-port = 8080
 server_address = ("", port)
 handler.cgi_directories = ["/"]
 httpd = server(server_address, handler)
