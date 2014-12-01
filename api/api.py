@@ -44,7 +44,7 @@ def validate_token(username, token):
     now = datetime.now() - timedelta(hours=1)
     res = execute_query("SELECT users.token_gen FROM users WHERE users.username = \"%s\" AND users.token = \"%s\"" % (username, token))
     if len(res) != 1: return False
-    else: return res[0][0] < now
+    else: return res[0][0] > now
 
 def table_permissions(username, table, table_id, edit):
     creator_query = execute_query("SELECT %s.privacy FROM %s INNER JOIN users ON users.id = %s.creator_id WHERE %s.id = \"%s\" AND users.username = \"%s\"" % (table, table, table, table, table_id, username))
@@ -61,11 +61,13 @@ def table_permissions(username, table, table_id, edit):
     elif privacy == 1:
         if table == 'trips':
             trip_id = table_id
-        else:
+        elif table == 'albums':
             trip_query = execute_query("SELECT trips.id FROM trips INNER JOIN albums ON albums.trip_id = trips.id WHERE albums.id = \"%s\"" % (table_id))
             if len(trip_query) == 0:
                 return False
             trip_id = trip_query[0][0]
+        else:
+            return False
         takes_query = execute_query("SELECT takes.status FROM takes INNER JOIN users ON users.id = takes.user_id WHERE takes.trip_id = \"%s\" AND users.username = \"%s\"" % (trip_id, username))
         if len(takes_query) == 0:
             return False
