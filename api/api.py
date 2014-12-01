@@ -46,6 +46,41 @@ def validate_token(username, token):
     if len(res) != 1: return False
     else: return res[0][0] < now
 
+def table_permissions(username, table, table_id, edit):
+    creator_query = execute_query("SELECT %s.privacy FROM %s INNER JOIN users ON users.id = %s.creator_id WHERE %s.id = \"%s\" AND users.username = \"%s\"" % (table, table, table, table, table_id, username))
+    if len(creator_query) > 0:
+        return True
+    elif edit:
+        return False
+    privacy_query = execute_query("SELECT %s.privacy FROM %s WHERE %s.id = \"%s\"" % (table, table, table, table_id))
+    if len(privacy_query) == 0:
+        return False
+    privacy = privacy_query[0][0]
+    if privacy == 0:
+        return True
+    elif privacy == 1:
+        if table == 'trips':
+            trip_id = table_id
+        else:
+            trip_query = execute_query("SELECT trips.id FROM trips INNER JOIN albums ON albums.trip_id = trips.id WHERE albums.id = \"%s\"" % (table_id))
+            if len(trip_query) == 0:
+                return False
+            trip_id = trip_query[0][0]
+        takes_query = execute_query("SELECT takes.status FROM takes INNER JOIN users ON users.id = takes.user_id WHERE takes.trip_id = \"%s\" AND users.username = \"%s\"" % (trip_id, username))
+        if len(takes_query) == 0:
+            return False
+        return takes_query[0][0] == 0
+    else: 
+        return False
+
+def has_permissions(username, album=None, trip=None, edit=False):
+    if album is not None:
+        return table_permissions(username, 'albums', album, edit)
+    elif trip is not None:
+        return table_permissions(username, 'trips', trip, edit)
+    else: 
+        return False    
+
 def export_json(d):
     print "Content-Type: application/json\n"
     print json.JSONEncoder(indent=2).encode(d)
