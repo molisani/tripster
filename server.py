@@ -11,7 +11,7 @@ port = 8080
 server = BaseHTTPServer.HTTPServer
 handler = CGIHTTPServer.CGIHTTPRequestHandler
 server_address = ("", port)
-handler.cgi_directories = ["/"]
+handler.cgi_directories = ["/api"]
 httpd = server(server_address, handler)
 
 print "Server listening on port %d at %s..." % (port, time.ctime())
