@@ -48,7 +48,7 @@ elif validate_token(user_id, post('token')):
         	    else:
         		    trip[item] = None
             execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
-                          % (user_id, trip_name, trip[0], trip[1], trip[2], trip[3], trip[4]))
+                          % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
             data['status'] = 'Success'
             data['message'] = 'Added trip'
         else:
