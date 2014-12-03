@@ -60,10 +60,16 @@ elif has_fields(['user_id', 'token']):
                 data['friends'] += [f]
         elif post('action') == "send_request":
             if has_fields(['friend_id']):
-                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, friend_id))
+                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('friend_id')))
+                data['status'] = 'Success'
+                data['message'] = 'Successfully added friend request.'
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
         elif post('action') == "get_requests":
-            execute_query("SELECT * ")
-
+            pass
+        elif post('action') == 'unfriend':
+            pass
         else:
             data['status'] = 'Failure'
             data['message'] = 'No action specified'
