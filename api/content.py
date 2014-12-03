@@ -23,7 +23,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'add_content':
 		if has_fields (['album_id', 'url', 'type']):
-			if has_permissions(user_id, album = post('album_id'), edit = true):
+			if has_permissions(user_id, album = post('album_id'), edit = True):
 				query = execute_query("INSERT INTO albums (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"% (post('album_id'), post('url'), post ('type')))
 				data['status'] = 'success'
 				data['message'] = 'Added content to album'
@@ -70,7 +70,7 @@ export_json(data)
 get content info (likes / comments)
 add content to album (done but not tested)
 tag content location
-like content (done but not tested)
-comment on content (done but not tested)
+like content (tested)
+comment on content (tested)
 set privacy (tested)
 """
