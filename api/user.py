@@ -6,7 +6,7 @@ from api import *
 data = {}
 
 # Create Account
-if post('action') == "create":
+if post('action') == "register":
     if has_fields(['username', 'fullname', 'password']):
         username = post('username')
         if len(execute_query("SELECT * FROM users WHERE users.username = \"%s\"" % (username))) > 0:

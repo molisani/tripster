@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
+import sys
+
+port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
+
 import BaseHTTPServer
 import CGIHTTPServer
 import cgitb; cgitb.enable()
 
 import time
 
-port = 8080
 
 server = BaseHTTPServer.HTTPServer
 handler = CGIHTTPServer.CGIHTTPRequestHandler
