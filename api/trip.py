@@ -10,9 +10,9 @@ user_id = post('user_id')
 # possible fields for trip post: username, user_id, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
 # privacy, rating, id, comment, description, cost, expense_id
 
-if (not has_fields(['username', 'token'])):
+if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
-    data['message'] = 'Username and token not specified.'
+    data['message'] = 'UserId and token not specified.'
 elif validate_token(user_id, post('token')):
     action = post('action')
     if action == 'info':
