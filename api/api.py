@@ -34,20 +34,20 @@ def execute_query(query):
     cur.close()
     return [x for x in result]
 
-def generate_token(username):
+def generate_token(user_id):
     token = random.randint(0, 1e17)
     token_gen = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    execute_query("UPDATE users SET users.token = \"%d\", users.token_gen = \"%s\" WHERE users.username = \"%s\"" % (token, token_gen, username))
+    execute_query("UPDATE users SET users.token = \"%d\", users.token_gen = \"%s\" WHERE users.id= \"%s\"" % (token, token_gen, user_id))
     return token
 
-def validate_token(username, token):
+def validate_token(user_id, token):
     now = datetime.now() - timedelta(hours=1)
-    res = execute_query("SELECT users.token_gen FROM users WHERE users.username = \"%s\" AND users.token = \"%s\"" % (username, token))
+    res = execute_query("SELECT users.token_gen FROM users WHERE users.id = \"%s\" AND users.token = \"%s\"" % (user_id, token))
     if len(res) != 1: return False
     else: return res[0][0] > now
 
-def table_permissions(username, table, table_id, edit):
-    creator_query = execute_query("SELECT %s.privacy FROM %s INNER JOIN users ON users.id = %s.creator_id WHERE %s.id = \"%s\" AND users.username = \"%s\"" % (table, table, table, table, table_id, username))
+def table_permissions(user_id, table, table_id, edit):
+    creator_query = execute_query("SELECT * FROM %s WHERE %s.id = \"%s\" AND %s.creator_id = \"%s\"" % (table, table, table_id, table, user_id))
     if len(creator_query) > 0:
         return True
     elif edit:
@@ -68,18 +68,18 @@ def table_permissions(username, table, table_id, edit):
             trip_id = trip_query[0][0]
         else:
             return False
-        takes_query = execute_query("SELECT takes.status FROM takes INNER JOIN users ON users.id = takes.user_id WHERE takes.trip_id = \"%s\" AND users.username = \"%s\"" % (trip_id, username))
+        takes_query = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
         if len(takes_query) == 0:
             return False
         return takes_query[0][0] == 0
     else: 
         return False
 
-def has_permissions(username, album=None, trip=None, edit=False):
+def has_permissions(user_id, album=None, trip=None, edit=False):
     if album is not None:
-        return table_permissions(username, 'albums', album, edit)
+        return table_permissions(user_id, "albums", album, edit)
     elif trip is not None:
-        return table_permissions(username, 'trips', trip, edit)
+        return table_permissions(user_id, "trips", trip, edit)
     else: 
         return False    
 
