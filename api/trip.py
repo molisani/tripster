@@ -55,15 +55,74 @@ elif validate_token(user_id, post('token')):
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'join':
-        pass
+        #Requires user_id and trip_id
+	    if has_fields(['user_id']) and has_fields(['trip_id')]:
+	        user_id = post('user_id')
+            trip_id = post('trip_id')
+	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")" 
+	                     % (user_id, trip_id))
+	    if (len(result) > 0):
+		if (result = 1):
+		    execute_query("UPDATE takes SET status= \"0\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\")" 
+		        % (user_id, trip_id))					
+		    data['status'] = 'Success'
+		    data['message'] = 'User has been added to trip'
+		else:
+			pass
+	    else:
+		    execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"1\")"
+		        % (user_id, trip_id)
+		data['status'] = 'Success'
+		data['message'] = 'User has requested to join trip'
+	else:
+	    data['status'] = 'Failure'
+	    data['message'] = 'Insufficient information given'		    
     elif action == 'invite':
-        pass
+	    if has_fields(['user_id']) and has_fields(['trip_id')]:
+	        user_id = post('user_id')
+            trip_id = post('trip_id')
+	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")"
+	                 % (user_id, trip_id))
+	    if (len(result) > 0):
+	        pass
+	    else:
+		    execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"0\")"
+	            % (user_id, trip_id)
+		    data['status'] = 'Success'
+		    data['message'] = 'User has been invited to join trip'
+	else:
+	    data['status'] = 'Failure'
+	    data['message'] = 'Insufficient information given'					
     elif action == 'get_requests':
-        pass
+        if has_fields(['trip_id')]:
+	        trip_id = post('trip_id')
+	        execute_query("SELECT user_id FROM takes T WHERE T.trip_id = \"%s\" AND T.status = \"2\")"
+	            % (trip_id)
+	        data['status'] = 'Success'
+	        data['message'] = 'Requests have been retrieved'
+	else:
+	    data['status'] = 'Failure'
+	    data['message'] = 'Insufficient information given'
     elif action == 'rate':
-        pass
+        if has_fields(['rating', 'id']):
+	        rating = post('rating')
+	        trip_id = post('id')
+	        execute_query("UPDATE trip_ratings SET rating= \"%s\" WHERE trips.id = \"%s\"" % (rating, trip_id))
+            data['status'] = 'Success'
+            data['message'] = 'Added rating'
+	    else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
     elif action == 'set_privacy':
-        pass
+        if has_fields(['privacy', 'id']):
+	        new_privacy = post('privacy')
+	        trip_id = post('id')
+	        execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
+            data['status'] = 'Success'
+            data['message'] = 'Updated privacy'
+	    else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
     elif action == 'comment':
         if has_fields(['id','comment']):
             trip_id = post('id')
