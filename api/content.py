@@ -31,8 +31,8 @@ elif (validate_token(post('user_id'), post('token'))):
 				data['status'] = 'success'
 				data['message'] = 'Added content to album'
 			else:
-			data['status'] = 'failure'
-			data['message'] = 'Failure: does not have editing permissions on this album'	
+				data['status'] = 'failure'
+				data['message'] = 'Failure: does not have editing permissions on this album'	
 		else:
 			data['status'] = 'failure'
 			data['message'] = 'Failed to add content, check album_id, url, and type'
@@ -79,5 +79,5 @@ add content to album (done but not tested)
 tag content location
 like content (done but not tested)
 comment on content (done but not tested)
-set privacy
+set privacy (done but not tested)
 """
