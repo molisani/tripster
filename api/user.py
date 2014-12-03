@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from datetime import datetime
 from api import *
 
 data = {}
@@ -35,6 +36,20 @@ elif post('action') == "login":
         data['status'] = 'Failure'
         data['message'] = 'Insufficient information given'
 
+elif post('action') == "refresh":
+    if has_fields(['user_id', 'token']):
+        user_id = post('user_id')
+        if validate_token(user_id, post('token')):
+            execute_query("UPDATE users SET users.token_gen = \"%s\" WHERE users.id = \"%s\"" % (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id))
+            data['status'] = 'Success'
+            data['message'] = 'Token successfully refreshed.'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Token authentication failed.'
+    else:
+        data['status'] = 'Failure'
+        data['message'] = 'Insufficient information given'
+
 # Account Logout
 elif post('action') == "logout":
     if has_fields(['user_id', 'token']):
@@ -42,7 +57,7 @@ elif post('action') == "logout":
         if validate_token(user_id, post('token')):
             execute_query("UPDATE users SET users.token_gen = \"2000-01-01 01:01:01\" WHERE users.id = \"%s\"" % (user_id))
             data['status'] = 'Success'
-            data['message'] = 'User successfully logged out, token invalidated'
+            data['message'] = 'User successfully logged out, token invalidated.'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Token authentication failed.'
@@ -51,6 +66,12 @@ elif post('action') == "logout":
         data['message'] = 'Insufficient information given'
 
 # 
-elif post('action') == 
+elif post('action') == "send_request":
+    pass
+elif post('action') == "get_requests":
+    pass
+else:
+    data['status'] = 'Failure'
+    data['message'] = 'No action specified'
 
 export_json(data)
