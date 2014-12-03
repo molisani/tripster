@@ -9,7 +9,6 @@ user_id = post('user_id')
 if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
     data['message'] = 'User_ID and token not specified.'
-    export_json(data)
 elif (validate_token(post('user_id'), post('token'))):
     # Actual API
 	action = post('action')
@@ -63,11 +62,10 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'Failure, no album_id or privacy submitted'
 	
 	
-    export_json(data)
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
-    export_json(data)
+export_json(data)
 """add album to trip (done but not tested)
 get content info (likes / comments)
 add content to album (done but not tested)
