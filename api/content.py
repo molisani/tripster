@@ -55,7 +55,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'set_privacy':
 		if has_fields (['album_id', 'privacy']):
-			query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" % (post('album_id', post('privacy'))
+			query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" % (post('album_id'), post('privacy')))
 			data['status'] = 'success'
 			data['message'] = 'Updated album privacy'
 		else:
