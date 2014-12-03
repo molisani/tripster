@@ -78,19 +78,19 @@ elif validate_token(user_id, post('token')):
     elif action == 'invite':
 	    if has_fields(['user_id', 'trip_id']):
 	        user_id = post('user_id')
-            trip_id = post('trip_id')
+                trip_id = post('trip_id')
 	        result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")"
-	                 % (user_id, trip_id))
-	    if (len(result) > 0):
-	        pass
+	                               % (user_id, trip_id))
+	    	if (len(result) > 0):
+	        	pass
+	    	else:
+		    	execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"0\")"
+	            		      % (user_id, trip_id))
+		    	data['status'] = 'Success'
+		    	data['message'] = 'User has been invited to join trip'
 	    else:
-		    execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"0\")"
-	            % (user_id, trip_id))
-		    data['status'] = 'Success'
-		    data['message'] = 'User has been invited to join trip'
-	else:
-	    data['status'] = 'Failure'
-	    data['message'] = 'Insufficient information given'					
+	    	data['status'] = 'Failure'
+	    	data['message'] = 'Insufficient information given'					
     elif action == 'get_requests':
         if has_fields(['trip_id']):
 	        trip_id = post('trip_id')
