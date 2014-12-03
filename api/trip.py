@@ -56,7 +56,7 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Insufficient information given'
     elif action == 'join':
         #Requires user_id and trip_id
-	    if has_fields(['user_id']) and has_fields(['trip_id')]:
+	    if has_fields(['user_id', 'trip_id']):
 	        user_id = post('user_id')
             trip_id = post('trip_id')
 	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")" 
@@ -78,7 +78,7 @@ elif validate_token(user_id, post('token')):
 	    data['status'] = 'Failure'
 	    data['message'] = 'Insufficient information given'		    
     elif action == 'invite':
-	    if has_fields(['user_id']) and has_fields(['trip_id')]:
+	    if has_fields(['user_id', 'trip_id']):
 	        user_id = post('user_id')
             trip_id = post('trip_id')
 	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")"
@@ -94,7 +94,7 @@ elif validate_token(user_id, post('token')):
 	    data['status'] = 'Failure'
 	    data['message'] = 'Insufficient information given'					
     elif action == 'get_requests':
-        if has_fields(['trip_id')]:
+        if has_fields(['trip_id']):
 	        trip_id = post('trip_id')
 	        execute_query("SELECT user_id FROM takes T WHERE T.trip_id = \"%s\" AND T.status = \"2\")"
 	            % (trip_id)
