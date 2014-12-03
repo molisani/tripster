@@ -6,10 +6,9 @@ from dateutil import parser
 data = {}
 
 username = post('username')
-user_id = execute_query("SELECT * FROM users where users.username = \"%s\"" % (username))[0][0]
-''' possible fields for trip post: username, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
-privacy, rating, id, comment, description, cost, expense_id
-'''
+user_id = post('user_id')
+# possible fields for trip post: username, user_id, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
+# privacy, rating, id, comment, description, cost, expense_id
 
 if (not has_fields(['username', 'token'])):
     data['status'] = 'Failure'
@@ -38,19 +37,18 @@ elif validate_token(username, post('token')):
             data['status'] = 'Failure'
             data['message'] = 'Trip ID was not included in request.'
     elif action == 'create':
-        # Requires name?
+        # Requires name
         if has_fields(['tripname']):
             trip_name = post('trip_name')
-            trip_fields = ['creator_id', 'start_date', 'end_date', 'todo_list', 'privacy', 'rating']
+            trip_fields = ['start_date', 'end_date', 'todo_list', 'privacy', 'rating']
             trip = {}
             for item in trip_fields:
         	    if has_fields(item):
         		    trip[item] = post(item)
         	    else:
         		    trip[item] = None
-            # %??? -> format for dates?
-            execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%d\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
-                          % (trip[0], trip_name, trip[1], trip[2], trip[3], trip[4], trip[5]))
+            execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
+                          % (user_id, trip_name, trip[0], trip[1], trip[2], trip[3], trip[4]))
             data['status'] = 'Success'
             data['message'] = 'Added trip'
         else:
@@ -70,7 +68,7 @@ elif validate_token(username, post('token')):
         if has_fields(['id','comment']):
             trip_id = post('id')
             comment = post('comment')
-            execute_query("INSERT INTO trip_comments (user_id, trip_id, comment) VALUES (\"%d\", \"%d\", \"%s\")" % (user_id, trip_id, comment))
+            execute_query("INSERT INTO trip_comments (user_id, trip_id, comment) VALUES (\"%s\", \"%s\", \"%s\")" % (user_id, trip_id, comment))
             data['status'] = 'Success'
             data['message'] = 'Added comment'
         else:
@@ -80,8 +78,7 @@ elif validate_token(username, post('token')):
         if has_fields(['todo_list','id']):
             todo = post('todo_list')
             trip_id = post('id')
-            # Need to append todo to current string?
-            execute_query("UPDATE trips SET todo_list = \"%s\" WHERE trips.id = \"%d\"" % (todo, trip_id))
+            execute_query("UPDATE trips SET todo_list = \"%s\" WHERE trips.id = \"%s\"" % (todo, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Updated todo'
         else:
@@ -89,34 +86,34 @@ elif validate_token(username, post('token')):
             data['message'] = 'Insufficient information given'
     elif action == 'add_expense':
         if has_fields(['id']):
-		    trip_id = post('id')
-		    description = None
-		    cost = None
-		    if has_fields(['description']):
-			    description = post('description')
-		    if has_fields(['cost']):
-			    cost = post('cost')
-		    # Should expense user_id auto be user_id of person putting it in or null?
-		    execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%d\", \"%d\", \"%s\", \"%s\")" % (trip_id, user_id, description, cost))
-		    data['status'] = 'Success'
+	    trip_id = post('id')
+	    description = None
+	    cost = None
+	    if has_fields(['description']):
+	        description = post('description')
+	    if has_fields(['cost']):
+	        cost = post('cost')
+	    execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, None, description, cost))
+	    data['status'] = 'Success'
             data['message'] = 'Added expense'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'claim_expense':
-        if has_fields('expense_id'):
-		    expense_id = post('expense_id')
-		    execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%d\"" % (user_id, expense_id))
-		    data['status'] = 'Success'
+        if has_fields('expense_id', 'expense_user'):
+	    expense_id = post('expense_id')
+	    expense_user = post('expense_user')
+	    execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (expense_user, expense_id))
+	    data['status'] = 'Success'
             data['message'] = 'Claimed expense'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'remove_expense':
         if has_fields('expense_id'):
-		    expense_id = post('expense_id')
-		    execute_query("DELETE FROM expenses WHERE id = \"%d\"" % (expense_id))
-		    data['status'] = 'Success'
+	    expense_id = post('expense_id')
+	    execute_query("DELETE FROM expenses WHERE id = \"%s\"" % (expense_id))
+	    data['status'] = 'Success'
             data['message'] = 'Removed expense'
         else:
             data['status'] = 'Failure'
