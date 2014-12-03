@@ -45,7 +45,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'comment_content':
 		if has_fields (['content_id','comment']):
-			query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
+			query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
 			data['status'] = 'success'
 			data['message'] = 'Added comment to content'
 		else:
@@ -72,5 +72,5 @@ add content to album (done but not tested)
 tag content location
 like content (done but not tested)
 comment on content (done but not tested)
-set privacy (done but not tested)
+set privacy (tested)
 """
