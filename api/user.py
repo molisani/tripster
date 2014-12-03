@@ -38,17 +38,18 @@ elif post('action') == "login":
 
 elif has_fields(['user_id', 'token']):
     user_id = post('user_id')
+    data['user_id'] = user_id
+    data['token'] = post('token')
+    data['validate'] = validate_token(user_id, post('token'))
     if validate_token(user_id, post('token')):
         if post('action') == "refresh":
             execute_query("UPDATE users SET users.token_gen = \"%s\" WHERE users.id = \"%s\"" % (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id))
             data['status'] = 'Success'
             data['message'] = 'Token successfully refreshed.'
-            
         elif post('action') == "logout":
             execute_query("UPDATE users SET users.token_gen = \"2000-01-01 01:01:01\" WHERE users.id = \"%s\"" % (user_id))
             data['status'] = 'Success'
             data['message'] = 'User successfully logged out, token invalidated.'
-
         elif post('action') == "get_friends":
             friends = execute_query("SELECT friends.user1_id, users.username FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (user_id))
             data['status'] = 'Success'

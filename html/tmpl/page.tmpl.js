@@ -50,11 +50,11 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.page_title : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "</title>\r\n<nav class=\"navbar navbar-default navbar-static-top\" role=\"navigation\">\r\n    <div class=\"container\">\r\n        <a class=\"navbar-brand\" href=\"./index.html\">Tripster</a>\r\n        <div class=\"pull-right\">\r\n            <ul class=\"nav navbar-nav\">\r\n                <li>\r\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.token : depth0), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.program(7, data),"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.username : depth0), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.program(7, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "                </li>\r\n            </ul>\r\n        </div>\r\n    </div>\r\n</nav>\r\n<div class=\"container\">\r\n    ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.standalone : depth0), {"name":"if","hash":{},"fn":this.program(9, data),"inverse":this.program(11, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "</div>\r\n<footer class=\"footer\" style=\"position: absolute; bottom: 0; width: 100%; height: 60px; background-color: #f5f5f5;\">\r\n    <div class=\"container text-center\">\r\n        <p style=\"margin: 20px 0;\">Text goes here.</p>\r\n    </div>\r\n</footer>";
+  return buffer + "</div>\r\n<footer class=\"footer\" style=\"position: absolute; bottom: 0; width: 100%; height: 60px; background-color: #f5f5f5;\">\r\n    <div class=\"container text-center\">\r\n        <p style=\"margin: 20px 0;\">Things like copyrights, attributions, licenses, etc. go here ~ (C) 2014</p>\r\n    </div>\r\n</footer>";
 },"useData":true});
 })();

@@ -10,7 +10,7 @@
     </head>
 
     <body>
-        <div id="standalone-content">
+        <div id="content">
             <div class="row">
                 <div class="col-md-5 col-md-offset-1">
                     <div class="panel panel-info">
@@ -79,36 +79,47 @@
         </div>
     </body>
     
-    <script src="page.tmpl.js" id="page-template"></script>
+    <script src="js/util.js" id="page-template"></script>
+    <script src="js/jquery.cookie.min.js" id="page-template"></script>
+    <script src="tmpl/result-modal.tmpl.js" id="page-template"></script>
+    <script src="tmpl/page.tmpl.js" id="page-template"></script>
     <script type="text/javascript">
-        function $_GET(k) {
-            return decodeURI((RegExp(k+'='+'(.+?)(&|$)').exec(location.search)||[,null])[1]);
-        }
-        function formData(formID) {
-            data = {};
-            formArray = $(formID).serializeArray();
-            for (var i = 0; i < formArray.length; i++) {
-                data[formArray[i]["name"]] = formArray[i]["value"]
-            }
-            return data;
-        }
-        var template = Handlebars.templates['page.tmpl'];
-        data = {
-            page_title: "Page Title",
-            username: "molisani",
-            standalone: $('#standalone-content').html()
-        };
-        $('body').html(template(data));
-        $('#register-form').ajax({
-            url: '../api/user.py', 
-            type: 'post',
-            data: formData('#register-form'),
-            dataType: 'json'
+        $('body').html(Handlebars.templates['page.tmpl']({standalone:$('#content').html()}));
+
+        $('#register-form').submit(function(e){
+            $.ajax({
+                url: '../api/user.py', 
+                type: 'post',
+                data: formData('#register-form'),
+                dataType: 'json',
+                success: function(json) {
+                    $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "register-modal",result: json}));
+                    $('#register-modal').modal({show: true, keyboard: true});
+                }
+            });
         });
-        $('#login-form').ajax({
-            url: '../api/user.py', 
-            type: 'post',
-            dataType: 'json',
+
+        $('#login-form').submit(function(e){
+            form = formData('#login-form');
+            $.ajax({
+                url: '../api/user.py', 
+                type: 'post',
+                data: formData('#login-form'),
+                dataType: 'json',
+                success: function(json) {
+                    $('#login-modal').remove();
+                    $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "login-modal",result: json}));
+                    $('#login-modal').modal({show: true, keyboard: true});
+                    if (json['status'] == 'Success') {
+                        $.cookie('username', form['username'], {expires: 7});
+                        $.cookie('user_id', json['user_id'], {expires: 7});
+                        $.cookie('token', json['token'], {expires: 7});
+                    }
+                }
+            });
         });
+        
+
+        
     </script>
 </html>

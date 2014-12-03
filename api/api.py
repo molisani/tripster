@@ -35,7 +35,7 @@ def execute_query(query):
     return [x for x in result]
 
 def generate_token(user_id):
-    token = random.randint(0, 1e17)
+    token = int(random.randint(0, 1e16))
     token_gen = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     execute_query("UPDATE users SET users.token = \"%d\", users.token_gen = \"%s\" WHERE users.id= \"%s\"" % (token, token_gen, user_id))
     return token

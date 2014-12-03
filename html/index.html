@@ -1,5 +1,71 @@
 <html>
-<title>Sample Index</title>
-<h1>Placeholder</h1>
-<p>These webpages will have javascript code embedded that when run will use AJAX to call the API, get the data, and load it into the page.</p>
+    <head>
+        <!-- jQuery -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <!-- Handlebars -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+    </head>
+
+    <body>
+        <div id="main-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <p>Most of the stuff will go here.</p>
+                </div>
+            </div>
+        </div>
+        <div id="sidebar">
+            <div class="container-fluid">
+                <div class="row">
+                    <button type="button" class="btn btn-danger pull-right" id="logout-btn">Logout</button>
+                </div>
+                <hr>
+                <div class="row">
+                    <p>Other things can go here!</p>
+                </div>
+                <div class="row">
+                    <p>More, and more!</p>
+                </div>
+            </div>
+        </div>
+    </body>
+    
+    <script src="js/util.js" id="page-template"></script>
+    <script src="js/jquery.cookie.min.js" id="page-template"></script>
+    <script src="tmpl/page.tmpl.js" id="page-template"></script>
+    <script type="text/javascript">
+        var pageData = {
+            page_header: "Welcome to Tripster!",
+            page_body: $('#main-content').html(),
+            page_sidebar: $('#sidebar').html()
+        }
+        if ($.cookie("username")) {
+            pageData['username'] = $.cookie("username")
+        }
+        $('body').html(Handlebars.templates['page.tmpl'](pageData));
+
+        $('#logout-btn').click(function(){
+            $.ajax({
+                url: '../api/user.py', 
+                type: 'post',
+                data: {
+                    action: 'logout',
+                    user_id: $.cookie('user_id'),
+                    token: $.cookie('token')
+                },
+                dataType: 'json',
+                success: function(json) {
+                    if (json['status'] == 'Success') {
+                        $.cookie('username', '', {expires: -1});
+                        $.cookie('user_id', '', {expires: -1});
+                        $.cookie('token', '', {expires: -1});
+                        location.reload();
+                    }
+                }
+            });
+        });
+    </script>
 </html>
