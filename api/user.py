@@ -36,42 +36,43 @@ elif post('action') == "login":
         data['status'] = 'Failure'
         data['message'] = 'Insufficient information given'
 
-elif post('action') == "refresh":
-    if has_fields(['user_id', 'token']):
-        user_id = post('user_id')
-        if validate_token(user_id, post('token')):
+elif has_fields(['user_id', 'token']):
+    user_id = post('user_id')
+    if validate_token(user_id, post('token')):
+        if post('action') == "refresh":
             execute_query("UPDATE users SET users.token_gen = \"%s\" WHERE users.id = \"%s\"" % (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id))
             data['status'] = 'Success'
             data['message'] = 'Token successfully refreshed.'
-        else:
-            data['status'] = 'Failure'
-            data['message'] = 'Token authentication failed.'
-    else:
-        data['status'] = 'Failure'
-        data['message'] = 'Insufficient information given'
-
-# Account Logout
-elif post('action') == "logout":
-    if has_fields(['user_id', 'token']):
-        user_id = post('user_id')
-        if validate_token(user_id, post('token')):
+            
+        elif post('action') == "logout":
             execute_query("UPDATE users SET users.token_gen = \"2000-01-01 01:01:01\" WHERE users.id = \"%s\"" % (user_id))
             data['status'] = 'Success'
             data['message'] = 'User successfully logged out, token invalidated.'
+
+        elif post('action') == "get_friends":
+            friends = execute_query("SELECT friends.user1_id, users.username FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (user_id))
+            data['status'] = 'Success'
+            data['friends'] = []
+            for friend in friends:
+                f = {}
+                f['user_id'] = friend[0]
+                f['username'] = friend[1]
+                data['friends'] += [f]
+        elif post('action') == "send_request":
+            if has_fields(['friend_id']):
+                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, friend_id))
+        elif post('action') == "get_requests":
+            execute_query("SELECT * ")
+
         else:
             data['status'] = 'Failure'
-            data['message'] = 'Token authentication failed.'
+            data['message'] = 'No action specified'
     else:
         data['status'] = 'Failure'
-        data['message'] = 'Insufficient information given'
-
-# 
-elif post('action') == "send_request":
-    pass
-elif post('action') == "get_requests":
-    pass
+        data['message'] = 'Token authentication failed.'
 else:
     data['status'] = 'Failure'
-    data['message'] = 'No action specified'
+    data['message'] = 'Insufficient information given'
+
 
 export_json(data)
