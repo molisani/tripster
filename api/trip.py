@@ -69,7 +69,7 @@ elif validate_token(user_id, post('token')):
 		    		data['message'] = 'User has been added to trip'
 	    	else:
 		    	execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"1\")"
-		                      % (user_id, trip_id)
+		                      % (user_id, trip_id))
 			data['status'] = 'Success'
 			data['message'] = 'User has requested to join trip'
 	else:
@@ -79,13 +79,13 @@ elif validate_token(user_id, post('token')):
 	    if has_fields(['user_id', 'trip_id']):
 	        user_id = post('user_id')
             trip_id = post('trip_id')
-	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")"
+	        result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")"
 	                 % (user_id, trip_id))
 	    if (len(result) > 0):
 	        pass
 	    else:
 		    execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"&s\", \"0\")"
-	            % (user_id, trip_id)
+	            % (user_id, trip_id))
 		    data['status'] = 'Success'
 		    data['message'] = 'User has been invited to join trip'
 	else:
@@ -95,7 +95,7 @@ elif validate_token(user_id, post('token')):
         if has_fields(['trip_id']):
 	        trip_id = post('trip_id')
 	        execute_query("SELECT user_id FROM takes T WHERE T.trip_id = \"%s\" AND T.status = \"2\")"
-	            % (trip_id)
+	            % (trip_id))
 	        data['status'] = 'Success'
 	        data['message'] = 'Requests have been retrieved'
 	else:
@@ -103,22 +103,22 @@ elif validate_token(user_id, post('token')):
 	    data['message'] = 'Insufficient information given'
     elif action == 'rate':
         if has_fields(['rating', 'id']):
-	        rating = post('rating')
-	        trip_id = post('id')
-	        execute_query("UPDATE trip_ratings SET rating= \"%s\" WHERE trips.id = \"%s\"" % (rating, trip_id))
+	    rating = post('rating')
+	    trip_id = post('id')
+	    execute_query("UPDATE trip_ratings SET rating= \"%s\" WHERE trips.id = \"%s\"" % (rating, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Added rating'
-	    else:
+	else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'set_privacy':
         if has_fields(['privacy', 'id']):
-	        new_privacy = post('privacy')
-	        trip_id = post('id')
-	        execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
+	    new_privacy = post('privacy')
+	    trip_id = post('id')
+	    execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Updated privacy'
-	    else:
+	else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'comment':
