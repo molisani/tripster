@@ -6,10 +6,9 @@ from dateutil import parser
 data = {}
 
 username = post('username')
-user_id = execute_query("SELECT * FROM users where users.username = \"%s\"" % (username))[0][0]
-''' possible fields for trip post: username, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
-privacy, rating, id, comment, description, cost, expense_id
-'''
+user_id = post('user_id')
+# possible fields for trip post: username, user_id, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
+# privacy, rating, id, comment, description, cost, expense_id
 
 if (not has_fields(['username', 'token'])):
     data['status'] = 'Failure'
