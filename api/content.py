@@ -37,7 +37,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'failure'
 			data['message'] = 'Failed to add content, check album_id, url, and type'
 	
-	elif action = 'like_content':
+	elif action == 'like_content':
 		if has_fields (['content_id']):
 			query = execute_query ("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"
 									% (user_id, post('content_id')))
@@ -47,7 +47,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'failure'
 			data['message'] = 'Failure, no content_id submitted'
 	
-	elif action = 'comment_content':
+	elif action == 'comment_content':
 		if has_fields (['content_id','comment']):
 			query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\")"
 									% (user_id, post('content_id'), post('comment')))
@@ -57,7 +57,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'failure'
 			data['message'] = 'Failure, no content_id or comment submitted'
 	
-	elif action = 'set_privacy':
+	elif action == 'set_privacy':
 		if has_fields (['album_id', 'privacy']):
 			query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" 
 								  % (post('album_id', post('privacy'))
