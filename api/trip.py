@@ -61,8 +61,8 @@ elif validate_token(user_id, post('token')):
             	trip_id = post('trip_id')
 	        result = (execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\")" 
 	                     % (user_id, trip_id))
-	    	if (len(result) > 0):
-			if (result = 1):
+	    	if len(result) > 0:
+			if result == 1:
 		    	    	execute_query("UPDATE takes SET status= \"0\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\")" 
 		        	               % (user_id, trip_id))					
 		    		data['status'] = 'Success'
