@@ -13,7 +13,7 @@ user_id = post('user_id')
 if (not has_fields(['username', 'token'])):
     data['status'] = 'Failure'
     data['message'] = 'Username and token not specified.'
-elif validate_token(username, post('token')):
+elif validate_token(user_id, post('token')):
     action = post('action')
     if action == 'info':
         if has_fields(['id']):
