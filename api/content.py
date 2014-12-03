@@ -4,11 +4,11 @@ from api import *
 
 data = {}
 
-if (not has_fields(['username', 'token'])):
+if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
-    data['message'] = 'Username and token not specified.'
+    data['message'] = 'User_ID and token not specified.'
     export_json(data)
-elif (validate_token(post('username'), post('token'))):
+elif (validate_token(post('user_id'), post('token'))):
     # Actual API
     export_json(data)
 else:
