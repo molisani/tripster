@@ -20,6 +20,14 @@ elif (validate_token(post('user_id'), post('token'))):
 			rating = post('rating')
 			query = execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" 
 								  % (user_id, location_id, rating))
+			data['status'] = 'success'
+			data['message'] = 'Added location rating'
+		else:
+			data['status'] = 'failure'
+			data['message'] = 'Attempting to rate without a location id'
+			
+	elif action = 'recommend_locations':
+		query = execute_query("Select Distinct V.location_id From takes T Inner Join ( Select Distinct F.user2_id From users U Inner Join friends F on U.id = F.user1_id Where U.id = 1) FR on FR.user2_id = T.user_id Inner Join visits V on V.trip_id = T.trip_id Where V.location_id Not In  (Select Distinct V.location_id From users U Inner Join takes T on T.user_id = U.id Inner Join visits V on V.trip_id = T.trip_id Where U.id = 1);")
 								  
     export_json(data)
 else:
