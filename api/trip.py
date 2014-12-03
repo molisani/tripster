@@ -38,7 +38,7 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Trip ID was not included in request.'
     elif action == 'create':
         # Requires name
-        if has_fields(['tripname']):
+        if has_fields(['trip_name']):
             trip_name = post('trip_name')
             trip_fields = ['start_date', 'end_date', 'todo_list', 'privacy', 'rating']
             trip = {}
