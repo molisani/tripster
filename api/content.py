@@ -15,8 +15,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	action = post('action')
 	if action == 'add_album':
 		if has_fields (['trip_id', 'albumname', 'privacy']):
-			query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"
-								   % (post('trip_id'), user_id, post('albumname'), post('privacy')))
+			query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (post('trip_id'), user_id, post('albumname'), post('privacy')))
 			data['status'] = 'success'
 			data['message'] = 'Added album to trip'
 		else:
@@ -26,8 +25,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	elif action == 'add_content':
 		if has_fields (['album_id', 'url', 'type']):
 			if has_permissions(user_id, album = post('album_id'), edit = true):
-				query = execute_query("INSERT INTO albums (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"
-								  % (post('album_id'), post('url'), post ('type')))
+				query = execute_query("INSERT INTO albums (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"% (post('album_id'), post('url'), post ('type')))
 				data['status'] = 'success'
 				data['message'] = 'Added content to album'
 			else:
@@ -39,8 +37,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'like_content':
 		if has_fields (['content_id']):
-			query = execute_query ("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"
-									% (user_id, post('content_id')))
+			query = execute_query ("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id')))
 			data['status'] = 'success'
 			data['message'] = 'Added like to content'
 		else:
@@ -49,8 +46,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'comment_content':
 		if has_fields (['content_id','comment']):
-			query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\")"
-									% (user_id, post('content_id'), post('comment')))
+			query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
 			data['status'] = 'success'
 			data['message'] = 'Added comment to content'
 		else:
@@ -59,8 +55,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	
 	elif action == 'set_privacy':
 		if has_fields (['album_id', 'privacy']):
-			query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" 
-								  % (post('album_id', post('privacy'))
+			query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" % (post('album_id', post('privacy'))
 			data['status'] = 'success'
 			data['message'] = 'Updated album privacy'
 		else:
