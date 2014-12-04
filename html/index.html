@@ -25,42 +25,21 @@
   <script src="js/jquery.cookie.min.js"></script>
   <script src="tmpl/page.tmpl.js" id="page-template"></script>
   <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+  <script src="tmpl/result-modal.tmpl.js" id="result-modal-template"></script>
   <script type="text/javascript">
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.page_header = "Welcome to Tripster!";
+      pageData.page_body = $('#main-content').html();
 
-  var pageData = {
-    page_header: "Welcome to Tripster!",
-    page_body: $('#main-content').html()
-  }
-  var sidebarData = {}
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+        sidebarData.username = $.cookie("username");
+      }
 
-  if ($.cookie("username")) {
-    pageData.username = $.cookie("username");
-    sidebarData.username = $.cookie("username");
-  }
-
-  function build_page() {
-    $('body').html(Handlebars.templates['page.tmpl'](pageData));
-  }
-  build_page();
-
-  function build_sidebar() {
-    pageData.page_sidebar = Handlebars.templates['sidebar.tmpl'](sidebarData);
-    build_page();
-  }
-
-  $.ajax({
-    url: '../api/user.py',
-    type: 'post',
-    data: {
-      action: 'get_friends',
-      user_id: $.cookie('user_id'),
-      token: $.cookie('token')
-    },
-    dataType: 'json',
-    success: function(json) {
-      sidebarData.friends = json.friends;
-      build_sidebar();
-    }
-  });
+      build_page();
+      load_sidebar();
+    });
   </script>
 </html>

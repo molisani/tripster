@@ -12,45 +12,53 @@
   <body>
     <script id="search-template" type="text/x-handlebars-template">
       <section id="search-results">
-        {{#if users}}
-          <div class="panel panel-info">
-            <div class="panel-heading">
-              <h1 class="panel-title">Users</h1>
+        <div class="row">
+          {{#if users}}
+            <div class="col-lg-{{#if trips}}{{#if locations}}4{{else}}6{{/if}}{{else}}{{#if locations}}6{{else}}12{{/if}}{{/if}}">
+              <div class="panel panel-info">
+                <div class="panel-heading">
+                  <h1 class="panel-title">Users</h1>
+                </div>
+                <ul class="list-group">
+                  {{#each users}}
+                    <a href="./user.html?id={{user_id}}" class="list-group-item">{{{fullname}}} ({{{username}}})</a>
+                  {{/each}}
+                </ul>
+              </div>
             </div>
-            <ul class="list-group">
-              {{#each users}}
-                <a href="./user.html?id={{user_id}}" class="list-group-item">{{{fullname}}} ({{{username}}})</a>
-              {{/each}}
-            </ul>
-          </div>
-        {{/if}}
-        {{#if trips}}
-          <div class="panel panel-success">
-            <div class="panel-heading">
-              <h1 class="panel-title">Trips</h1>
+          {{/if}}
+          {{#if trips}}
+            <div class="col-lg-{{#if users}}{{#if locations}}4{{else}}6{{/if}}{{else}}{{#if locations}}6{{else}}12{{/if}}{{/if}}">
+              <div class="panel panel-success">
+                <div class="panel-heading">
+                  <h1 class="panel-title">Trips</h1>
+                </div>
+                <ul class="list-group">
+                  {{#each trips}}
+                    <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{{tripname}}}</a>
+                  {{/each}}
+                </ul>
+              </div>
             </div>
-            <ul class="list-group">
-              {{#each trips}}
-                <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{{tripname}}}</a>
-              {{/each}}
-            </ul>
-          </div>
-        {{/if}}
-        {{#if locations}}
-          <div class="panel panel-warning">
-            <div class="panel-heading">
-              <h1 class="panel-title">Locations</h1>
+          {{/if}}
+          {{#if locations}}
+            <div class="col-lg-{{#if trips}}{{#if users}}4{{else}}6{{/if}}{{else}}{{#if users}}6{{else}}12{{/if}}{{/if}}">
+              <div class="panel panel-warning">
+                <div class="panel-heading">
+                  <h1 class="panel-title">Locations</h1>
+                </div>
+                <ul class="list-group">
+                  {{#each locations}}
+                    <a href="./location.html?id={{location_id}}" class="list-group-item">{{{citystate}}}, <i>{{{country}}}</i></a>
+                  {{/each}}
+                </ul>
+              </div>
             </div>
-            <ul class="list-group">
-              {{#each locations}}
-                <a href="./location.html?id={{location_id}}" class="list-group-item">{{{citystate}}}, <i>{{{country}}}</i></a>
-              {{/each}}
-            </ul>
-          </div>
-        {{/if}}
-        {{#unless users}}{{#unless trips}}{{#unless locations}}
-          <div class="alert alert-warning">No results found.</div>
-        {{/unless}}{{/unless}}{{/unless}}
+          {{/if}}
+          {{#unless users}}{{#unless trips}}{{#unless locations}}
+            <div class="alert alert-warning">No results found.</div>
+          {{/unless}}{{/unless}}{{/unless}}
+        </div>
       </section>
     </script>
   </body>
@@ -61,21 +69,22 @@
   <script type="text/javascript">
   var search_template = Handlebars.compile($('#search-template').html());
   var pageData = { standalone: search_template({}) };
-  if ($.cookie("username")) {
-    pageData.username = $.cookie("username")
-  }
+  if ($.cookie("username")) pageData.username = $.cookie("username");
+  var q = $_GET('q');
+  if (q != "null") pageData.q = q;
+
   function build_page() {
     $('body').html(Handlebars.templates['page.tmpl'](pageData));
   }
   build_page();
 
-  q = $_GET('q');
+  
 
   function embolden_results(arr) {
     if (arr) {
       for (var i = 0; i < arr.length; i++) {
         for (var j in arr[i]) {
-          arr[i][j] = typeof arr[i][j] == "string" ? arr[i][j].replace(RegExp(q, 'gi'), '<b>$&</b>') : arr[i][j];
+          arr[i][j] = typeof arr[i][j] == "string" ? arr[i][j].replace(RegExp(q, 'gi'), '<b><u>$&</u></b>') : arr[i][j];
         }
       }
     }

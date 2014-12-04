@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Handlebars -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+  </head>
+
+  <body>
+    <section id="main-content">
+      <div class="panel-body">
+        <div class="container-fluid">
+          <div class="row">
+            <p>Most of the stuff will go here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="sidebar-content">
+      <div class="panel-body">
+        <div class="container-fluid">
+          <div class="row">
+            <p>Most of the stuff will go here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+
+  <script src="js/field_utils.js"></script>
+  <script src="js/jquery.cookie.min.js"></script>
+  <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script type="text/javascript">
+    var trip = $_GET('id');
+    var pageData = {
+      page_header: "[[tripname]]",
+      page_body: $('#main-content').html(),
+      page_sidebar: $('#sidebar-content').html()
+    }
+    var sidebarData = {}
+
+    if ($.cookie("username")) pageData.username = $.cookie("username");
+
+    function build_page() {
+      $('body').html(Handlebars.templates['page.tmpl'](pageData));
+    }
+    build_page();
+
+    if (trip != "null") {
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip
+        },
+        dataType: 'json',
+        success: function(json) {
+          console.log(json);
+          pageData.page_header = json.trip.tripname;
+          console.log(pageData);
+          build_page();
+        }
+      });
+    }
+  </script>
+</html>

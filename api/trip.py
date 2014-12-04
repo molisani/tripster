@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from api import *
-from dateutil import parser
 
 data = {}
 
