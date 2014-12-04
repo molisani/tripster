@@ -1,0 +1,43 @@
+{{#if username}}
+    <div class="panel-body">
+        <div class="container-fluid">
+            <div class="row">
+                <button type="button" class="btn btn-danger pull-right" id="logout-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+    {{#if friends}}
+        <div class="panel-body">
+            <hr>
+            <span class="label label-primary pull-right">Friends</span>
+        </div>
+        <table class="table">
+            <thead></thead>
+            <tbody>
+                {{#each friends}}
+                    <tr><td><a href="./user.html?id={{user_id}}">{{fullname}}</a></td></tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/if}}
+    <script type="text/javascript">
+    $('#logout-btn').click(function(){
+        $.ajax({
+            url: '../api/user.py', 
+            type: 'post',
+            data: {
+                action: 'logout',
+                user_id: $.cookie('user_id'),
+                token: $.cookie('token')
+            },
+            dataType: 'json',
+            success: function(json) {
+                $.cookie('username', '', {expires: -1});
+                $.cookie('user_id', '', {expires: -1});
+                $.cookie('token', '', {expires: -1});
+                location.reload();
+            }
+        });
+    });
+    </script>
+{{/if}}

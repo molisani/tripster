@@ -51,13 +51,14 @@ elif has_fields(['user_id', 'token']):
             data['status'] = 'Success'
             data['message'] = 'User successfully logged out, token invalidated.'
         elif post('action') == "get_friends":
-            friends = execute_query("SELECT friends.user1_id, users.username FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (user_id))
+            friends = execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (user_id))
             data['status'] = 'Success'
             data['friends'] = []
             for friend in friends:
                 f = {}
                 f['user_id'] = friend[0]
                 f['username'] = friend[1]
+                f['fullname'] = friend[2]
                 data['friends'] += [f]
         elif post('action') == "send_request":
             if has_fields(['friend_id']):

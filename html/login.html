@@ -10,7 +10,7 @@
     </head>
 
     <body>
-        <div id="content">
+        <section id="content">
             <div class="row">
                 <div class="col-md-5 col-md-offset-1">
                     <div class="panel panel-info">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </body>
     
     <script src="js/util.js" id="page-template"></script>
@@ -84,7 +84,11 @@
     <script src="tmpl/result-modal.tmpl.js" id="page-template"></script>
     <script src="tmpl/page.tmpl.js" id="page-template"></script>
     <script type="text/javascript">
-        $('body').html(Handlebars.templates['page.tmpl']({standalone:$('#content').html()}));
+        var pageData = { standalone:$('#content').html() };
+        if ($.cookie("username")) {
+            pageData.username = $.cookie("username")
+        }
+        $('body').html(Handlebars.templates['page.tmpl'](pageData));
 
         $('#register-form').submit(function(e){
             $.ajax({
@@ -107,19 +111,14 @@
                 data: formData('#login-form'),
                 dataType: 'json',
                 success: function(json) {
-                    $('#login-modal').remove();
-                    $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "login-modal",result: json}));
-                    $('#login-modal').modal({show: true, keyboard: true});
                     if (json['status'] == 'Success') {
-                        $.cookie('username', form['username'], {expires: 7});
-                        $.cookie('user_id', json['user_id'], {expires: 7});
-                        $.cookie('token', json['token'], {expires: 7});
+                        $.cookie('username', form['username']);
+                        $.cookie('user_id', json['user_id']);
+                        $.cookie('token', json['token']);
+                        window.location = "./index.html";
                     }
                 }
             });
         });
-        
-
-        
     </script>
 </html>
