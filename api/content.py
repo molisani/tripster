@@ -65,7 +65,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			content_id = post('content_id')
 			content = {}
 			content_info = execute_query("Select * From content Where id content.id = \"%s\"" % (content_id))
-			if len(query) > 0:
+			if len(content_info) > 0:
 				content['status'] = 'Success'
 				content['id'] = content_id
 				content['album_id'] = content_info[0][1]
@@ -84,21 +84,16 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'No content_id given'
 	
 	elif action = 'tag_content_location'
-		if has_fields(['content_id', 'location_name'])
+		if has_fields(['content_id', 'location_id'])
 			content_id = post('content_id')
-			location_name = post('location_name')
-			query = execute_query("Select id From locations Where citystate Like '%\"%s\"%'" % (location_name))
-			if len(query) > 0:
-				location_id = query[0][0]
-				query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))
-				data['status'] = "Success"
-				data['message'] = "Updated content location"
-			else:
-				data['status'] = "Failure"
-				data['message'] = "No location found with that name"
+			location_id = post ('location_id')
+			query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))
+			data['status'] = "Success"
+			data['message'] = "Updated content location"
+			
 		else:
 			data['status'] = "Failure"
-			data['message'] = "No content_id or location_name given"
+			data['message'] = "No content_id or location_id given"
 			
 else:
     data['status'] = 'Failure'
