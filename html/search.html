@@ -69,7 +69,7 @@
   }
   build_page();
 
-  q = "an"
+  q = $_GET('q');
 
   function embolden_results(arr) {
     if (arr) {
@@ -80,26 +80,27 @@
       }
     }
   }
-
-  $.ajax({
-    url: '../api/tripster.py',
-    type: 'post',
-    data: {
-      action: 'search',
-      user_id: $.cookie('user_id'),
-      token: $.cookie('token'),
-      query: q
-    },
-    dataType: 'json',
-    success: function(json) {
-      if (json.status == 'Success') {
-        embolden_results(json.users);
-        embolden_results(json.trips);
-        embolden_results(json.locations);
-        pageData.standalone = search_template(json);
-        build_page();
+  if (q != "null") {
+    $.ajax({
+      url: '../api/tripster.py',
+      type: 'post',
+      data: {
+        action: 'search',
+        user_id: $.cookie('user_id'),
+        token: $.cookie('token'),
+        query: q
+      },
+      dataType: 'json',
+      success: function(json) {
+        if (json.status == 'Success') {
+          embolden_results(json.users);
+          embolden_results(json.trips);
+          embolden_results(json.locations);
+          pageData.standalone = search_template(json);
+          build_page();
+        }
       }
-    }
-  });
+    });
+  }
   </script>
 </html>
