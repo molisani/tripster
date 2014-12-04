@@ -84,41 +84,47 @@
   <script src="tmpl/result-modal.tmpl.js" id="page-template"></script>
   <script src="tmpl/page.tmpl.js" id="page-template"></script>
   <script type="text/javascript">
-  var pageData = { standalone:$('#content').html() };
-  if ($.cookie("username")) {
-    pageData.username = $.cookie("username")
-  }
-  $('body').html(Handlebars.templates['page.tmpl'](pageData));
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.standalone = $('#content').html();
 
-  $('#register-form').submit(function(e){
-    $.ajax({
-      url: '../api/user.py', 
-      type: 'post',
-      data: formData('#register-form'),
-      dataType: 'json',
-      success: function(json) {
-        $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "register-modal",result: json}));
-        $('#register-modal').modal({show: true, keyboard: true});
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
       }
-    });
-  });
 
-  $('#login-form').submit(function(e){
-    form = formData('#login-form');
-    $.ajax({
-      url: '../api/user.py', 
-      type: 'post',
-      data: formData('#login-form'),
-      dataType: 'json',
-      success: function(json) {
-        if (json['status'] == 'Success') {
-          $.cookie('username', form['username']);
-          $.cookie('user_id', json['user_id']);
-          $.cookie('token', json['token']);
-          window.location = "./index.html";
-        }
-      }
+      build_page();
+
+      $('#register-form').submit(function(e){
+        $.ajax({
+          url: '../api/user.py', 
+          type: 'post',
+          data: formData('#register-form'),
+          dataType: 'json',
+          success: function(json) {
+            $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "register-modal",result: json}));
+            $('#register-modal').modal({show: true, keyboard: true});
+          }
+        });
+      });
+
+      $('#login-form').submit(function(e){
+        form = formData('#login-form');
+        $.ajax({
+          url: '../api/user.py', 
+          type: 'post',
+          data: formData('#login-form'),
+          dataType: 'json',
+          success: function(json) {
+            if (json['status'] == 'Success') {
+              $.cookie('username', form['username']);
+              $.cookie('user_id', json['user_id']);
+              $.cookie('token', json['token']);
+              window.location = "./index.html";
+            }
+          }
+        });
+      });
     });
-  });
   </script>
 </html>

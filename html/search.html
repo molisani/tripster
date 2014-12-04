@@ -67,49 +67,52 @@
   <script src="js/jquery.cookie.min.js" id="page-template"></script>
   <script src="tmpl/page.tmpl.js" id="page-template"></script>
   <script type="text/javascript">
-  var search_template = Handlebars.compile($('#search-template').html());
-  var pageData = { standalone: search_template({}) };
-  if ($.cookie("username")) pageData.username = $.cookie("username");
-  var q = $_GET('q');
-  if (q != "null") pageData.q = q;
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      var search_template = Handlebars.compile($('#search-template').html());
+      pageData.standalone = search_template({});
 
-  function build_page() {
-    $('body').html(Handlebars.templates['page.tmpl'](pageData));
-  }
-  build_page();
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+      }
 
-  
+      var q = $_GET('q');
+      if (q != "null") pageData.q = q;
 
-  function embolden_results(arr) {
-    if (arr) {
-      for (var i = 0; i < arr.length; i++) {
-        for (var j in arr[i]) {
-          arr[i][j] = typeof arr[i][j] == "string" ? arr[i][j].replace(RegExp(q, 'gi'), '<b><u>$&</u></b>') : arr[i][j];
+      build_page();
+
+      function embolden_results(arr) {
+        if (arr) {
+          for (var i = 0; i < arr.length; i++) {
+            for (var j in arr[i]) {
+              arr[i][j] = typeof arr[i][j] == "string" ? arr[i][j].replace(RegExp(q, 'gi'), '<b><u>$&</u></b>') : arr[i][j];
+            }
+          }
         }
       }
-    }
-  }
-  if (q != "null") {
-    $.ajax({
-      url: '../api/tripster.py',
-      type: 'post',
-      data: {
-        action: 'search',
-        user_id: $.cookie('user_id'),
-        token: $.cookie('token'),
-        query: q
-      },
-      dataType: 'json',
-      success: function(json) {
-        if (json.status == 'Success') {
-          embolden_results(json.users);
-          embolden_results(json.trips);
-          embolden_results(json.locations);
-          pageData.standalone = search_template(json);
-          build_page();
-        }
+      if (q != "null") {
+        $.ajax({
+          url: '../api/tripster.py',
+          type: 'post',
+          data: {
+            action: 'search',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            query: q
+          },
+          dataType: 'json',
+          success: function(json) {
+            if (json.status == 'Success') {
+              embolden_results(json.users);
+              embolden_results(json.trips);
+              embolden_results(json.locations);
+              pageData.standalone = search_template(json);
+              build_page();
+            }
+          }
+        });
       }
     });
-  }
   </script>
 </html>

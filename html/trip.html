@@ -33,40 +33,41 @@
   <script src="js/field_utils.js"></script>
   <script src="js/jquery.cookie.min.js"></script>
   <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
   <script type="text/javascript">
-    var trip = $_GET('id');
-    var pageData = {
-      page_header: "[[tripname]]",
-      page_body: $('#main-content').html(),
-      page_sidebar: $('#sidebar-content').html()
-    }
-    var sidebarData = {}
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.page_header = "[[tripname]]",
+      pageData.page_body = $('#main-content').html(),
+      pageData.page_sidebar = $('#sidebar-content').html()
 
-    if ($.cookie("username")) pageData.username = $.cookie("username");
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+        sidebarData.username = $.cookie("username");
+      }
 
-    function build_page() {
-      $('body').html(Handlebars.templates['page.tmpl'](pageData));
-    }
-    build_page();
+      build_page();
+      load_sidebar();
 
-    if (trip != "null") {
-      $.ajax({
-        url: '../api/trip.py',
-        type: 'post',
-        data: {
-          action: 'info',
-          user_id: $.cookie('user_id'),
-          token: $.cookie('token'),
-          id: trip
-        },
-        dataType: 'json',
-        success: function(json) {
-          console.log(json);
-          pageData.page_header = json.trip.tripname;
-          console.log(pageData);
-          build_page();
-        }
-      });
-    }
+      var trip = $_GET('id');
+      if (trip != "null") {
+        $.ajax({
+          url: '../api/trip.py',
+          type: 'post',
+          data: {
+            action: 'info',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            id: trip
+          },
+          dataType: 'json',
+          success: function(json) {
+            pageData.page_header = json.trip.tripname;
+            build_page();
+          }
+        });
+      }
+    });
   </script>
 </html>
