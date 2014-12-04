@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Handlebars -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+  </head>
+
+  <body>
+    <script id="search-template" type="text/x-handlebars-template">
+      <section id="search-results">
+        {{#if users}}
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h1 class="panel-title">Users</h1>
+            </div>
+            <ul class="list-group">
+              {{#each users}}
+                <a href="./user.html?id={{user_id}}" class="list-group-item">{{{fullname}}} ({{{username}}})</a>
+              {{/each}}
+            </ul>
+          </div>
+        {{/if}}
+        {{#if trips}}
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h1 class="panel-title">Trips</h1>
+            </div>
+            <ul class="list-group">
+              {{#each trips}}
+                <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{{tripname}}}</a>
+              {{/each}}
+            </ul>
+          </div>
+        {{/if}}
+        {{#if locations}}
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <h1 class="panel-title">Locations</h1>
+            </div>
+            <ul class="list-group">
+              {{#each locations}}
+                <a href="./location.html?id={{location_id}}" class="list-group-item">{{{citystate}}}, <i>{{{country}}}</i></a>
+              {{/each}}
+            </ul>
+          </div>
+        {{/if}}
+        {{#unless users}}{{#unless trips}}{{#unless locations}}
+          <div class="alert alert-warning">No results found.</div>
+        {{/unless}}{{/unless}}{{/unless}}
+      </section>
+    </script>
+  </body>
+
+  <script src="js/field_utils.js" id="page-template"></script>
+  <script src="js/jquery.cookie.min.js" id="page-template"></script>
+  <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script type="text/javascript">
+  var search_template = Handlebars.compile($('#search-template').html());
+  var pageData = { standalone: search_template({}) };
+  if ($.cookie("username")) {
+    pageData.username = $.cookie("username")
+  }
+  function build_page() {
+    $('body').html(Handlebars.templates['page.tmpl'](pageData));
+  }
+  build_page();
+
+  q = "an"
+
+  function embolden_results(arr) {
+    if (arr) {
+      for (var i = 0; i < arr.length; i++) {
+        for (var j in arr[i]) {
+          arr[i][j] = typeof arr[i][j] == "string" ? arr[i][j].replace(RegExp(q, 'gi'), '<b>$&</b>') : arr[i][j];
+        }
+      }
+    }
+  }
+
+  $.ajax({
+    url: '../api/tripster.py',
+    type: 'post',
+    data: {
+      action: 'search',
+      user_id: $.cookie('user_id'),
+      token: $.cookie('token'),
+      query: q
+    },
+    dataType: 'json',
+    success: function(json) {
+      if (json.status == 'Success') {
+        embolden_results(json.users);
+        embolden_results(json.trips);
+        embolden_results(json.locations);
+        pageData.standalone = search_template(json);
+        build_page();
+      }
+    }
+  });
+  </script>
+</html>
