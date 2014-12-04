@@ -41,6 +41,7 @@
   function build_page() {
     $('body').html(Handlebars.templates['page.tmpl'](pageData));
   }
+  build_page();
 
   function build_sidebar() {
     pageData.page_sidebar = Handlebars.templates['sidebar.tmpl'](sidebarData);
