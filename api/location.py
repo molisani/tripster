@@ -51,7 +51,3 @@ else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
 export_json(data)
-
-# rate location
-# recommend locations (look at intersection of locations user hasn't been to and 
-# user’s friends have been to and request 5)
