@@ -53,5 +53,5 @@ else:
 export_json(data)
 
 # rate location
-# recommend locations (look at intersection of locations user hasn’t been to and 
+# recommend locations (look at intersection of locations user hasn't been to and 
 # user’s friends have been to and request 5)
