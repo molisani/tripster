@@ -83,7 +83,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'Failure'
 			data['message'] = 'No content_id given'
 	
-	elif action == 'tag_content_location'
+	elif action == 'tag_content_location':
 		if has_fields(['content_id', 'location_id'])
 			content_id = post('content_id')
 			location_id = post ('location_id')
