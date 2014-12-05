@@ -13,8 +13,8 @@ elif (validate_token(post('user_id'), post('token'))):
     # Actual API
 	
 	action = post('action')
-	if action == 'rate':
-		if has_fields(['id']):
+	if action == 'rate_location':
+		if has_fields(['id','rating']):
 			location_id = post('id')
 			rating = post('rating')
 			query = execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, location_id, rating))
@@ -26,9 +26,9 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'Attempting to rate without a location id'
 			
 	elif action == 'get_location_info':
-		if has_fields(['location_id']):
+		if has_fields(['id']):
 			location = {}
-			location_id = post('location_id')
+			location_id = post('id')
 			location_info = execute_query("Select * From locations Where id = \"%s\"" % (location_id))
 			if len(location_info) > 0:
 				location['status'] = 'Success'
