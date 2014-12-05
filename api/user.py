@@ -38,11 +38,24 @@ elif post('action') == "login":
 
 elif has_fields(['user_id', 'token']):
     user_id = post('user_id')
-    data['user_id'] = user_id
-    data['token'] = post('token')
-    data['validate'] = validate_token(user_id, post('token'))
     if validate_token(user_id, post('token')):
-        if post('action') == "refresh":
+        if post('action') == "info":
+            if has_fields(['id']):
+                info = execute_query("SELECT * FROM users WHERE users.id = \"%s\"" % (post('id')))
+                if len(info) < 1:
+                    data['status'] = 'Failure'
+                    data['message'] = 'User with that id does not exist.'
+                else:
+                    data['status'] = 'Success'
+                    user = {}
+                    user['id'] = post('id')
+                    user['username'] = info[0][1]
+                    user['fullname'] = info[0][3]
+                    data['user'] = user
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
+        elif post('action') == "refresh":
             execute_query("UPDATE users SET users.token_gen = \"%s\" WHERE users.id = \"%s\"" % (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_id))
             data['status'] = 'Success'
             data['message'] = 'Token successfully refreshed.'

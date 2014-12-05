@@ -29,7 +29,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "[[tripname]]",
+      pageData.page_header = "[[username]]",
       pageData.page_body = $('#main-content').html(),
       pageData.page_sidebar = $('#sidebar-content').html()
 
@@ -44,7 +44,7 @@
       var trip = $_GET('id');
       if (trip != "null") {
         $.ajax({
-          url: '../api/trip.py',
+          url: '../api/user.py',
           type: 'post',
           data: {
             action: 'info',
@@ -54,7 +54,7 @@
           },
           dataType: 'json',
           success: function(json) {
-            pageData.page_header = json.trip.tripname;
+            pageData.page_header = json.user.fullname;
             build_page();
           }
         });
