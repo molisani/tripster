@@ -72,8 +72,23 @@ elif (validate_token(post('user_id'), post('token'))):
 				content['location_id'] = content_info[0][2]
 				content['url'] = content_info[0][3]
 				content['type'] = content_info[0][4]
-				content['likes'] = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
-				content['comments'] = execute_query("Select user_id, comment From content_comments Where content_id = \"%s\"" % (content_id))
+				likes_query = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
+				likes = []
+				for like in likes_query:
+					l = {}
+					l['user_id'] = like[0]
+					likes += [l]
+				if len(likes) > 0:
+					content['likes'] = likes
+				comments_query = execute_query("Select user_id, comment From content_comments Where content_id = \"%s\"" % (content_id))
+				comments = []
+				for comment in comments_query:
+					c = {}
+					c['user_id'] = comment[0]
+					c['comment'] = comment[1]
+					comments+= [c]
+				if len(comments) > 0:
+					content['comments'] = comments
 				
 			else:
 				content['status'] = 'Failure'
