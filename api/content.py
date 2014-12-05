@@ -60,7 +60,7 @@ elif (validate_token(post('user_id'), post('token'))):
 		else:
 			data['status'] = 'failure'
 			data['message'] = 'Failure, no album_id or privacy submitted'
-	elif action = 'get_content_info':
+	elif action == 'get_content_info':
 		if has_fields(['content_id']):
 			content_id = post('content_id')
 			content = {}
@@ -83,7 +83,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'Failure'
 			data['message'] = 'No content_id given'
 	
-	elif action = 'tag_content_location'
+	elif action == 'tag_content_location'
 		if has_fields(['content_id', 'location_id'])
 			content_id = post('content_id')
 			location_id = post ('location_id')

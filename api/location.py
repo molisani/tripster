@@ -35,7 +35,7 @@ elif (validate_token(post('user_id'), post('token'))):
 				location['id'] = location_id
 				location['latitude'] = location_info[0][1]
 				location['longitude'] = location_info[0][2]
-				location['name'] = location_info[0][3]
+				location['locationname'] = location_info[0][3]
 				location['country'] = location_info[0][4]
 				location['rating'] = location_info[0][5]
 			
