@@ -26,8 +26,9 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'Attempting to rate without a location id'
 			
 	elif action == 'get_location_info':
-		if has_fields(['id']):
+		if has_fields(['location_id']):
 			location = {}
+			location_id = post('location_id')
 			location_info = execute_query("Select * From locations Where id = \"%s\"" % (location_id))
 			if len(location_info) > 0:
 				location['status'] = 'Success'
