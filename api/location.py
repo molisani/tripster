@@ -26,7 +26,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['status'] = 'failure'
 			data['message'] = 'Attempting to rate without a location id'
 			
-	elif action = 'get_location_info':
+	elif action == 'get_location_info':
 		if has_fields(['id']):
 			location = {}
 			location_info = execute_query("Select * From content Where id content.id = \"%s\"" % (location_id))
