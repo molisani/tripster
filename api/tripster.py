@@ -34,10 +34,10 @@ elif (validate_token(post('user_id'), post('token'))):
             if len(trips) > 0:
                 data['trips'] = trips
             locations = []
-            for u in execute_query("SELECT locations.id, locations.citystate, locations.country FROM locations WHERE locations.citystate LIKE \'%%%s%%\' OR locations.country LIKE \'%%%s%%\'" % (q, q)):
+            for u in execute_query("SELECT locations.id, locations.locationname, locations.country FROM locations WHERE locations.locationname LIKE \'%%%s%%\' OR locations.country LIKE \'%%%s%%\'" % (q, q)):
                 location = {}
                 location['location_id'] = u[0]
-                location['citystate'] = u[1]
+                location['locationname'] = u[1]
                 location['country'] = u[2]
                 locations += [location]
             if len(locations) > 0:
