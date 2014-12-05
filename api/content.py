@@ -109,16 +109,46 @@ elif (validate_token(post('user_id'), post('token'))):
 		else:
 			data['status'] = "Failure"
 			data['message'] = "No content_id or location_id given"
-			
+	elif action == 'get_album_content':
+		if has_fields(['album_id']):
+			album_id = post('album_id')
+			album = {}
+			album_info = execute_query("Select * From albums Where id = \"%s\"" % (album_id))
+			if len(album_info) > 0:
+				album['status'] = 'Success'
+				album['id'] = album_id
+				album['trip_id'] = album_info[0][1]
+				album['creator_id'] = album_info[0][2]
+				album['albumname'] = album_info[0][3]
+				album['privacy'] = album_info[0][4]
+				
+				content_query = execute_query("Select * From content Where album_id = \"%s\"" % (album_id))
+				contents = []
+				for content in content_query:
+					c = {}
+					c['content_id'] = content[0]
+					c['url'] = content[3]
+					contents+= [c]
+					
+				if len(contents) > 0:
+					album['contents'] = contents
+				
+			else: 
+				album['status'] = 'Failure'
+				album['message'] = 'No album found for that id'
+			data['album'] = album
+		else:
+			data['status'] = 'Failure'
+			data['message'] = 'No album_id given'
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
 export_json(data)
-"""add album to trip (done but not tested)
-get content info (likes / comments) (done but not tested)
+"""add album to trip (tested)
+get content info (likes / comments) (tested)
 add content to album (tested)
-tag content location  (done but not tested)
+tag content location  (tested)
 like content (tested)
 comment on content (tested)
-set privacy (tested)
+set privacy in albums(tested)
 """
