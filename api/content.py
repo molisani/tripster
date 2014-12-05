@@ -84,7 +84,7 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'No content_id given'
 	
 	elif action == 'tag_content_location':
-		if has_fields(['content_id', 'location_id'])
+		if has_fields(['content_id', 'location_id']):
 			content_id = post('content_id')
 			location_id = post ('location_id')
 			query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))

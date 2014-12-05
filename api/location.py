@@ -9,7 +9,6 @@ user_id = post('user_id')
 if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
     data['message'] = 'User_ID and token not specified.'
-    export_json(data)
 elif (validate_token(post('user_id'), post('token'))):
     # Actual API
 	
@@ -48,11 +47,10 @@ elif (validate_token(post('user_id'), post('token'))):
 			data['message'] = 'No ID given for this location'
 			
 	
-    export_json(data)
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
-    export_json(data)
+export_json(data)
 
 # rate location
 # recommend locations (look at intersection of locations user hasn’t been to and 
