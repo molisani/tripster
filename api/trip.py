@@ -42,7 +42,7 @@ elif validate_token(user_id, post('token')):
             trip_fields = ['start_date', 'end_date', 'todo_list', 'privacy', 'rating']
             trip = {}
             for item in trip_fields:
-        	    if has_fields(item):
+        	    if has_fields([item]):
         		    trip[item] = post(item)
         	    else:
         		    trip[item] = None
