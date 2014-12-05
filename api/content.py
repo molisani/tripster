@@ -64,7 +64,7 @@ elif (validate_token(post('user_id'), post('token'))):
 		if has_fields(['content_id']):
 			content_id = post('content_id')
 			content = {}
-			content_info = execute_query("Select * From content Where id content.id = \"%s\"" % (content_id))
+			content_info = execute_query("Select * From content Where id = \"%s\"" % (content_id))
 			if len(content_info) > 0:
 				content['status'] = 'Success'
 				content['id'] = content_id
