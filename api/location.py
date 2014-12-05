@@ -28,7 +28,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	elif action == 'get_location_info':
 		if has_fields(['id']):
 			location = {}
-			location_info = execute_query("Select * From content Where id content.id = \"%s\"" % (location_id))
+			location_info = execute_query("Select * From locations Where id = \"%s\"" % (location_id))
 			if len(location_info) > 0:
 				location['status'] = 'Success'
 				location['id'] = location_id
