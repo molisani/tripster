@@ -54,8 +54,10 @@
           },
           dataType: 'json',
           success: function(json) {
-            pageData.page_header = json.user.fullname;
-            build_page();
+            if (json.status == 'Success') {
+              pageData.page_header = json.user.fullname;
+              build_page();
+            }
           }
         });
       }

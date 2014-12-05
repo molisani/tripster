@@ -29,7 +29,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "[[tripname]]",
+      pageData.page_header = "[[locationname]]",
       pageData.page_body = $('#main-content').html(),
       pageData.page_sidebar = $('#sidebar-content').html()
 
@@ -41,21 +41,23 @@
       build_page();
       load_sidebar();
 
-      var trip = $_GET('id');
-      if (trip != "null") {
+      var location = $_GET('id');
+      if (location != "null") {
         $.ajax({
-          url: '../api/trip.py',
+          url: '../api/location.py',
           type: 'post',
           data: {
             action: 'info',
             user_id: $.cookie('user_id'),
             token: $.cookie('token'),
-            id: trip
+            id: location
           },
           dataType: 'json',
           success: function(json) {
             if (json.status == 'Success') {
-              pageData.page_header = json.trip.tripname;
+              var name = json.location.locationname;
+              if (json.location.country) name += ", <i>" + json.location.country + "</i>";
+              pageData.page_header = name;
               build_page();
             }
           }

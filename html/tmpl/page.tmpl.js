@@ -48,10 +48,10 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   },"19":function(depth0,helpers,partials,data) {
   return "12";
   },"21":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "      <div class=\"page-header\">\r\n        <h1>"
-    + escapeExpression(((helper = (helper = helpers.page_header || (depth0 != null ? depth0.page_header : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"page_header","hash":{},"data":data}) : helper)))
-    + "</h1>\r\n      </div>\r\n";
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, buffer = "      <div class=\"page-header\">\r\n        <h1>";
+  stack1 = ((helper = (helper = helpers.page_header || (depth0 != null ? depth0.page_header : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"page_header","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</h1>\r\n      </div>\r\n";
 },"23":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, buffer = "    <div class=\"col-sm-3\">\r\n      <div class=\"panel panel-default\">";
   stack1 = ((helper = (helper = helpers.page_sidebar || (depth0 != null ? depth0.page_sidebar : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"page_sidebar","hash":{},"data":data}) : helper));
