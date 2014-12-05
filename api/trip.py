@@ -42,10 +42,7 @@ elif validate_token(user_id, post('token')):
             trip_fields = ['start_date', 'end_date', 'todo_list', 'privacy', 'rating']
             trip = {}
             for item in trip_fields:
-        	    if has_fields([item]):
-        		    trip[item] = post(item)
-        	    else:
-        		    trip[item] = None
+                trip[item] = post(item)
             execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
                           % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
             data['status'] = 'Success'
