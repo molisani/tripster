@@ -64,15 +64,19 @@ elif has_fields(['user_id', 'token']):
             data['status'] = 'Success'
             data['message'] = 'User successfully logged out, token invalidated.'
         elif post('action') == "get_friends":
-            friends = execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (user_id))
-            data['status'] = 'Success'
-            data['friends'] = []
-            for friend in friends:
-                f = {}
-                f['user_id'] = friend[0]
-                f['username'] = friend[1]
-                f['fullname'] = friend[2]
-                data['friends'] += [f]
+            if has_fields(['id']):
+                friends = execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (post('id')))
+                data['status'] = 'Success'
+                data['friends'] = []
+                for friend in friends:
+                    f = {}
+                    f['user_id'] = friend[0]
+                    f['username'] = friend[1]
+                    f['fullname'] = friend[2]
+                    data['friends'] += [f]
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
         elif post('action') == "send_request":
             if has_fields(['friend_id']):
                 execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('friend_id')))
@@ -82,7 +86,14 @@ elif has_fields(['user_id', 'token']):
                 data['status'] = 'Failure'
                 data['message'] = 'Insufficient information given'
         elif post('action') == "get_requests":
-            pass
+            data['status'] = 'Success'
+            requests = []
+            for req in execute_query("SELECT myfriends.user1_id, users.fullname FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (user_id, user_id)):
+                request = {}
+                request['user_id'] = req[0]
+                request['fullname'] = req[1]
+                requests += [request]
+            data['requests'] = requests
         elif post('action') == 'unfriend':
             pass
         else:
