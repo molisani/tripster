@@ -86,7 +86,14 @@ elif has_fields(['user_id', 'token']):
                 data['status'] = 'Failure'
                 data['message'] = 'Insufficient information given'
         elif post('action') == "get_requests":
-            pass
+            data['status'] = 'Success'
+            requests = []
+            for req in execute_query("SELECT myfriends.user1_id, users.fullname FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (user_id, user_id)):
+                request = {}
+                request['user_id'] = req[0]
+                request['fullname'] = req[1]
+                requests += [request]
+            data['requests'] = requests
         elif post('action') == 'unfriend':
             pass
         else:
