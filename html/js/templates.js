@@ -18,7 +18,8 @@ function load_sidebar() {
             data: {
                 action: 'get_friends',
                 user_id: $.cookie('user_id'),
-                token: $.cookie('token')
+                token: $.cookie('token'),
+                id: $.cookie('user_id')
             },
             dataType: 'json',
             success: function(json) { sidebarData.friends = json.friends; }
