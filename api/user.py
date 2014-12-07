@@ -68,7 +68,7 @@ elif has_fields(['user_id', 'token']):
                 requested = len(execute_query("SELECT * FROM friends WHERE friends.user1_id = \"%s\" AND friends.user2_id = \"%s\"" % (user_id, post('id')))) > 1
                 accepted = len(execute_query("SELECT * FROM friends WHERE friends.user1_id = \"%s\" AND friends.user2_id = \"%s\"" % (post('id'), user_id))) > 1
                 data['status'] = 'Success'
-                data['friend_status'] = 1 if (requested and accepted) else 2 if (requested and not accepted) else 0
+                data['friend_status'] = 1 if (requested and accepted) else 2 if (requested and not accepted) else 3 if (accepted and not requested) else 0
             else:
                 data['status'] = 'Failure'
                 data['message'] = 'Insufficient information given'
