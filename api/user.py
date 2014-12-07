@@ -63,6 +63,15 @@ elif has_fields(['user_id', 'token']):
             execute_query("UPDATE users SET users.token_gen = \"2000-01-01 01:01:01\" WHERE users.id = \"%s\"" % (user_id))
             data['status'] = 'Success'
             data['message'] = 'User successfully logged out, token invalidated.'
+        elif post('action') == "friend_status":
+            if has_fields(['id']):
+                requested = len(execute_query("SELECT * FROM friends WHERE friends.user1_id = \"%s\" AND friends.user2_id = \"%s\"" % (user_id, post('id')))) > 1
+                accepted = len(execute_query("SELECT * FROM friends WHERE friends.user1_id = \"%s\" AND friends.user2_id = \"%s\"" % (post('id'), user_id))) > 1
+                data['status'] = 'Success'
+                data['friend_status'] = 1 if (requested and accepted) else 2 if (requested and not accepted) else 0
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
         elif post('action') == "get_friends":
             if has_fields(['id']):
                 friends = execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (post('id')))
@@ -78,7 +87,7 @@ elif has_fields(['user_id', 'token']):
                 data['status'] = 'Failure'
                 data['message'] = 'Insufficient information given'
         elif post('action') == "send_request":
-            if has_fields(['friend_id']):
+            if has_fields(['id']):
                 execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('friend_id')))
                 data['status'] = 'Success'
                 data['message'] = 'Successfully added friend request.'
