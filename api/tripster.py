@@ -46,24 +46,36 @@ elif (validate_token(post('user_id'), post('token'))):
             data['status'] = 'Failure'
             data['message'] = 'No search query specified' 
     elif action == 'recommend_locations':
-		location_query = execute_query("Select id, rating From locations l Inner Join (Select Distinct V.location_id From takes T Inner Join ( Select Distinct F.user2_id From users U Inner Join friends F on U.id = F.user1_id Where U.id = \"%s\") FR on FR.user2_id = T.user_id Inner Join visits V on V.trip_id = T.trip_id Where V.location_id Not In  (Select Distinct V.location_id From users U Inner Join takes T on T.user_id = U.id Inner Join visits V on V.trip_id = T.trip_id Where U.id = \"%s\")) locs on l.id = locs.location_id Order By rating Desc" % (user_id))
-		if len(query) > 0:	
-			rec_locs = {}
-			locations = []
-			for location in location_query:
-				l = {}
-				l['location_id'] = location[0]
-				locations+= [l]
-			num_results = min (len(locations),5)
-			data['status'] = 'Success'
-			data['locations'] = locations[0:num_results]
-		else:
-			data['status'] = 'Failure'
-			data['message'] = 'No available recommended locations'
+        location_query = execute_query("Select id, rating From locations l Inner Join (Select Distinct V.location_id From takes T Inner Join ( Select Distinct F.user2_id From users U Inner Join friends F on U.id = F.user1_id Where U.id = \"%s\") FR on FR.user2_id = T.user_id Inner Join visits V on V.trip_id = T.trip_id Where V.location_id Not In  (Select Distinct V.location_id From users U Inner Join takes T on T.user_id = U.id Inner Join visits V on V.trip_id = T.trip_id Where U.id = \"%s\")) locs on l.id = locs.location_id Order By rating Desc" % (user_id, user_id))
+        if len(location_query) > 0:
+            rec_locs = {}
+            locations = []
+            for location in location_query:
+                l = {}
+                l['location_id'] = location[0]
+                locations+= [l]
+            num_results = min (len(locations),5)
+            data['status'] = 'Success'
+            data['locations'] = locations[0:num_results]
+        else:
+            location_query = execute_query("Select id, rating From locations Where id not in (Select Distinct v.location_id From takes t Inner Join visits v on v.trip_id = t.trip_id Where user_id = \"%s\") Order By rating" % (user_id))
+            if len(location_query) > 0:
+                rec_locs = {}
+                locations = []
+                for location in location_query:
+                    l = {}
+                    l['location_id'] = location[0]
+                    locations+= [l]
+                num_results = min (len(locations),5)
+                data['status'] = 'Success'
+                data['locations'] = locations[0:num_results]
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'No available locations to recommend'
     else:
         data['status'] = 'Failure'
         data['message'] = 'No action specified' 
-		
+        
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
