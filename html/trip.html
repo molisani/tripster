@@ -1,166 +1,147 @@
 <html>
-  <head>
-    <!-- jQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <!-- Handlebars -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-  </head>
+<head>
+  <!-- jQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!-- Handlebars -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+</head>
 
-  <body>
-    <section id="main-content">
-      <div class="panel-body">
-	  <br>
-        <div class="container-fluid">		
-		 <div class="col-md-8">
-          <div class="row">
-		    <div class="col-md-6">
-				<div class="list-group">
-				  <a href="#" class="list-group-item active">
-					 <h4 class="list-group-item-heading">Who's Going on This Trip?</h4>
-					 <a href="#" class="list-group-item">Trip Attendee #1</a>
-					 <a href="#" class="list-group-item">Trip Attendee #2</a>
-					 <a href="#" class="list-group-item">Trip Attendee #n</a>
-				  </a>
-				</div>
-				<div class="btn-group">
-				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-							Bring More People! <span class="caret"></span>
-				  </button>
-				  <ul class="dropdown-menu" role="menu">
-					<li><a href="#">User to invite #1</a></li>
-					<li><a href="#">User to invite #2</a></li>
-				  </ul>
-				</div>
-		    </div>
-		    <div class="col-md-6">
-			    <div class="list-group">
-				  <a href="#" class="list-group-item active">
-					 <h4 class="list-group-item-heading">Where Are We Going?</h4>
-					 <a href="#" class="list-group-item">Trip Destination #1</a>
-					 <a href="#" class="list-group-item">Trip Destination #2</a>
-					 <a href="#" class="list-group-item">Trip Destination #n</a>
-				  </a>
-			    </div>
-				<div class="btn-group">
-				  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-							Go More Places! <span class="caret"></span>
-				  </button>
-				  <ul class="dropdown-menu" role="menu">
-					<li><a href="#">Location to Add #1</a></li>
-					<li><a href="#">Location to Add #2</a></li>
-					<li class="divider"></li>
-					<li><a href="#">Create New Location</a></li>
-				  </ul>
-				</div>
-			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-md-6">
-				<div class="list-group">
-					  <a href="#" class="list-group-item active">
-						 <h4 class="list-group-item-heading">To-Do List</h4>
-						 <a href="#" class="list-group-item">						 
-							<input type="checkbox">	Task #1
-						 </a>
-						 <a href="#" class="list-group-item">
-							<input type="checkbox">	Task #2
-						 </a>
-						 <a href="#" class="list-group-item">
-						    <input type="checkbox"> Task #n
-						 </a>
-					  </a>
-				</div>
-				<button type="button" class="btn btn-default">Create New Task</button>
-		</div>
-			<div class="col-md-6">
-				<div class="list-group">
-					  <a href="#" class="list-group-item active">
-						 <h4 class="list-group-item-heading">Expenses</h4>
-						 <a href="#" class="list-group-item">Expense #1</a>
-						 <a href="#" class="list-group-item">Expense #2</a>
-						 <a href="#" class="list-group-item">Expense #n</a>
-					  </a>
-				</div>
-				<button type="button" class="btn btn-default">Add New Expense</button>			
-			</div>
-		  </div>
-		  </div>
-		    <div class="col-md-4">
-				<div class="list-group">
-				  <a href="#" class="list-group-item active">
-					 <h4 class="list-group-item-heading">Albums from This Trip
-					 </h4>
-				  </a>
-				</div>
-				<div class="thumbnail">
-				  <img data-src="holder.js/300x300" alt="...">
-				  <div class="caption">
-					<h3>Album #1</h3>
-					<p>Description of the album goes here</p>
-					<p><a href="#" class="btn btn-primary" role="button">Add Content</a> 
-				  </div>
-				</div>
-				<div class="thumbnail">
-				  <img data-src="holder.js/300x300" alt="...">
-				  <div class="caption">
-					<h3>Album #2</h3>
-					<p>Description of the album goes here</p>
-					<p><a href="#" class="btn btn-primary" role="button">Add Content</a> 
-				  </div>
-				</div>
-				<button type="button" class="btn btn-default">Make a New Album</button>
-			</div>
-		  <br>
-		  
+<body>
+  <script id="main-content" type="text/x-handlebars-template">
+    <div class="panel-body">
+      <br>
+      <div class="container-fluid">		
+        <div class="row">
+          <div class="col-md-3">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">To-Do List</h4>
+              </div>
+              {{#each todo_list}}
+              <a href="#" class="list-group-item">             
+                <input type="checkbox"> {{todo_item}}</input>
+              </a>
+              {{/each}}
+            </div>
+            <!-- <button type="button" class="btn btn-default">Create New Task</button> -->
+            <hr>
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Expenses</h4>
+              </div>
+              {{#each expense_list}}
+              <a href="#" class="list-group-item">{{expense_item}} <b>{{expense_cost}}</b></a>
+              {{/each}}
+            </div>
+            <!-- <button type="button" class="btn btn-default">Add New Expense</button> -->
+          </div>
+          <div class="col-md-4">
+            <div class="list-group">
+              <div class="list-group-item active">
+                <h4 class="list-group-item-heading">Who is Going?</h4>
+              </div>
+              {{#each users}}
+              <a href="./user.html?id={{user_id}}" class="list-group-item">{{fullname}}</a>
+              {{/each}}
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Bring More People! <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                {{#each user_select}}
+                <li><a id="invite-user" value="{{user_select_id}}">{{user_select_fullname}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+            <hr>
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Where Are We Going?</h4>
+              </div>
+              {{#each locations}}
+              <a href="#" class="list-group-item">Trip Destination #1</a>
+              {{/each}}
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Go More Places! <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                {{#each location_select}}
+                <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
+                {{/each}}
+                <li class="divider"></li>
+                <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Albums from This Trip</h4>
+              </div>
+            </div>
+            {{#each albums}}
+            <a href="#" class="thumbnail">
+              <img data-src="{{album_thumb_url}}" alt="...">
+              <div class="caption">
+                <h3>{{album_name}}</h3>
+              </div>
+            </a>
+            {{/each}}
+            <button type="button" class="btn btn-default">New Album</button>
+          </div>
         </div>
       </div>
-    </section>
-  </body>
-
-  <script src="js/field_utils.js"></script>
-  <script src="js/jquery.cookie.min.js"></script>
-  <script src="tmpl/page.tmpl.js" id="page-template"></script>
-  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
-  <script type="text/javascript">
-    $.when(
-      $.getScript("./js/templates.js")
-    ).done(function(){
-      pageData.page_header = "[[tripname]]",
-      pageData.page_body = $('#main-content').html(),
-      pageData.page_sidebar = $('#sidebar-content').html()
-
-      if ($.cookie("username")) {
-        pageData.username = $.cookie("username");
-        sidebarData.username = $.cookie("username");
-      }
-
-      build_page();
-      load_sidebar();
-
-      var trip = $_GET('id');
-      if (trip != "null") {
-        $.ajax({
-          url: '../api/trip.py',
-          type: 'post',
-          data: {
-            action: 'info',
-            user_id: $.cookie('user_id'),
-            token: $.cookie('token'),
-            id: trip
-          },
-          dataType: 'json',
-          success: function(json) {
-            if (json.status == 'Success') {
-              pageData.page_header = json.trip.tripname;
-              build_page();
-            }
-          }
-        });
-      }
-    });
+    </div>
   </script>
-</html>
+</body>
+
+<script src="js/field_utils.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="tmpl/page.tmpl.js" id="page-template"></script>
+<script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+<script type="text/javascript">
+$.when(
+  $.getScript("./js/templates.js")
+  ).done(function(){
+    var tripBody = Handlebars.compile($('#main-content').html());
+    pageData.page_header = "[[tripname]]";
+    pageData.page_body = tripBody({});
+
+    if ($.cookie("username")) {
+      pageData.username = $.cookie("username");
+      sidebarData.username = $.cookie("username");
+    }
+
+    build_page();
+    load_sidebar();
+
+    var trip = $_GET('id');
+    if (trip != "null") {
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            pageData.page_header = json.trip.tripname;
+            pageData.page_body = tripBody(json);
+            build_page();
+          }
+        }
+      });
+    }
+  });
+  </script>
+  </html>

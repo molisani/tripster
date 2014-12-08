@@ -6,7 +6,7 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   },"3":function(depth0,helpers,partials,data) {
   return "Tripster";
   },"5":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "      <div class=\"col-sm-4 col-sm-offset-3\">\r\n        <div class=\"navbar-form navbar-right\">\r\n          <div class=\"input-group\">\r\n            <form id=\"search-form\" action=\"javascript:void(0);\">\r\n              <input id=\"search-query\" type=\"text\" class=\"form-control\" ";
+  var stack1, buffer = "      <div class=\"col-sm-3\">\r\n        <button type=\"button\" class=\"btn btn-primary navbar-btn\" id=\"create-trip-btn\">Create New Trip</button>\r\n      </div>\r\n      <div class=\"col-sm-4\">\r\n        <div class=\"navbar-form navbar-right\">\r\n          <div class=\"input-group\">\r\n            <form id=\"search-form\" action=\"javascript:void(0);\">\r\n              <input id=\"search-query\" type=\"text\" class=\"form-control\" ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.q : depth0), {"name":"if","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + ">\r\n            </form>\r\n            <span class=\"input-group-btn\">\r\n              <button id=\"search-submit\" class=\"btn btn-default\" type=\"button\">Search</button>\r\n            </span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n";
@@ -73,6 +73,6 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   buffer += "            </li>\r\n          </ul>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</nav>\r\n<div class=\"container\">\r\n  ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.standalone : depth0), {"name":"if","hash":{},"fn":this.program(14, data),"inverse":this.program(16, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "</div>\r\n<footer class=\"footer\" style=\"position: absolute; bottom: 0; width: 100%; height: 60px; background-color: #f5f5f5;\">\r\n  <div class=\"container text-center\">\r\n    <p style=\"margin: 20px 0;\">Things like copyrights, attributions, licenses, etc. go here ~ (C) 2014</p>\r\n  </div>\r\n</footer>\r\n<script type=\"text/javascript\">\r\n  $('#search-form').submit(function(e) {\r\n    window.location = './search.html?q=' + encodeURIComponent($('#search-query').val());\r\n  });\r\n  $('#search-submit').click(function(e) { $('#search-form').submit(); });\r\n</script>";
+  return buffer + "</div>\r\n<!--<footer class=\"footer\" style=\"position: absolute; bottom: 0; width: 100%; height: 60px; background-color: #f5f5f5;\">\r\n  <div class=\"container text-center\">\r\n    <p style=\"margin: 20px 0;\">Things like copyrights, attributions, licenses, etc. go here ~ (C) 2014</p>\r\n  </div>\r\n</footer>-->\r\n<script type=\"text/javascript\">\r\n  $('#search-form').submit(function(e) {\r\n    window.location = './search.html?q=' + encodeURIComponent($('#search-query').val());\r\n  });\r\n  $('#search-submit').click(function(e) { $('#search-form').submit(); });\r\n  $('#create-trip-btn').click(function(e) { window.location = \"./create_trip.html\" });\r\n</script>";
 },"useData":true});
 })();
