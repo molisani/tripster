@@ -178,7 +178,7 @@ elif validate_token(user_id, post('token')):
                             expense_user = 'No User tagged'
                         else:
                             expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
-                        e['expense_user'] = expense_user
+                        e['expense_user'] = expense_user[0][0]
                         e['description'] = ex[3]
                         e['cost'] = str(ex[4])
                         expenses += [e]
