@@ -72,17 +72,17 @@ elif validate_token(user_id, post('token')):
                         data['expenses'] = expenses
                     
                     #locations associated
-                    l_query = execute_query("Select l.* From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
+                    l_query = execute_query("Select * From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
                     if len(l_query) > 0:
                         locations = []
                         for location in l_query:
                             l = {}
-                            l['location_id'] = l[0]
-                            l['lat'] = l[1]
-                            l['long'] = l[2]
-                            l['locationname'] = l[3]
-                            l['country'] = l[4]
-                            l['rating'] = l[5]
+                            l['location_id'] = location[0]
+                            l['lat'] = location[1]
+                            l['long'] = location[2]
+                            l['locationname'] = location[3]
+                            l['country'] = location[4]
+                            l['rating'] = str(location[5])
                             locations+=[l]
                         data['locations'] = locations
                     data['trip'] = trip
