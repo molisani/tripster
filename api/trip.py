@@ -92,7 +92,11 @@ elif validate_token(user_id, post('token')):
 	        requests = execute_query("SELECT user_id FROM takes WHERE takes.trip_id = \"%s\" AND takes.status = \"2\""
 	            % (trip))
 	        data['status'] = 'Success'
-	        data['message'] = 'Requests have been retrieved'
+	        data['requests'] = []
+                for request in requests:
+                    r = {}
+                    r['user_id'] = request[0]
+                    data['requests'] += [r]
 	else:
 	    data['status'] = 'Failure'
 	    data['message'] = 'Insufficient information given'
