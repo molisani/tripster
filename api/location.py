@@ -13,7 +13,18 @@ elif (validate_token(post('user_id'), post('token'))):
     # Actual API
 	
 	action = post('action')
-	if action == 'rate_location':
+	if action == 'create_location':
+		if has_fields (['name','country']):
+			name = post('name')
+			country = post('country')
+			query = execute_query("INSERT INTO locations (locationname, country) VALUES (\"%s\",\"%s\")" % (name, country))
+			data['status'] = 'Success'
+			data['message'] = 'Added a new location'
+		else:
+			data['message'] = 'Failure'
+			data['message'] = 'No name or country given'
+	
+	elif action == 'rate_location':
 		if has_fields(['id','rating']):
 			location_id = post('id')
 			rating = post('rating')
