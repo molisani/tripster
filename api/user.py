@@ -103,6 +103,24 @@ elif has_fields(['user_id', 'token']):
                 request['fullname'] = req[1]
                 requests += [request]
             data['requests'] = requests
+        elif post('action') == "change_password":
+            if has_fields(['password']):
+                password = post('password')
+                execute_query("UPDATE users SET password_sha1 = SHA1(\"%s\") WHERE users.id = \"%s\"" % (password,user_id))
+                data['status'] = 'Success'
+                data['message'] = 'Successfully changed password'
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
+        elif post('action') == "update_info":
+            info_fields = ['birthday', 'email', 'about_me', 'interests', 'affiliation']
+            info = {}
+            for item in info_fields:
+                info[item] = post(item)
+            execute_query("UPDATE users SET birthday = \"%s\", email = \"%s\", aboutme = \"%s\", interests = \"%s\", affiliation = \"%s\" WHERE users.id = \"%s\"" % ('DATA', info[info_fields[1]], info[info_fields[2]], info[info_fields[3]],info[info_fields[4]],user_id))
+            #execute_query("UPDATE users SET interests = \"%s\" WHERE users.id = \"%s\"" % ("DATA", post('user_id')))
+            data['status'] = 'Success'
+            data['message'] = 'Successfully updated user information'
         elif post('action') == 'unfriend':
             if has_fields(['id']):
                 execute_query("DELETE FROM friends WHERE user1_id = \"%s\" AND user2_id = \"%s\"" % (user_id, post('friend_id')))
