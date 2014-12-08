@@ -52,40 +52,40 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Insufficient information given'
     elif action == 'join':
         #Requires user_id and trip_id
-	if has_fields(['user_id', 'trip_id']):
-		user = post('user_id')
-            	trip = post('trip_id')
-	        result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\"" % (user, trip))
-	    	if len(result) > 0:
-			if result == 1:
-		    	    	execute_query("UPDATE takes SET status= \"0\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\")" 
-		        	               % (user, trip))					
-		    		data['status'] = 'Success'
-		    		data['message'] = 'User has been added to trip'
-	    	else:
-		    	execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"1\")" % (trip, user))
-			data['status'] = 'Success'
-			data['message'] = 'User has requested to join trip'
-	else:
-	    data['status'] = 'Failure'
-	    data['message'] = 'Insufficient information given'		    
+        if has_fields(['user_id', 'trip_id']):
+            user = post('user_id')
+            trip = post('trip_id')
+            result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\"" % (user, trip))
+            if len(result) > 0:
+                if result == 1:
+                    execute_query("UPDATE takes SET status= \"0\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\")" 
+                                   % (user, trip))                    
+                    data['status'] = 'Success'
+                    data['message'] = 'User has been added to trip'
+            else:
+                execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"1\")" % (trip, user))
+            data['status'] = 'Success'
+            data['message'] = 'User has requested to join trip'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'            
     elif action == 'invite':
-	    if has_fields(['user', 'trip_id']):
-	        user_to_invite = post('user')
-                trip = post('trip_id')
-	        result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\""
-	                               % (user_to_invite, trip))
-	    	if (len(result) > 0):
-	        	data['status'] = 'Success'
-		    	data['message'] = 'User is already invited to trip'
-	    	else:
-		    	execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"0\")"
-	            		      % (user_to_invite, trip))
-		    	data['status'] = 'Success'
-		    	data['message'] = 'User has been invited to join trip'
-	    else:
-	    	data['status'] = 'Failure'
-	    	data['message'] = 'Insufficient information given'					
+        if has_fields(['user', 'trip_id']):
+            user_to_invite = post('user')
+            trip = post('trip_id')
+            result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\""
+                                   % (user_to_invite, trip))
+            if (len(result) > 0):
+                data['status'] = 'Success'
+                data['message'] = 'User is already invited to trip'
+            else:
+                execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"0\")"
+                              % (user_to_invite, trip))
+                data['status'] = 'Success'
+                data['message'] = 'User has been invited to join trip'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'                    
     elif action == 'get_requests':
         if has_fields(['trip_id']):
 	        trip = post('trip_id')
@@ -102,22 +102,22 @@ elif validate_token(user_id, post('token')):
 	    data['message'] = 'Insufficient information given'
     elif action == 'rate':
         if has_fields(['rating', 'id']):
-	    trip_rating = post('rating')
-	    trip_id = post('id')
-	    execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.trip_id = \"%s\"" % (trip_rating, trip_id))
+            trip_rating = post('rating')
+            trip_id = post('id')
+            execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.trip_id = \"%s\"" % (trip_rating, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Added rating'
-	else:
+        else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'set_privacy':
         if has_fields(['privacy', 'trip']):
-	    new_privacy = post('privacy')
-	    trip_id = post('trip')
-	    execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
+            new_privacy = post('privacy')
+            trip_id = post('trip')
+            execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Updated privacy'
-	else:
+        else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'comment':
@@ -142,34 +142,34 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Insufficient information given'
     elif action == 'add_expense':
         if has_fields(['id']):
-	    trip_id = post('id')
-	    description = None
-	    cost = None
-	    if has_fields(['description']):
-	        description = post('description')
-	    if has_fields(['cost']):
-	        cost = post('cost')
-	    execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, None, description, cost))
-	    data['status'] = 'Success'
+            trip_id = post('id')
+            description = None
+            cost = None
+            if has_fields(['description']):
+                description = post('description')
+            if has_fields(['cost']):
+                cost = post('cost')
+            execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, None, description, cost))
+            data['status'] = 'Success'
             data['message'] = 'Added expense'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'claim_expense':
         if has_fields('expense_id', 'expense_user'):
-	    expense_id = post('expense_id')
-	    expense_user = post('expense_user')
-	    execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (expense_user, expense_id))
-	    data['status'] = 'Success'
+            expense_id = post('expense_id')
+            expense_user = post('expense_user')
+            execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (expense_user, expense_id))
+            data['status'] = 'Success'
             data['message'] = 'Claimed expense'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
     elif action == 'remove_expense':
         if has_fields('expense_id'):
-	    expense_id = post('expense_id')
-	    execute_query("DELETE FROM expenses WHERE id = \"%s\"" % (expense_id))
-	    data['status'] = 'Success'
+            expense_id = post('expense_id')
+            execute_query("DELETE FROM expenses WHERE id = \"%s\"" % (expense_id))
+            data['status'] = 'Success'
             data['message'] = 'Removed expense'
         else:
             data['status'] = 'Failure'

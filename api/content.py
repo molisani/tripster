@@ -37,6 +37,7 @@ elif (validate_token(post('user_id'), post('token'))):
 	elif action == 'like_content':
 		if has_fields (['content_id']):
 			query = execute_query ("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id')))
+			update_rating = execute_query("Call update_content_likes(\"%s\")" % (content_id))
 			data['status'] = 'success'
 			data['message'] = 'Added like to content'
 		else:
