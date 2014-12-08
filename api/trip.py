@@ -143,13 +143,10 @@ elif validate_token(user_id, post('token')):
     elif action == 'add_expense':
         if has_fields(['id']):
             trip_id = post('id')
-            description = None
-            cost = None
-            if has_fields(['description']):
-                description = post('description')
-            if has_fields(['cost']):
-                cost = post('cost')
-            execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, None, description, cost))
+            description = post('description')
+            cost = post('cost')
+            expense_user = post('expense_user')
+            execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id,expense_user, description, cost))
             data['status'] = 'Success'
             data['message'] = 'Added expense'
         else:
@@ -165,6 +162,28 @@ elif validate_token(user_id, post('token')):
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
+    elif action == 'get_expense':
+        if has_fields(['expense_id']):
+            expense_id = post('expense_id')
+            expense_query = execute_query("Select * From expenses Where id = \"%s\"" % (expense_id))
+            if len(expense_query) > 0:
+                expense = {}
+                expense['trip_id'] = expense_query[0][1]
+                expense_user = expense_query[0][2]
+                if expense_user != "":
+                    expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
+                expense['expense_user'] = expense_user
+                expense['description'] = expense_query[0][3]
+                expense['cost'] = str(expense_query[0][4])
+                
+                data['status'] = 'Success'
+                data['expense'] = expense
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'No expense found with that id'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information: no expense id given'
     elif action == 'remove_expense':
         if has_fields('expense_id'):
             expense_id = post('expense_id')
