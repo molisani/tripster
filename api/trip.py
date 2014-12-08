@@ -88,18 +88,18 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Insufficient information given'                    
     elif action == 'get_requests':
         if has_fields(['trip_id']):
-	        trip = post('trip_id')
-	        requests = execute_query("SELECT user_id FROM takes WHERE takes.trip_id = \"%s\" AND takes.status = \"2\""
-	            % (trip))
-	        data['status'] = 'Success'
-	        data['requests'] = []
-                for request in requests:
-                    r = {}
-                    r['user_id'] = request[0]
-                    data['requests'] += [r]
-	else:
-	    data['status'] = 'Failure'
-	    data['message'] = 'Insufficient information given'
+            trip = post('trip_id')
+            requests = execute_query("SELECT user_id FROM takes WHERE takes.trip_id = \"%s\" AND takes.status = \"2\""
+                % (trip))
+            data['status'] = 'Success'
+            data['requests'] = []
+            for request in requests:
+                r = {}
+                r['user_id'] = request[0]
+                data['requests'] += [r]
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
     elif action == 'rate':
         if has_fields(['rating', 'id']):
             trip_rating = post('rating')
@@ -162,25 +162,34 @@ elif validate_token(user_id, post('token')):
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
-    elif action == 'get_expense':
-        if has_fields(['expense_id']):
-            expense_id = post('expense_id')
-            expense_query = execute_query("Select * From expenses Where id = \"%s\"" % (expense_id))
-            if len(expense_query) > 0:
-                expense = {}
-                expense['trip_id'] = expense_query[0][1]
-                expense_user = expense_query[0][2]
-                if expense_user != "":
-                    expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
-                expense['expense_user'] = expense_user
-                expense['description'] = expense_query[0][3]
-                expense['cost'] = str(expense_query[0][4])
-                
-                data['status'] = 'Success'
-                data['expense'] = expense
+    elif action == 'get_expenses':
+        if has_fields(['id']):
+            trip_id = post('id')
+            query = execute_query("Select * From trips Where id = \"%s\"" % (trip_id))
+            if len(query) > 0:
+                expense_query = execute_query("Select * From expenses Where trip_id = \"%s\"" % (trip_id))
+                if len(expense_query) > 0:
+                    expenses = []
+                    for ex in expense_query:
+                        e = {}
+                        e['trip_id'] = trip_id
+                        expense_user = ex[2]
+                        if expense_user == "":
+                            expense_user = 'No User tagged'
+                        else:
+                            expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
+                        e['expense_user'] = expense_user
+                        e['description'] = ex[3]
+                        e['cost'] = str(ex[4])
+                        expenses += [e]
+                    data['status'] = 'Success'
+                    data['expense'] = expenses
+                else:
+                    data['status'] = 'Success'
+                    data['message'] = 'No expenses found for trip'
             else:
                 data['status'] = 'Failure'
-                data['message'] = 'No expense found with that id'
+                data['message'] = 'No expenses found with that id'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information: no expense id given'
