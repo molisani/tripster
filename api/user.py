@@ -104,7 +104,14 @@ elif has_fields(['user_id', 'token']):
                 requests += [request]
             data['requests'] = requests
         elif post('action') == 'unfriend':
-            pass
+            if has_fields(['id']):
+                execute_query("DELETE FROM friends WHERE user1_id = \"%s\" AND user2_id = \"%s\"" % (user_id, post('friend_id')))
+                execute_query("DELETE FROM friends WHERE user2_id = \"%s\" AND user1_id = \"%s\"" % (user_id, post('friend_id')))
+                data['status'] = 'Success'
+                data['message'] = 'Successfully added friend request.'
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'Insufficient information given'
         else:
             data['status'] = 'Failure'
             data['message'] = 'No action specified'
