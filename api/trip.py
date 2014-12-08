@@ -21,6 +21,7 @@ elif validate_token(user_id, post('token')):
                 query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
                 if len(query) > 0:
                     trip = {}
+                    #basic trip info
                     trip['status'] = 'Success'
                     trip['tripname'] = query[0][2]
                     trip['startdate'] = str(query[0][3])
@@ -28,6 +29,62 @@ elif validate_token(user_id, post('token')):
                     trip['todo_list'] = query[0][5]
                     trip['privacy'] = query[0][6]
                     trip['rating'] = str(query[0][7])
+                    
+                    #users attending
+                    u_query = execute_query("Select * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\"" % (trip_id))
+                    users = []
+                    for user in u_query:
+                        u = {}
+                        u['user_id'] = user[0]
+                        u['fullname'] = user[3]
+                        users+= [u]
+                    data['users_attending'] = users
+                    
+                    #albums associated
+                    a_query = execute_query("Select * From albums Where trip_id = \"%s\"" % (trip_id))
+                    albums = []
+                    
+                    for album in a_query:
+                        a = {}
+                        a['album_id'] = album[0]
+                        a['creator_id'] = album[2]
+                        a['albumname'] = album[3]
+                        a['privacy'] = album[4]
+                        albums+=[a]
+                    data['albums'] = albums
+                    
+                    #expenses associated
+                    expense_query = execute_query("Select * From expenses Where trip_id = \"%s\"" % (trip_id))
+                    if len(expense_query) > 0:
+                        expenses = []
+                        for ex in expense_query:
+                            e = {}
+                            e['trip_id'] = trip_id
+                            expense_user = ex[2]
+                            if expense_user == "":
+                                expense_user = 'No User tagged'
+                            else:
+                                expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
+                            e['expense_user'] = expense_user[0][0]
+                            e['description'] = ex[3]
+                            e['cost'] = str(ex[4])
+                            expenses += [e]
+                        data['expenses'] = expenses
+                    
+                    #locations associated
+                    l_query = execute_query("Select l.* From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
+                    if len(l_query) > 0:
+                        locations = []
+                        for location in l_query:
+                            l = {}
+                            l['location_id'] = l[0]
+                            l['lat'] = l[1]
+                            l['long'] = l[2]
+                            l['locationname'] = l[3]
+                            l['country'] = l[4]
+                            l['rating'] = l[5]
+                            locations+=[l]
+                        data['locations'] = locations
                     data['trip'] = trip
             else:
                 data['status'] = 'Failure'
