@@ -88,7 +88,7 @@ elif has_fields(['user_id', 'token']):
                 data['message'] = 'Insufficient information given'
         elif post('action') == "send_request":
             if has_fields(['id']):
-                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('friend_id')))
+                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('id')))
                 data['status'] = 'Success'
                 data['message'] = 'Successfully added friend request.'
             else:
