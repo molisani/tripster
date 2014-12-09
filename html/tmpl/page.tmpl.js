@@ -19,7 +19,7 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   return "col-sm-offset-7";
   },"10":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "              <a href=\"./edit_user?id="
+  return "              <a href=\"./edit_user.html?id="
     + escapeExpression(((helper = (helper = helpers.user_id || (depth0 != null ? depth0.user_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"user_id","hash":{},"data":data}) : helper)))
     + "\">Logged in as <b>"
     + escapeExpression(((helper = (helper = helpers.username || (depth0 != null ? depth0.username : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"username","hash":{},"data":data}) : helper)))
