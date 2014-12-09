@@ -7,7 +7,7 @@ Tripster implementation written in Python (API) and JavaScript (Front End).
 
 ### Requires
 
-- Python (with MySQLdb library)
+- Python (with MySQLdb and PyMongo libraries)
 
 ### Usage
 
