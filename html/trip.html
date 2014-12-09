@@ -32,8 +32,8 @@
               <div href="#" class="list-group-item active">
                 <h4 class="list-group-item-heading">Expenses</h4>
               </div>
-              {{#each expense_list}}
-              <a href="#" class="list-group-item">{{expense_item}} <b>{{expense_cost}}</b></a>
+              {{#each expenses}}
+              <a href="#" class="list-group-item">{{description}} <b>{{cost}}</b> ({{expense_user}})</a>
               {{/each}}
             </div>
             <!-- <button type="button" class="btn btn-default">Add New Expense</button> -->
@@ -43,7 +43,7 @@
               <div class="list-group-item active">
                 <h4 class="list-group-item-heading">Who is Going?</h4>
               </div>
-              {{#each users}}
+              {{#each users_attending}}
               <a href="./user.html?id={{user_id}}" class="list-group-item">{{fullname}}</a>
               {{/each}}
             </div>
@@ -52,8 +52,8 @@
               Bring More People! <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                {{#each user_select}}
-                <li><a id="invite-user" value="{{user_select_id}}">{{user_select_fullname}}</a></li>
+                {{#each all_users}}
+                <li><a href="#" id="invite-user" value="{{user_id}}">{{fullname}}</a></li>
                 {{/each}}
               </ul>
             </div>
@@ -63,7 +63,7 @@
                 <h4 class="list-group-item-heading">Where Are We Going?</h4>
               </div>
               {{#each locations}}
-              <a href="#" class="list-group-item">Trip Destination #1</a>
+              <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{locationname}}, <i>{{country}}</i></a>
               {{/each}}
             </div>
             <div class="btn-group">
@@ -81,15 +81,15 @@
           </div>
           <div class="col-md-5">
             <div class="list-group">
-              <div href="#" class="list-group-item active">
+              <div class="list-group-item active">
                 <h4 class="list-group-item-heading">Albums from This Trip</h4>
               </div>
             </div>
             {{#each albums}}
-            <a href="#" class="thumbnail">
+            <a href="./album.html?id={{album_id}}" class="thumbnail">
               <img data-src="{{album_thumb_url}}" alt="...">
               <div class="caption">
-                <h3>{{album_name}}</h3>
+                <h3>{{albumname}}</h3>
               </div>
             </a>
             {{/each}}
@@ -136,7 +136,7 @@ $.when(
         success: function(json) {
           if (json.status == 'Success') {
             pageData.page_header = json.trip.tripname;
-            pageData.page_body = tripBody(json);
+            pageData.page_body = tripBody(json.trip);
             build_page();
           }
         }

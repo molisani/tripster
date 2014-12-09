@@ -4,10 +4,7 @@
     <div class="row">
       <div class="col-sm-2"><a class="navbar-brand" href="./index.html">Tripster</a></div>
       {{#if username}}
-      <div class="col-sm-3">
-        <button type="button" class="btn btn-primary navbar-btn" id="create-trip-btn">Create New Trip</button>
-      </div>
-      <div class="col-sm-4">
+      <div class="col-sm-5">
         <div class="navbar-form navbar-right">
           <div class="input-group">
             <form id="search-form" action="javascript:void(0);">
@@ -19,13 +16,16 @@
           </div>
         </div>
       </div>
+      <div class="col-sm-2">
+        <a href="./create_trip.html" class="btn btn-primary navbar-btn" id="create-trip-btn">Create New Trip</a>
+      </div>
       {{/if}}
       <div class="col-sm-3 {{#unless username}}col-sm-offset-7{{/unless}}">
         <div class="navbar-right">
           <ul class="nav navbar-nav">
             <li>
               {{#if username}}
-              <a>Logged in as <b>{{username}}</b></a>
+              <a href="./edit_user?id={{user_id}}">Logged in as <b>{{username}}</b></a>
               {{else}}
               <a href="./login.html">Login</a>
               {{/if}}
@@ -65,5 +65,4 @@
     window.location = './search.html?q=' + encodeURIComponent($('#search-query').val());
   });
   $('#search-submit').click(function(e) { $('#search-form').submit(); });
-  $('#create-trip-btn').click(function(e) { window.location = "./create_trip.html" });
 </script>

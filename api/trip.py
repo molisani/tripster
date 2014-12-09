@@ -97,6 +97,7 @@ elif validate_token(user_id, post('token')):
                         all_users += [u]
                     trip['all_users'] = all_users
                     data['trip'] = trip
+                    data['status'] = 'Success'
             else:
                 data['status'] = 'Failure'
                 data['message'] = 'User does not have the correct permissions for this trip.'
@@ -106,10 +107,11 @@ elif validate_token(user_id, post('token')):
     elif action == 'list':
         data['status'] = 'Success'
         trips = []
-        for t in execute_query("SELECT trips.id, trips.tripname FROM trips INNER JOIN takes ON takes.trip_id = trips.id WHERE takes.user_id = \"%s\"" % (user_id)):
+        for t in execute_query("SELECT trips.id, trips.tripname, trips.creator_id FROM trips INNER JOIN takes ON takes.trip_id = trips.id WHERE takes.user_id = \"%s\"" % (user_id)):
             trip = {}
             trip['trip_id'] = t[0]
             trip['tripname'] = t[1]
+            if (str(t[2]) == user_id): trip['creator_id'] = t[2]
             trips += [trip]
         data['trips'] = trips
     elif action == 'create':

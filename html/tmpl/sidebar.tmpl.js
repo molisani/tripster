@@ -16,7 +16,7 @@ templates['sidebar.tmpl'] = template({"1":function(depth0,helpers,partials,data)
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "    <tr><td><a href=\"./user.html?id="
     + escapeExpression(((helper = (helper = helpers.user_id || (depth0 != null ? depth0.user_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"user_id","hash":{},"data":data}) : helper)))
-    + "\">"
+    + "\" class=\"primary\">"
     + escapeExpression(((helper = (helper = helpers.fullname || (depth0 != null ? depth0.fullname : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"fullname","hash":{},"data":data}) : helper)))
     + "</a></td></tr>\r\n";
 },"5":function(depth0,helpers,partials,data) {
@@ -25,12 +25,19 @@ templates['sidebar.tmpl'] = template({"1":function(depth0,helpers,partials,data)
   if (stack1 != null) { buffer += stack1; }
   return buffer + "  </tbody>\r\n</table>\r\n";
 },"6":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <tr><td><a href=\"./trip.html?id="
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "    <tr><td><a href=\"./trip.html?id="
     + escapeExpression(((helper = (helper = helpers.trip_id || (depth0 != null ? depth0.trip_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trip_id","hash":{},"data":data}) : helper)))
-    + "\">"
+    + "\" class=\"success\">"
     + escapeExpression(((helper = (helper = helpers.tripname || (depth0 != null ? depth0.tripname : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"tripname","hash":{},"data":data}) : helper)))
-    + "</a></td></tr>\r\n";
+    + "</a> ";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.creator_id : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</td></tr>\r\n";
+},"7":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<a href=\"./edit_trip.html?id="
+    + escapeExpression(((helper = (helper = helpers.trip_id || (depth0 != null ? depth0.trip_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trip_id","hash":{},"data":data}) : helper)))
+    + "\"><b>[Edit]</b></a>";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.username : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
