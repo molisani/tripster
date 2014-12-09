@@ -20,6 +20,20 @@
   </tbody>
 </table>
 {{/if}}
+{{#if trips}}
+<div class="panel-body" style="padding-top: 0px;">
+  <br style="margin-top: 5px;"></br>
+  <span class="label label-success">Trips</span>
+</div>
+<table class="table">
+  <thead></thead>
+  <tbody>
+    {{#each trips}}
+    <tr><td><a href="./trip.html?id={{trip_id}}">{{tripname}}</a></td></tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/if}}
 <script type="text/javascript">
 $('#logout-btn').click(function(){
   $.ajax({

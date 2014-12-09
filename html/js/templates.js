@@ -23,6 +23,17 @@ function load_sidebar() {
             },
             dataType: 'json',
             success: function(json) { sidebarData.friends = json.friends; }
+        }),
+        $.ajax({
+            url: '../api/trip.py',
+            type: 'post',
+            data: {
+                action: 'list',
+                user_id: $.cookie('user_id'),
+                token: $.cookie('token')
+            },
+            dataType: 'json',
+            success: function(json) { sidebarData.trips = json.trips; }
         })
     ).done(function() { build_sidebar(); });
 }

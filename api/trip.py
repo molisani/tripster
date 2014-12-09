@@ -103,6 +103,15 @@ elif validate_token(user_id, post('token')):
         else:
             data['status'] = 'Failure'
             data['message'] = 'Trip ID was not included in request.'
+    elif action == 'list':
+        data['status'] = 'Success'
+        trips = []
+        for t in execute_query("SELECT trips.id, trips.tripname FROM trips INNER JOIN takes ON takes.trip_id = trips.id WHERE takes.user_id = \"%s\"" % (user_id)):
+            trip = {}
+            trip['trip_id'] = t[0]
+            trip['tripname'] = t[1]
+            trips += [trip]
+        data['trips'] = trips
     elif action == 'create':
         # Requires name
         if has_fields(['trip_name']):
