@@ -159,7 +159,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = json.trip.tripname;
+            pageData.page_header = "<h1>" + json.trip.tripname + "</h1>";
             pageData.page_body = tripBody(json.trip);
             build_page();
           }
