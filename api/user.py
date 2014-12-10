@@ -51,7 +51,7 @@ elif has_fields(['user_id', 'token']):
                     user['id'] = post('id')
                     user['username'] = info[0][1]
                     user['fullname'] = info[0][3]
-                    user['birthday'] = info[0][6]
+                    user['birthday'] = str(info[0][6])
                     user['email'] = info[0][7]
                     user['aboutme'] = info[0][8]
                     user['interests'] = info[0][9]
