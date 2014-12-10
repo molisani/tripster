@@ -6,21 +6,25 @@ data = {}
 
 username = post('username')
 user_id = post('user_id')
+if (not has_fields(['user_id', 'token'])):
+    data['status'] = 'Failure'
+    data['message'] = 'User_ID and token not specified.'
 
-action = post('action')
-if action == 'show_trips':
-    user = post('user_id')
-    trips = execute_query("SELECT DISTINCT T.trip_id FROM takes T INNER JOIN friends F ON F.user2_id = T.user_id WHERE F.user1_id = \"%s\"" % (user))            
-    data['status'] = 'Success'
-    data['trips'] = []
-    for trip in trips:
-        t = {}
-        t['trip_id'] = trip[0]
-        data['trips'] += [t]
-elif action == 'info':
-        if has_fields(['id']):
-            trip_id = post('id')
-            if has_permissions(username, trip=trip_id):
+elif (validate_token(post('user_id'), post('token'))):
+    action = post('action')
+    if action == 'show_trips':
+        user = post('user_id')
+        trips_query = execute_query("SELECT DISTINCT T.trip_id FROM takes T INNER JOIN friends F ON F.user2_id = T.user_id WHERE F.user1_id = \"%s\"" % (user))            
+        data['status'] = 'Success'
+        trips = []
+        for trip in trips_query:
+            t = {}
+            t['trip_id'] = trip[0]
+            trips += [t]
+        data['trips'] = trips
+    elif action == 'info':
+            if has_fields(['trip_id']):
+                trip_id = post('trip_id')
                 query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
                 if len(query) > 0:
                     trip = {}
@@ -32,7 +36,7 @@ elif action == 'info':
                     trip['todo_list'] = query[0][5]
                     trip['privacy'] = query[0][6]
                     trip['rating'] = str(query[0][7])
-                    
+                     
                     #users attending
                     u_query = execute_query("Select * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\"" % (trip_id))
                     users = []
@@ -42,8 +46,8 @@ elif action == 'info':
                         u['fullname'] = user[3]
                         users+= [u]
                     trip['users_attending'] = users
-					
-					#locations associated
+                        
+                    #locations associated
                     l_query = execute_query("Select * From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
                     if len(l_query) > 0:
                         locations = []
@@ -56,14 +60,15 @@ elif action == 'info':
                             l['country'] = location[4]
                             l['rating'] = str(location[5])
                             locations+=[l]
-							
-			else:
+                        trip['locations'] = locations
+                        data['trip'] = trip
+                else:
+                    data['status'] = 'Failure'
+                    data['message'] = 'There are no trips with that id'
+            else:
                 data['status'] = 'Failure'
-                data['message'] = 'User does not have the correct permissions for this trip.'
-        else:
-            data['status'] = 'Failure'
-            data['message'] = 'Trip ID was not included in request.'
-				
-
-
+                data['message'] = 'Trip ID was not included in request.'
+else:
+    data['status'] = 'Failure'
+    data['message'] = 'Token authentication failed. Token may have expired.'                
 export_json(data)
