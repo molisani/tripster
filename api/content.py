@@ -120,7 +120,19 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = "Failure"
             data['message'] = "No content_id or location_id given"
-            
+    
+    elif action == 'change_album_name':
+        #requires an album_id and an albumname
+        if has_fields(['album_id','albumname']):
+            album_id = post('album_id')
+            albumname = post('albumname')
+            query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (album_id, albumname))
+            data['status'] = 'Success'
+            data['message'] = 'Updated album name'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Failure, no album id or albumname given'
+    
     elif action == 'get_album_content':
         #requires an album_id
         if has_fields(['album_id']):
