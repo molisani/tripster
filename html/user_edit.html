@@ -14,48 +14,48 @@
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
-	      <div class="col-md-4">
+	      <div class="col-md-6">
 		<div href="#" class="list-group-item active">
                   <h4 class="list-group-item-heading">Change About Me</h4>
                 </div>
                 <a href="#" class="list-group-item">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder={{aboutme}}>
+                    <input type="text" class="form-control" value="{{aboutme}}">
                   </div>
                 </a>
                 <br>
               </div>
-	      <div class="col-md-4">
+	      <div class="col-md-6">
 		  <div href="#" class="list-group-item active">
                 <h4 class="list-group-item-heading">Change Interests</h4>
 		  </div>
 		  <a href="#" class="list-group-item">  
 		    <div class="input-group">
-		      <input type="text" class="form-control" placeholder={{interests}}>
+		      <input type="text" class="form-control" value="{{interests}}">
 		    </div>
 		  </a>
 	          <br>
 	      </div>
+	    </div>
+	    <div class="row">
 	      <div class="col-md-4">
                   <div href="#" class="list-group-item active">
                 <h4 class="list-group-item-heading">Change Birthday</h4>
                   </div>
                   <a href="#" class="list-group-item">
                     <div class="input-group">
-                      <input type="text" class="form-control" placeholder={{birthday}}>
+                      <input type="text" class="form-control" value="{{birthday}}">
                     </div>
                   </a>
                   <br>
               </div>
-	  </div>
-	  <div class="row">
 	    <div class="col-md-4">
               <div href="#" class="list-group-item active">
                 <h4 class="list-group-item-heading">Change Email</h4>
               </div>
               <a href="#" class="list-group-item">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder={{email}}>
+                  <input type="text" class="form-control" value="{{email}}">
                 </div>
               </a>
               <br>
@@ -66,18 +66,7 @@
               </div>
               <a href="#" class="list-group-item">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder={{affiliation}}>
-                </div>
-              </a>
-              <br>
-            </div>
-	    <div class="col-md-4">
-              <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">Change Password</h4>
-              </div>
-              <a href="#" class="list-group-item">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder={{password}}>
+                  <input type="text" class="form-control" value="{{affiliation}}">
                 </div>
               </a>
               <br>
@@ -85,8 +74,26 @@
 	  </div>
 	  <div class="row">
 	      <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Save Changes</button>
-	        </div>
-	        </div>
+	  </div>
+	</div>
+      </div>
+      <br>
+      <div class="panel-body">
+	<div class="container-fluid">
+	  <div class="col-md-8">
+	    <div href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">Change Password</h4>
+            </div>
+            <a href="#" class="list-group-item">
+              <div class="input-group">
+		<input type="text" class="form-control" placeholder="New Password">
+              </div>
+            </a>
+	  </div>
+	  <div class="col-md-4">
+	    <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Update Password</button>
+	  </div>
+	</div>
       </div>
     </script>
   </body>
@@ -125,7 +132,7 @@
     success: function(json) {
       if (json.status == 'Success') {
     pageData.page_header = json.user.username;
-    pageData.page_body = tripBody(json.user);
+    pageData.page_body = user_edit_template(json.user);
     build_page();
       }
     }
