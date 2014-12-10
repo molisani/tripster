@@ -72,7 +72,7 @@ elif (validate_token(post('user_id'), post('token'))):
             
     elif action == 'get_all_locations':
         locations = []
-        location_query = execute_query("SELECT * FROM locations"))
+        location_query = execute_query("SELECT * FROM locations")
         for location in location_query:
             #get info for all location_id's
 else:
