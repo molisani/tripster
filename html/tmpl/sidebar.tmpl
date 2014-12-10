@@ -20,6 +20,17 @@
   </tbody>
 </table>
 {{/if}}
+{{#if rec_friend}}
+<div class="panel-body">
+  <span class="label label-primary">Do you know?</span>
+</div>
+<table class="table">
+  <thead></thead>
+  <tbody>
+    <tr><td><a href="./user.html?id={{rec_friend.rec_id}}" class="primary">{{rec_friend.rec_name}}</a></td></tr>
+  </tbody>
+</table>
+{{/if}}
 {{#if trips}}
 <div class="panel-body" style="padding-top: 0px;">
   <br style="margin-top: 5px;"></br>
@@ -30,6 +41,20 @@
   <tbody>
     {{#each trips}}
     <tr><td><a href="./trip.html?id={{trip_id}}" class="success">{{tripname}}</a> {{#if creator_id}}<a href="./trip_edit.html?id={{trip_id}}"><b>[Edit]</b></a>{{/if}}</td></tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/if}}
+{{#if rec_locations}}
+<div class="panel-body" style="padding-top: 0px;">
+  <br style="margin-top: 5px;"></br>
+  <span class="label label-warning">Have you ever been to?</span>
+</div>
+<table class="table">
+  <thead></thead>
+  <tbody>
+    {{#each rec_location}}
+    <tr><td><a href="./location.html?id={{location_id}}" class="success">{{locationname}}</td></tr>
     {{/each}}
   </tbody>
 </table>

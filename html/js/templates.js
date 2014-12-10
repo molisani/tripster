@@ -41,6 +41,25 @@ function load_sidebar() {
             }
         }),
         $.ajax({
+            url: '../api/tripster.py',
+            type: 'post',
+            data: {
+                action: 'recommend_friends',
+                user_id: $.cookie('user_id'),
+                token: $.cookie('token'),
+                id: $.cookie('user_id')
+            },
+            dataType: 'json',
+            success: function(json) { 
+                console.log(json);
+                if (json.status == "Success") {
+                    sidebarData.rec_friend = json;
+                } else {
+                    err = json;
+                }
+            }
+        }),
+        $.ajax({
             url: '../api/trip.py',
             type: 'post',
             data: {
@@ -58,6 +77,7 @@ function load_sidebar() {
             }
         })
     ).done(function() { 
+        console.log(sidebarData);
         if (err != null) {
             display_error(err);
         } else build_sidebar();
