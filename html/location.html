@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <section id="main-content" >
+    <section id="main-content" type="text/x-handlebars-template">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
@@ -35,8 +35,9 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
+      var locationBody = Handlebars.compile($('#main-content').html());
       pageData.page_header = "[[locationname]]",
-      pageData.page_body = $('#main-content').html(),
+      pageData.page_body = locationBody({});
       pageData.page_sidebar = $('#sidebar-content').html()
 
       if ($.cookie("username")) {
@@ -66,7 +67,7 @@
               if (json.location.country) name += ", <i>" + json.location.country + "</i>";
             //  json.location.location_id = location
               pageData.page_header = name;
-             // pageData.page_body = albumBody(json.location)
+              pageData.page_body = locationBody(json.location)
               build_page();
             }
           }
