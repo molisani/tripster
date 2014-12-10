@@ -10,11 +10,17 @@
   </head>
 
   <body>
-    <section id="main-content">
+    <section id="main-content" >
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
-            <p>Most of the stuff will go here.</p>
+              {{#each content}}
+              <div class="col-md-3">
+                <a href="./content.html?id={{content_id}}" class="thumbnail">
+                  <img src="{{url}}" alt="...">
+                </a>
+              </div>
+              {{/each}}
           </div>
         </div>
       </div>
@@ -58,7 +64,9 @@
             if (json.status == 'Success') {
               var name = json.location.locationname;
               if (json.location.country) name += ", <i>" + json.location.country + "</i>";
+            //  json.location.location_id = location
               pageData.page_header = name;
+             // pageData.page_body = albumBody(json.location)
               build_page();
             }
           }
