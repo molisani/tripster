@@ -10,11 +10,11 @@
   </head>
 
   <body>
-    <section id="main-content"type="text/x-handlebars-template">
+    <script id="main-content"type="text/x-handlebars-template">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
-		    {{#each trip}}
+		    {{#each trips}}
             <div class="well well-sm">
 			    <h3>{{tripname}}</h3>
 				<div class="row">				
@@ -55,7 +55,7 @@
           </div>		  
         </div>
       </div>
-    </section>
+    </script>
   </body>
 
   <script src="js/field_utils.js"></script>
@@ -68,7 +68,8 @@
       $.getScript("./js/templates.js")
     ).done(function(){
       var pageBody = Handlebars.compile($('#main-content').html());
-      pageData.page_header = "Welcome to Tripster!";
+	  //var requestHeader = Handlebars.compile($'#newsfeed-template').html());
+      pageData.page_header = "Welcome";
       pageData.page_body = pageBody({});
 
       if ($.cookie("username")) {
@@ -86,13 +87,12 @@
         data: {
           action: 'info',
           user_id: $.cookie('user_id'),
-          token: $.cookie('token'),
-          trip_id: 1
+          token: $.cookie('token')
         },
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = requestHeader(json.trip);
+            pageData.page_header = "Welcome To Tripster";
             pageData.page_body = pageBody(json.trip);
             build_page();
           }
