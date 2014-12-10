@@ -10,12 +10,13 @@
   </head>
 
   <body>
-    <section id="main-content">
+    <script id="main-content">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
+		    {{#each trip}}
             <div class="well well-sm">
-			    <h3>Trip Name</h3>
+			    <h3>{{tripname}}</h3>
 				<div class="row">				
 				  <div class="col-xs-6 col-md-4">
 					<a href="#" class="thumbnail">
@@ -29,7 +30,8 @@
 					</a>
 					<a href="#" class="list-group-item">
 					  {{#each users_attending}}
-					    {{fullname}}, 
+					    {{fullname}}
+						<br>
 					  {{/each}}
 					</a>
 				  </div>
@@ -39,15 +41,21 @@
 				    <a href="#" class="list-group-item active">
 					  Where?
 					</a>
-					<a href="#" class="list-group-item">Trip Location 1, Trip Location 2, etc.</a>
+					<a href="#" class="list-group-item">
+					  {{#each locations}}
+					    {{locationname}}
+						<br>
+                      {{/each}}						
+					</a>
 				  </div>
 				</div>
 			  </div>
 			</div>
-          </div>
+			{{/each}}
+          </div>		  
         </div>
       </div>
-    </section>
+    </script>
   </body>
 
   <script src="js/field_utils.js"></script>
@@ -70,6 +78,29 @@
 
       build_page();
       load_sidebar();
+	  
+	  var trip = $_GET('id');
+    if (trip != "null") {
+      $.ajax({
+        url: '../api/newsfeed.py',
+        type: 'post',
+        data: {
+          action: 'info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            pageData.page_header = requestHeader(json.trip);
+            pageData.page_body = tripBody(json.trip);
+            build_page();
+          }
+        }
+      });
+    }
+	
     });
   </script>
 </html>
