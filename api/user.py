@@ -14,6 +14,10 @@ if post('action') == "register":
             data['message'] = 'This username already exists'
         else:
             execute_query("INSERT INTO users (username, password_sha1, fullname) VALUES (\"%s\", SHA1(\"%s\"), \"%s\")" % (username, post('password'), post('fullname')))
+            result = execute_query("SELECT users.id FROM users WHERE users.username = \"%s\" AND users.password_sha1 = SHA1(\"\
+%s\")" % (post('username'), post('password')))
+            data['user_id'] = result[0][0]
+            data['token'] = generate_token(result[0][0])
             data['status'] = 'Success'
             data['message'] = 'Added user'
     else:
