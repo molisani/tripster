@@ -72,7 +72,7 @@
               </button>
               <ul class="dropdown-menu" role="menu">
                 {{#each all_users}}
-                <li><a href="#" id="invite-user" value="{{user_id}}">{{fullname}}</a></li>
+                <li><a name="{{user_id}}" id="invite-user">{{fullname}}</a></li>
                 {{/each}}
               </ul>
             </div>
@@ -214,6 +214,27 @@ $.when(
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
           id: trip
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
+    $(document).on("click", '#invite-user', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'invite',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          invitee_id: $(e.target).attr('name')
         },
         dataType: 'json',
         success: function(json) {

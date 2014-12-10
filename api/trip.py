@@ -172,7 +172,7 @@ elif validate_token(user_id, post('token')):
                     new_status = 0
                 execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
             else:
-                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 1))
+                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
             data['status'] = 'Success'
             data['message'] = 'User successfully invited to trip (or added if already requested)'
         else:
@@ -226,9 +226,14 @@ elif validate_token(user_id, post('token')):
         if has_fields(['rating', 'id']):
             trip_rating = post('rating')
             trip_id = post('id')
-            execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.trip_id = \"%s\"" % (trip_rating, trip_id))
+            already_rated = len(execute_query("SELECT * FROM trip_ratings WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (user_id, trip_id))) > 0
+            if (already_rated):
+                execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (trip_rating, user_id, trip_id))
+            else:
+                execute_query("INSERT INTO trip_ratings (user_id, trip_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, trip_id, trip_rating))
+            update_rating = execute_query("CALL update_trip_rating(\"%s\")" % (trip_id))
             data['status'] = 'Success'
-            data['message'] = 'Added rating'
+            data['message'] = 'Added trip rating'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
