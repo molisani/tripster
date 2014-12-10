@@ -51,6 +51,17 @@ elif (validate_token(post('user_id'), post('token'))):
                 location['locationname'] = location_info[0][3]
                 location['country'] = location_info[0][4]
                 location['rating'] = str(location_info[0][5])
+                
+                content_query = execute_query("SELECT * FROM content WHERE location_id = \"%s\"" % (location_id))
+                contents = []
+                for content in content_query:
+                    c = {}
+                    c['content_id'] = content[0]
+                    c['url'] = content[3].replace("watch?v=","embed/")
+                    contents+= [c]
+                if len(contents) > 0:
+                    location['content'] = contents
+                
                 data['location'] = location
             else:
                 data['status'] = 'Failure'
