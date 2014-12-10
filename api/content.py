@@ -50,7 +50,7 @@ elif (validate_token(post('user_id'), post('token'))):
             data['status'] = 'Failure'
             data['message'] = 'Failure, no content_id submitted'
     
-    elif action == 'comment_content':
+    elif action == 'comment':
         #requires a content_id and a comment
         if has_fields (['content_id','comment']):
             query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
