@@ -158,26 +158,26 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = 'Failure'
             data['message'] = 'No album_id given'
-	elif action == 'delete_content':
-		if has_fields(['content_id']):
-			query = execute_query("DELETE * From content Where id = \"%s\"" % (post(content_id)))
-			data['status'] = 'Success'
-			data['message'] = 'Content deleted'
-		else:
-			data['status'] = 'Failure'
-			data['message'] = 'No content id given to delete'
-	elif action == 'delete_album':
-		if has_fields(['album_id']):
-			album_id = post('album_id')
-			query = execute_query("DELETE content_likes.* From content_likes Inner Join content on content.id = content_likes.content_id Where content.album_id = \"%s\"" % (album_id))
-			query1 = execute_query("DELETE content_comments.* From content_comments Inner Join content on content.id = content_comments.content_id Where content.album_id = \"%s\"" % (album_id))
-			query2 = execute_query("DELETE * From content Where content.album_id = \"%s\"" % (album_id))
-			query3 = execute_query("DELETE * From albums Where id = \"%s\"" % (album_id))
-			data['status'] = 'Success'
-			data['status'] = 'Deleted all rows associated with album'
-		else:
-			data['status'] = 'Failure'
-			data['message'] = 'No album_id given to delete'
+    elif action == 'delete_content':
+        if has_fields(['content_id']):
+            query = execute_query("DELETE * From content Where id = \"%s\"" % (post(content_id)))
+            data['status'] = 'Success'
+            data['message'] = 'Content deleted'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'No content id given to delete'
+    elif action == 'delete_album':
+        if has_fields(['album_id']):
+            album_id = post('album_id')
+            query = execute_query("DELETE content_likes.* From content_likes Inner Join content on content.id = content_likes.content_id Where content.album_id = \"%s\"" % (album_id))
+            query1 = execute_query("DELETE content_comments.* From content_comments Inner Join content on content.id = content_comments.content_id Where content.album_id = \"%s\"" % (album_id))
+            query2 = execute_query("DELETE content.* From content Where content.album_id = \"%s\"" % (album_id))
+            query3 = execute_query("DELETE * From albums Where id = \"%s\"" % (album_id))
+            data['status'] = 'Success'
+            data['status'] = 'Deleted all rows associated with album'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'No album_id given to delete'
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'
