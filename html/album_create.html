@@ -17,7 +17,13 @@
           <input type="hidden" name="action" value="create">
           <div class="form-group">
             <div class="col-sm-12">
-              <input type="text" class="form-control" name="albumname" placeholder="Album Name">
+			  <div class="input-group">
+                <input type="text" class="form-control" id="albumname" name="albumname" placeholder="Album Name">
+			   <span class="input-group-btn">
+                  <button class="btn btn-success" type="submit" 
+			    	id="new-album-btn">Add Album</button>
+                </span>
+			  </div>
             </div>
           </div>
           <div class="form-group">
@@ -33,13 +39,6 @@
                 <label class="btn btn-danger" id="vis-options">
                   <input type="radio" autocomplete="off" value="2"> Only Me
                 </label>
-              </div>
-            </div>
-            <div class="col-sm-4 pull-right">
-              <br></br>
-              <br></br>
-              <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-album-btn">Create Album</button>
               </div>
             </div>
           </div>
@@ -68,21 +67,33 @@
       build_page();
       load_sidebar();
     });
+	
+	var trip = $_GET('trip_id')
+	
     $(document).on("click", '#new-album-btn', function(e) {
-      newAlbum = formData('#new-album-form');
-      newAlbum.privacy = $('#vis-options[class*="active"] input').attr("value");
-      console.log(newAlbum);
-      $.ajax({
-        url: '../api/content.py',
-        type: 'post',
-        data: newAlbum,
-        dataType: 'json',
-        success: function(json){
-          if (json.status = "Success") {
-            //window.location = "./edit_album.html?id=" + json.id;
+      if ($('#albumname').val() == "") return;
+      p = $('#vis-options[class*="active"] input').attr("value");
+      
+	  if (trip != "null"){
+        $.ajax({
+          url: '../api/content.py',
+          type: 'post',
+          data: {
+		    action: 'add_album',
+			user_id: $.cookie('user_id'),
+			token: $.cookie('token'),
+			trip_id: trip,
+			albumname: $('#albumname').val(),
+			privacy: p
+		  },
+          dataType: 'json',
+          success: function(json){
+            if (json.status = "Success") {
+              window.location = "./edit_album.html?id=" + json.id;
+            }
           }
-        }
-      });
+        });
+	  }
     });
   </script>
 </html>

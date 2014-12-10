@@ -158,6 +158,7 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = 'Failure'
             data['message'] = 'No album_id given'
+			
     elif action == 'delete_content':
         if has_fields(['content_id']):
             content_id = post('content_id')
@@ -169,6 +170,7 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = 'Failure'
             data['message'] = 'No content id given to delete'
+			
     elif action == 'delete_album':
         if has_fields(['album_id']):
             album_id = post('album_id')
