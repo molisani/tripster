@@ -98,7 +98,7 @@
 			success: function(json) {
 			  if (json.status == 'Success') {
 				pageData.page_header = json.trip.tripname;
-				pageData.page_body = tripBody(json.trip);
+				pageData.page_body = trip_edit_template(json.trip);
 				build_page();
 			  }
 			}
