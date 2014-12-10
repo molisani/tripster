@@ -92,26 +92,31 @@
       build_page();
       load_sidebar();
     });
+	var album = $_GET('album_id');
+	
     $(document).on("click", '#new-content-btn', function(e) {
 	  if($('#url').val() == "") return;
-      $.ajax({
-        url: '../api/content.py',
-        type: 'post',
-        data: {
-			action: 'add_content',
-			user_id: $.cookie('user_id'),
+	  
+	  if (album != "null"){
+        $.ajax({
+          url: '../api/content.py',
+          type: 'post',
+          data: {
+		  	action: 'add_content',
+		  	user_id: $.cookie('user_id'),
 			token: $.cookie('token'),
-			album_id: "",
+			album_id: album,
 			url: $('#url').val(),
 			type: $('#vis-options[class*="active"] input').attr("value")
-		},
-        dataType: 'json',
-        success: function(json){
-          if (json.status = "Success") {
-            location.reload();
+		  },
+          dataType: 'json',
+          success: function(json){
+            if (json.status = "Success") {
+              location.reload();
+            }
           }
-        }
-      });
+		})
+      };
     });
   </script>
 </html>
