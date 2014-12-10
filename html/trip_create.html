@@ -33,13 +33,13 @@
               <h4>Visibility</h4>
               <div class="btn-group" data-toggle="buttons">
                 <label class="btn btn-default active" id="vis-options">
-                  <input type="radio" autocomplete="off" value="0"> Public
+                  <input type="radio" autocomplete="off" value="0"> Public</input>
                 </label>
                 <label class="btn btn-default" id="vis-options">
-                  <input type="radio" autocomplete="off" value="1"> Private
+                  <input type="radio" autocomplete="off" value="1"> Private</input>
                 </label>
                 <label class="btn btn-danger" id="vis-options">
-                  <input type="radio" autocomplete="off" value="2"> Only Me
+                  <input type="radio" autocomplete="off" value="2"> Only Me</input>
                 </label>
               </div>
             </div>
@@ -69,6 +69,7 @@
 
       if ($.cookie("username")) {
         pageData.username = $.cookie("username");
+        pageData.user_id = $.cookie("user_id");
         sidebarData.username = $.cookie("username");
       }
 
