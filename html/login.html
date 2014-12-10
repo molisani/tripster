@@ -102,8 +102,14 @@
           data: formData('#register-form'),
           dataType: 'json',
           success: function(json) {
-            $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "register-modal",result: json}));
-            $('#register-modal').modal({show: true, keyboard: true});
+            if (json['status'] == 'Success') {
+              $('body').append(Handlebars.templates['result-modal.tmpl']({modal_id: "register-modal",result: json}));
+              $('#register-modal').modal({show: true, keyboard: true});
+              $.cookie('username', form['username']);
+              $.cookie('user_id', json['user_id']);
+              $.cookie('token', json['token']);
+              window.location = "./user_edit.html?id="+json.user_id;
+            }
           }
         });
       });
