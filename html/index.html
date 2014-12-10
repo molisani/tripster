@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <section id="main-content">
+    <section id="main-content"type="text/x-handlebars-template">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
@@ -93,7 +93,7 @@
         success: function(json) {
           if (json.status == 'Success') {
             pageData.page_header = requestHeader(json.trip);
-            pageData.page_body = tripBody(json.trip);
+            pageData.page_body = pageBody(json.trip);
             build_page();
           }
         }
