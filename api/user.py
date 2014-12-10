@@ -135,8 +135,7 @@ elif has_fields(['user_id', 'token']):
             info = {}
             for item in info_fields:
                 info[item] = post(item)
-            execute_query("UPDATE users SET birthday = \"%s\", email = \"%s\", aboutme = \"%s\", interests = \"%s\", affiliation = \"%s\" WHERE users.id = \"%s\"" % ('DATA', info[info_fields[1]], info[info_fields[2]], info[info_fields[3]],info[info_fields[4]],user_id))
-            #execute_query("UPDATE users SET interests = \"%s\" WHERE users.id = \"%s\"" % ("DATA", post('user_id')))
+            execute_query("UPDATE users SET birthday = \"%s\", email = \"%s\", aboutme = \"%s\", interests = \"%s\", affiliation = \"%s\" WHERE users.id = \"%s\"" % (info[info_fields[0]], info[info_fields[1]], info[info_fields[2]], info[info_fields[3]],info[info_fields[4]],user_id))
             data['status'] = 'Success'
             data['message'] = 'Successfully updated user information'
         elif post('action') == 'unfriend':
