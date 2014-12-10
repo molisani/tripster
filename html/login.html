@@ -96,6 +96,7 @@
       build_page();
 
       $('#register-form').submit(function(e){
+        form = formData('#register-form');
         $.ajax({
           url: '../api/user.py', 
           type: 'post',
