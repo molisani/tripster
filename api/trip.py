@@ -94,7 +94,7 @@ elif validate_token(user_id, post('token')):
                         c = {}
                         c['fullname'] = comment[0]
                         c['comment'] = comment[1]
-                    comments+= [c]
+                        comments+= [c]
                     if len(comments) > 0:
                         trip['comments'] = comments
                     
