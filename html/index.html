@@ -14,7 +14,36 @@
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
-            <p>Most of the stuff will go here.</p>
+            <div class="well well-sm">
+			    <h3>Trip Name</h3>
+				<div class="row">				
+				  <div class="col-xs-6 col-md-4">
+					<a href="#" class="thumbnail">
+					  <img data-src="holder.js/100%x180" alt="Picture from this trip">
+					</a>
+				  </div>	
+				<div class="col-xs-6 col-md-4">
+				  <div class="list-group">
+				    <a href="#" class="list-group-item active">
+					  Who's Going?
+					</a>
+					<a href="#" class="list-group-item">
+					  {{#each users_attending}}
+					    {{fullname}}, 
+					  {{/each}}
+					</a>
+				  </div>
+				</div>
+				<div class="col-xs-6 col-md-4">
+				  <div class="list-group">
+				    <a href="#" class="list-group-item active">
+					  Where?
+					</a>
+					<a href="#" class="list-group-item">Trip Location 1, Trip Location 2, etc.</a>
+				  </div>
+				</div>
+			  </div>
+			</div>
           </div>
         </div>
       </div>
@@ -30,7 +59,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "<h1>Welcome to Tripster!</h1>";
+      pageData.page_header = "Welcome to Tripster!";
       pageData.page_body = $('#main-content').html();
 
       if ($.cookie("username")) {
