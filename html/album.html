@@ -69,6 +69,7 @@ $.when(
         success: function(json) {
           if (json.status == 'Success') {
             pageData.page_header = "<h1>" + json.album.albumname + "</h1>";
+            json.album.album_id = album;
             pageData.page_body = albumBody(json.album);
             build_page();
           }
