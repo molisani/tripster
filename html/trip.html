@@ -24,15 +24,11 @@
               <div class="list-group-item"><i>{{fullname}} says...</i><br>&nbsp;&nbsp;&nbsp;<b>{{comment}}</b></div>
               {{/each}}
               <div class="list-group-item">
-                <div class="row">
-                  <div class="col-md-10">
-                    <div class="input-group">
-                      <input type="text" class="form-control" placeholder="Write new comment...">
-                      <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Submit</button>
-                      </span>
-                    </div>
-                  </div>
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Write new comment...">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">Submit</button>
+                  </span>
                 </div>
               </div>
             </div>
@@ -159,7 +155,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = json.trip.tripname;
+            pageData.page_header = "<h1>" + json.trip.tripname + "</h1>";
             pageData.page_body = tripBody(json.trip);
             build_page();
           }

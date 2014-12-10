@@ -86,7 +86,18 @@ elif validate_token(user_id, post('token')):
                             l['rating'] = str(location[5])
                             locations+=[l]
                         trip['locations'] = locations
-                        
+                    
+                    #get comments
+                    comments_query = execute_query("SELECT users.fullname, trip_comments.comment From trip_comments INNER JOIN users ON users.id = trip_comments.user_id Where trip_id = \"%s\"" % (trip_id))
+                    comments = []
+                    for comment in comments_query:
+                        c = {}
+                        c['fullname'] = comment[0]
+                        c['comment'] = comment[1]
+                        comments+= [c]
+                    if len(comments) > 0:
+                        trip['comments'] = comments
+                    
                     #get all users
                     us_query = execute_query("Select id, fullname From users")
                     all_users = []
@@ -200,6 +211,17 @@ elif validate_token(user_id, post('token')):
             execute_query("UPDATE trips SET privacy= \"%s\" WHERE trips.id = \"%s\"" % (new_privacy, trip_id))
             data['status'] = 'Success'
             data['message'] = 'Updated privacy'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
+    # Remember to check for permissions
+    elif action == 'change_name':
+        if has_fields(['id','name']):
+            trip_id = post('id')
+            trip_name = post('name')
+            execute_query("UPDATE trips SET tripname= \"%s\" WHERE trips.id = \"%s\"" % (trip_name, trip_id))
+            data['status'] = 'Success'
+            data['message'] = 'Updated trip name'
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
