@@ -15,130 +15,144 @@
       <br>
       <div class="container-fluid">		
         <div class="row">
-	  <div class="col-md-12">
-            <div class="list-group">
-              <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">Comments</h4>
-              </div>
-              {{#each comments}}
-              <div class="list-group-item"><i>{{fullname}} says...</i><br>&nbsp;&nbsp;&nbsp;<b>{{comment}}</b></div>
-              {{/each}}
-              <div class="list-group-item">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Write new comment...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Submit</button>
-                  </span>
-                </div>
+         <div class="col-md-12">
+          <div class="list-group">
+            <div href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">Comments</h4>
+              <span class="badge" id="trip-rating">
+                AVG: {{rating}}
+                <span class="glyphicon glyphicon-star"></span> | 
+                <span data-rating="1" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="2" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="3" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="4" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="5" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="6" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="7" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="8" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="9" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+                <span data-rating="10" class="glyphicon glyphicon-star-empty" id="rating-star"></span>
+              </span>
+            </div>
+            {{#each comments}}
+            <div class="list-group-item"><i>{{fullname}} says...</i><br>&nbsp;&nbsp;&nbsp;<b>{{comment}}</b></div>
+            {{/each}}
+            <div class="list-group-item">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Write new comment...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Submit</button>
+                </span>
               </div>
             </div>
           </div>
-	  <hr>
-          <div class="col-md-3">
-            <div class="list-group">
-              <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">To-Do List</h4>
-              </div>
-              {{#each todo_list}}
-              <a href="#" class="list-group-item">             
-                <input type="checkbox"> {{todo_item}}</input>
-              </a>
-              {{/each}}
+        </div>
+        <hr>
+        <div class="col-md-3">
+          <div class="list-group">
+            <div href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">To-Do List</h4>
             </div>
-            <!-- <button type="button" class="btn btn-default">Create New Task</button> -->
-            <hr>
-            <div class="list-group">
-              <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">Expenses</h4>
-              </div>
-              {{#each expenses}}
-              <a href="#" class="list-group-item">{{description}} <b>{{cost}}</b> ({{expense_user}})</a>
-              {{/each}}
-            </div>
-            <!-- <button type="button" class="btn btn-default">Add New Expense</button> -->
-          </div>
-          <div class="col-md-4">
-            <div class="list-group">
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading">Who is Going?</h4>
-              </div>
-              {{#each users_attending}}
-              <a href="./user.html?id={{user_id}}" class="list-group-item">{{fullname}}</a>
-              {{/each}}
-            </div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              Bring More People! <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                {{#each all_users}}
-                <li><a name="{{user_id}}" id="invite-user">{{fullname}}</a></li>
-                {{/each}}
-              </ul>
-            </div>
-            <hr>
-            <div class="list-group">
-              <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">Where Are We Going?</h4>
-              </div>
-              {{#each locations}}
-              <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{locationname}}, <i>{{country}}</i></a>
-              {{/each}}
-            </div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              Go More Places! <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                {{#each location_select}}
-                <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
-                {{/each}}
-                <li class="divider"></li>
-                <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-5">
-            <div class="list-group">
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading">Albums from This Trip</h4>
-              </div>
-            </div>
-            {{#each albums}}
-            <a href="./album.html?id={{album_id}}" class="thumbnail">
-              <img data-src="{{album_thumb_url}}" alt="...">
-              <div class="caption">
-                <h3>{{albumname}}</h3>
-              </div>
+            {{#each todo_list}}
+            <a href="#" class="list-group-item">             
+              <input type="checkbox"> {{todo_item}}</input>
             </a>
             {{/each}}
-            <button type="button" class="btn btn-default">New Album</button>
           </div>
-	  <br>
-	</div>
+          <!-- <button type="button" class="btn btn-default">Create New Task</button> -->
+          <hr>
+          <div class="list-group">
+            <div href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">Expenses</h4>
+            </div>
+            {{#each expenses}}
+            <a href="#" class="list-group-item">{{description}} <b>{{cost}}</b> ({{expense_user}})</a>
+            {{/each}}
+          </div>
+          <!-- <button type="button" class="btn btn-default">Add New Expense</button> -->
+        </div>
+        <div class="col-md-4">
+          <div class="list-group">
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading">Who is Going?</h4>
+            </div>
+            {{#each users_attending}}
+            <a href="./user.html?id={{user_id}}" class="list-group-item">{{fullname}}</a>
+            {{/each}}
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Bring More People! <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {{#each all_users}}
+              <li><a name="{{user_id}}" id="invite-user">{{fullname}}</a></li>
+              {{/each}}
+            </ul>
+          </div>
+          <hr>
+          <div class="list-group">
+            <div href="#" class="list-group-item active">
+              <h4 class="list-group-item-heading">Where Are We Going?</h4>
+            </div>
+            {{#each locations}}
+            <a href="./trip.html?id={{trip_id}}" class="list-group-item">{{locationname}}, <i>{{country}}</i></a>
+            {{/each}}
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Go More Places! <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {{#each location_select}}
+              <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
+              {{/each}}
+              <li class="divider"></li>
+              <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="list-group">
+            <div class="list-group-item active">
+              <h4 class="list-group-item-heading">Albums from This Trip</h4>
+            </div>
+          </div>
+          {{#each albums}}
+          <a href="./album.html?id={{album_id}}" class="thumbnail">
+            <img data-src="{{album_thumb_url}}" alt="...">
+            <div class="caption">
+              <h3>{{albumname}}</h3>
+            </div>
+          </a>
+          {{/each}}
+          <a href="./album_create.html?trip_id={{trip_id}}" type="button" class="btn btn-default">New Album</a>
+        </div>
+        <br>
       </div>
     </div>
-  </section>
-  <section id="join-req-template" type="text/x-handlebars-template">
-    <h1>
-      {{tripname}}
-      <div class="btn-group">
-        {{#if going}}
-        <button type="button" id="leave-btn" class="btn btn-danger">Leave Trip</button>
-        {{else}}
-        {{#if requested}}
-        <div class="btn btn-info">Request Pending</div>
-        {{else}}
-        {{#if invited}}
-        <button type="button" id="request-btn" class="btn btn-primary">Accept Trip Invitation</button>
-        {{else}}
-        <button type="button" id="request-btn" class="btn btn-primary">Request to Join Trip</button>
-        {{/if}}
-        {{/if}}
-        {{/if}}
-      </div>
-    </h1>
-  </section>
+  </div>
+</section>
+<section id="join-req-template" type="text/x-handlebars-template">
+  <h1>
+    {{tripname}}
+    <div class="btn-group">
+      {{#if going}}
+      <button type="button" id="leave-btn" class="btn btn-danger">Leave Trip</button>
+      {{else}}
+      {{#if requested}}
+      <div class="btn btn-info">Request Pending</div>
+      {{else}}
+      {{#if invited}}
+      <button type="button" id="request-btn" class="btn btn-primary">Accept Trip Invitation</button>
+      {{else}}
+      <button type="button" id="request-btn" class="btn btn-primary">Request to Join Trip</button>
+      {{/if}}
+      {{/if}}
+      {{/if}}
+    </div>
+  </h1>
+</section>
 </body>
 
 <script src="js/field_utils.js"></script>
@@ -160,6 +174,13 @@ $.when(
       sidebarData.username = $.cookie("username");
     }
 
+    var rating = 0;
+    function starify_rating() {
+      for (var i = 1; i < rating + 1; i++) {
+        $('#rating-star[data-rating="' + i + '"]').attr('class', "glyphicon glyphicon-star");
+      }
+    }
+
     build_page();
     load_sidebar();
 
@@ -177,9 +198,12 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            rating = json.trip.user_rating;
+            json.trip.trip_id = trip;
             pageData.page_header = requestHeader(json.trip);
             pageData.page_body = tripBody(json.trip);
             build_page();
+            starify_rating();
           }
         }
       });
@@ -244,6 +268,27 @@ $.when(
         }
       });
     });
+
+    $(document).on("click", '#rating-star', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'rate',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          rating: $(e.target).attr('data-rating')
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
   });
-  </script>
-  </html>
+</script>
+</html>

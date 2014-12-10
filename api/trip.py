@@ -127,6 +127,9 @@ elif validate_token(user_id, post('token')):
                         else:
                             trip['going'] = True
 
+                    rating = execute_query("SELECT trip_ratings.rating FROM trip_ratings WHERE trip_ratings.trip_id = \"%s\" AND trip_ratings.user_id = \"%s\"" % (trip_id, user_id))
+                    trip['user_rating'] = rating[0][0] if len(rating) > 0 else 0
+
                     data['trip'] = trip
                     data['status'] = 'Success'
             else:
