@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Handlebars -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+  </head>
+
+  <body>
+    <section id="main-content">
+      <div class="container-fluid">
+        <br>
+        <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
+          <input type="hidden" name="action" value="create">
+          <div class="form-group">
+            <div class="col-sm-12">
+				<h4>Change Album Name To</h4>
+              <input type="text" class="form-control" name="albumname" placeholder="Album Name">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-8">
+              <h4>Change Visibility To</h4>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active" id="vis-options">
+                  <input type="radio" autocomplete="off" value="0"> Public
+                </label>
+                <label class="btn btn-default" id="vis-options">
+                  <input type="radio" autocomplete="off" value="1"> Private
+                </label>
+                <label class="btn btn-danger" id="vis-options">
+                  <input type="radio" autocomplete="off" value="2"> Only Me
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-4 pull-right">
+              <br></br>
+              <br></br>
+              <div class="pull-right">
+                <button type="submit" class="btn btn-success" id="new-album-btn">Create Album</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </body>
+
+  <script src="js/field_utils.js"></script>
+  <script src="js/jquery.cookie.min.js"></script>
+  <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+  <script type="text/javascript">
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.page_header = "Edit Album",
+      pageData.page_body = $('#main-content').html()
+
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+        sidebarData.username = $.cookie("username");
+      }
+
+      build_page();
+      load_sidebar();
+    });
+    $(document).on("click", '#new-album-btn', function(e) {
+      newAlbum = formData('#new-album-form');
+      newAlbum.privacy = $('#vis-options[class*="active"] input').attr("value");
+      console.log(newAlbum);
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: newAlbum,
+        dataType: 'json',
+        success: function(json){
+          if (json.status = "Success") {
+            //window.location = "./edit_album.html?id=" + json.id;
+          }
+        }
+      });
+    });
+  </script>
+</html>
