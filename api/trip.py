@@ -159,7 +159,7 @@ elif validate_token(user_id, post('token')):
             execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
                           % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
             data['status'] = 'Success'
-            trip_id = execute_query("SELECT LAST_INSERT_ID()")
+            trip_id = execute_query("SELECT LAST_INSERT_ID()")[0][0]
             data['id'] = trip_id
             execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%d\", \"%s\", \"0\")" % (trip_id, user_id))
             data['message'] = 'Added trip'
