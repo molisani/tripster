@@ -10,58 +10,66 @@
 </head>
 
 <body>
-  <script id="trip_edit-content" type="text/x-handlebars-template">
+  <section id="trip_edit-content" type="text/x-handlebars-template">
     <div class="panel-body">
       <div class="container-fluid">
+        <br>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default active" id="vis-options">
+                <input type="radio" autocomplete="off" value="0"> Public</input>
+              </label>
+              <label class="btn btn-default" id="vis-options">
+                <input type="radio" autocomplete="off" value="1"> Private</input>
+              </label>
+              <label class="btn btn-danger" id="vis-options">
+                <input type="radio" autocomplete="off" value="2"> Only Me</input>
+              </label>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div class="input-group">
+              <input type="text" class="form-control" name="albumname" value="{{tripname}}">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="save-btn">Save Changes</button>
+              </span>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-6">
             <div class="list-group">
               <div href="#" class="list-group-item active">
-                <h4 class="list-group-item-heading">Change Trip Privacy</h4>
+                <h4 class="list-group-item-heading">Users Going</h4>Click user to remove from trip
               </div>
-              <a href="#" class="list-group-item">             
-                <input type="radio" name="optradio"> Everyone</input>  
-              </a>					
-              <a href="#" class="list-group-item">              
-                <input type="radio" name="optradio"> Only friends</input> 
-              </a>
-              <a href="#" class="list-group-item">                
-                <input type="radio" name="optradio"> Only trip members</input>
-              </a>  
-			  <button type="button" class="btn btn-primary btn-sm RbtnMargin" id="save-changes-btn">Update Privacy</button>
+              {{#each users_attending}}
+              <a class="list-group-item" val="{{user_id}}">{{fullname}}</a>
+              {{/each}}
             </div>
-          </div>				
-          <div class="col-md-4">
-            <div href="#" class="list-group-item active">
-              <h4 class="list-group-item-heading">Change Trip Name</h4>
-            </div>
-            <a href="#" class="list-group-item">  
-              <div class="input-group">
-                <input type="text" class="form-control" value="{{tripname}}">
-				  <span class="input-group-btn">
-					<button class="btn btn-default" type="button">Go!</button>
-				  </span>
-              </div>
-            </a>
-            <br>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="list-group">
-              <div class="list-group-item active">
-                <h4 class="list-group-item-heading">Kick People Out</h4>
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Users Requested</h4>
               </div>
-			   {{#each users_attending}}
-			    <a href="./user.html?id={{user_id}}" class="list-group-item">
-				  <input type="checkbox" name="options" id="option1"> {{fullname}}
-				</a>			  
-				{{/each}}  
-			    <button type="button" class="btn btn-primary btn-sm RbtnMargin" id="save-changes-btn">Remove From Trip</button>
-			  </div>
+              {{#each users_requested}}
+              <div class="list-group-item">
+                <p class="text-left">{{fullname}}</p>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-success" type="button" role="group" id="accept-btn" value="{{user_id}}">Accept</button>
+                    <button class="btn btn-danger" type="button" role="group" id="reject-btn" value="{{user_id}}">Reject</button>
+                </div>
+
+              </div>
+              {{/each}}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </script>
+  </section>
 </body>
 
 <script src="js/field_utils.js"></script>
@@ -70,11 +78,11 @@
 <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
 <script src="tmpl/result-modal.tmpl.js" id="result-modal-template"></script>
 <script type="text/javascript">
-  $.when(
-    $.getScript("./js/templates.js")
+$.when(
+  $.getScript("./js/templates.js")
   ).done(function(){
     var trip_edit_template = Handlebars.compile($('#trip_edit-content').html());
-    pageData.page_header = "Change Your Trip's Information";
+    pageData.page_header = "<h1>Edit Trip Information</h1>";
     pageData.page_body = trip_edit_template({});
 
     if ($.cookie("username")) {
@@ -99,7 +107,7 @@
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = json.trip.tripname;
+            pageData.page_header = "<h1>" + json.trip.tripname + " <small>Editing</small></h1>";
             pageData.page_body = trip_edit_template(json.trip);
             build_page();
           }
@@ -127,6 +135,47 @@
         }
       });
     });
+
+    $(document).on("click", '#accept-btn', function(e) {
+      console.log(e);
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'invite',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          invitee_id: $(e.target).val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
+    $(document).on("click", '#reject-btn', function(e) {
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'leave',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          drop_user_id: $(e.target).val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
   });
-  </script>
-  </html>
+</script>
+</html>

@@ -31,7 +31,7 @@ elif validate_token(user_id, post('token')):
                     trip['rating'] = str(query[0][7])
                     
                     #users attending
-                    u_query = execute_query("Select * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\"" % (trip_id))
+                    u_query = execute_query("SELECT * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\" AND t.status = \"0\"" % (trip_id))
                     users = []
                     for user in u_query:
                         u = {}
@@ -39,6 +39,16 @@ elif validate_token(user_id, post('token')):
                         u['fullname'] = user[3]
                         users+= [u]
                     trip['users_attending'] = users
+
+                    #users requested
+                    r_query = execute_query("SELECT * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\" AND t.status = \"2\"" % (trip_id))
+                    req_users = []
+                    for r in r_query:
+                        req = {}
+                        req['user_id'] = r[0]
+                        req['fullname'] = r[3]
+                        req_users+= [req]
+                    trip['users_requested'] = req_users
                     
                     #albums associated
                     a_query = execute_query("Select * From albums Where trip_id = \"%s\"" % (trip_id))
@@ -167,7 +177,7 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'User successfully invited to trip (or added if already requested)'
         else:
             data['status'] = 'Failure'
-            data['message'] = 'Insufficient information given'          
+            data['message'] = 'Insufficient information given!'          
     elif action == 'request':
         #requires user_id as user of user to invite and trip_id as id
         if has_fields(['id']):
