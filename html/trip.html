@@ -119,6 +119,26 @@
       </div>
     </div>
   </script>
+  <script id="join-req-template" type="text/x-handlebars-template">
+    <h1>
+      {{tripname}}
+      <div class="btn-group">
+        {{#if going}}
+        <button type="button" id="leave-btn" class="btn btn-danger">Leave Trip</button>
+        {{else}}
+        {{#if requested}}
+        <div class="btn btn-info">Request Pending</div>
+        {{else}}
+        {{#if invited}}
+        <button type="button" id="request-btn" class="btn btn-primary">Accept Trip Invitation</button>
+        {{else}}
+        <button type="button" id="request-btn" class="btn btn-primary">Request to Join Trip</button>
+        {{/if}}
+        {{/if}}
+        {{/if}}
+      </div>
+    </h1>
+  </script>
 </body>
 
 <script src="js/field_utils.js"></script>
@@ -130,7 +150,8 @@ $.when(
   $.getScript("./js/templates.js")
   ).done(function(){
     var tripBody = Handlebars.compile($('#main-content').html());
-    pageData.page_header = "[[tripname]]";
+    var requestHeader = Handlebars.compile($('#join-req-template').html());
+    pageData.page_header = requestHeader({});
     pageData.page_body = tripBody({});
 
     if ($.cookie("username")) {
@@ -156,13 +177,52 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = "<h1>" + json.trip.tripname + "</h1>";
+            pageData.page_header = requestHeader(json.trip);
             pageData.page_body = tripBody(json.trip);
             build_page();
           }
         }
       });
     }
+
+    $(document).on("click", '#leave-btn', function(e) {
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'leave',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          drop_user_id: $.cookie('user_id')
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            //location.reload();
+          }
+        }
+      });
+    });
+
+    $(document).on("click", '#request-btn', function(e) {
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'request',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            //location.reload();
+          }
+        }
+      });
+    });
   });
   </script>
   </html>

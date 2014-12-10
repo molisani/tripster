@@ -107,6 +107,16 @@ elif validate_token(user_id, post('token')):
                         u['fullname'] = user[1]
                         all_users += [u]
                     trip['all_users'] = all_users
+
+                    status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
+                    if len(status) > 0:
+                        if status[0][0] == 1:
+                            trip['invited'] = True
+                        elif status[0][0] == 2:
+                            trip['requested'] = True
+                        else:
+                            trip['going'] = True
+
                     data['trip'] = trip
                     data['status'] = 'Success'
             else:
@@ -139,44 +149,53 @@ elif validate_token(user_id, post('token')):
             data['message'] = 'Added trip'
         else:
             data['status'] = 'Failure'
-            data['message'] = 'Insufficient information given'
-    elif action == 'join':
-        #Requires user_id and trip_id
-        if has_fields(['user_id', 'trip_id']):
-            user = post('user_id')
-            trip = post('trip_id')
-            result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\"" % (user, trip))
-            if len(result) > 0:
-                if result == 1:
-                    execute_query("UPDATE takes SET status= \"0\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\")" 
-                                   % (user, trip))                    
-                    data['status'] = 'Success'
-                    data['message'] = 'User has been added to trip'
-            else:
-                execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"1\")" % (trip, user))
-            data['status'] = 'Success'
-            data['message'] = 'User has requested to join trip'
-        else:
-            data['status'] = 'Failure'
-            data['message'] = 'Insufficient information given'            
+            data['message'] = 'Insufficient information given'          
     elif action == 'invite':
         #requires user_id as user of user to invite and trip_id as id
-        if has_fields(['user', 'id']):
-            user_to_invite = post('user')
-            trip = post('id')
-            result = execute_query("SELECT status FROM takes T WHERE T.user_id = \"%s\" AND T.trip_id = \"%s\""
-                                   % (user_to_invite, trip))
-            if (len(result) > 0):
-                data['status'] = 'Success'
-                data['message'] = 'User is already invited to trip'
+        if has_fields(['invitee_id', 'id']):
+            invitee = post('invitee_id')
+            trip_id = post('id')
+            status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, invitee))
+            new_status = 1
+            if len(status) > 0:
+                if status[0][0] == 2:
+                    new_status = 0
+                execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
             else:
-                execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%s\", \"%s\", \"0\")"
-                              % (user_to_invite, trip))
-                data['status'] = 'Success'
-                data['message'] = 'User has been invited to join trip'
+                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 1))
+            data['status'] = 'Success'
+            data['message'] = 'User successfully invited to trip (or added if already requested)'
         else:
             data['status'] = 'Failure'
-            data['message'] = 'Insufficient information given'                    
+            data['message'] = 'Insufficient information given'          
+    elif action == 'request':
+        #requires user_id as user of user to invite and trip_id as id
+        if has_fields(['id']):
+            trip_id = post('id')
+            status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
+            new_status = 2
+            if len(status) > 0:
+                if status[0][0] == 1:
+                    new_status = 0
+                execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, user_id, trip_id))
+            else:
+                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 2))
+            data['status'] = 'Success'
+            data['message'] = 'User successfully requested to join trip (or added if already invited)'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
+    elif action == 'leave':
+        #requires user_id as user of user to invite and trip_id as id
+        if has_fields(['id', 'drop_user_id']):
+            trip_id = post('id')
+            dropped = post('drop_user_id')
+            execute_query("DELETE FROM takes WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (dropped, trip_id))
+            data['status'] = 'Success'
+            data['message'] = 'User successfully removed from trip'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'              
     elif action == 'get_requests':
         #requires trip_id as id
         if has_fields(['id']):

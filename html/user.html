@@ -91,8 +91,8 @@ $.when(
   $.getScript("./js/templates.js")
   ).done(function(){
     var userBody = Handlebars.compile($('#main-content').html());
-    var requestBody = Handlebars.compile($('#friend-req-template').html());
-    pageData.page_header = requestBody({});
+    var requestHeader = Handlebars.compile($('#friend-req-template').html());
+    pageData.page_header = requestHeader({});
     pageData.page_body = userBody({});
 
     if ($.cookie("username")) {
@@ -118,7 +118,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = requestBody(json.user)
+            pageData.page_header = requestHeader(json.user)
             pageData.page_body = userBody(json.user);
             build_page();
           }
@@ -139,7 +139,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            //location.reload();
+            location.reload();
           }
         }
       });
@@ -158,7 +158,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            //location.reload();
+            location.reload();
           }
         }
       });
@@ -177,7 +177,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            //location.reload();
+            location.reload();
           }
         }
       });
@@ -196,7 +196,7 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            //location.reload();
+            location.reload();
           }
         }
       });
