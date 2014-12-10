@@ -160,10 +160,10 @@ elif (validate_token(post('user_id'), post('token'))):
             data['message'] = 'No album_id given'
     elif action == 'delete_content':
         if has_fields(['content_id']):
-			content_id = post('content_id')
+            content_id = post('content_id')
             query = execute_query("DELETE content_likes.* From content_likes WHERE content_likes.content_id = \"%s\"" % (content_id))
-			query1 = execute_query("DELETE content_comments.* From content_comments WHERE content_comments.content_id = \"%s\"" % (content_id))
-			query = execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
+            query1 = execute_query("DELETE content_comments.* From content_comments WHERE content_comments.content_id = \"%s\"" % (content_id))
+            query = execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
             data['status'] = 'Success'
             data['message'] = 'Content deleted'
         else:
