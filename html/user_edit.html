@@ -10,54 +10,83 @@
   </head>
 
   <body>
-    <script id="trip_edit-content" type="text/x-handlebars-template">
+    <script id="user_edit-content" type="text/x-handlebars-template">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
-              <div class="col-md-4">
-		<div class="list-group">
-                  <div href="#" class="list-group-item active">
-                    <h4 class="list-group-item-heading">Change Trip Privacy</h4>
-                  </div>
-                  <a href="#" class="list-group-item">             
-                    <input type="radio" name="optradio"> Everyone</input>  
-                  </a>
-                  <a href="#" class="list-group-item">              
-                    <input type="radio" name="optradio"> Only friends</input> 
-		      </a>
-                  <a href="#" class="list-group-item">                
-                    <input type="radio" name="optradio"> Only trip members</input>
-                  </a>
-                </div>
-	      </div>
 	      <div class="col-md-4">
 		<div href="#" class="list-group-item active">
-                  <h4 class="list-group-item-heading">Change Trip Name</h4>
-		</div>
-		<a href="#" class="list-group-item">  
-		  <div class="input-group">
-		    <input type="text" class="form-control" placeholder="New Trip Name">
-		      </div>
-		    </a>
-	        <br>
-		</div>
-	      <div class="col-md-4">
-		<div class="list-group">
-                  <div class="list-group-item active">
-                    <h4 class="list-group-item-heading">Kick People Out</h4>
+                  <h4 class="list-group-item-heading">Change About Me</h4>
+                </div>
+                <a href="#" class="list-group-item">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder={{aboutme}}>
                   </div>
-                {{#each users_attending}}
-                <a href="./user.html?id={{user_id}}" class="list-group-item">
-		    <input type="checkbox" name="options" id="option1"> {{fullname}}
-		    </a>
-                {{/each}}
+                </a>
+                <br>
               </div>
-	          </div>
+	      <div class="col-md-4">
+		  <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Change Interests</h4>
+		  </div>
+		  <a href="#" class="list-group-item">  
+		    <div class="input-group">
+		      <input type="text" class="form-control" placeholder={{interests}}>
+		    </div>
+		  </a>
+	          <br>
+	      </div>
+	      <div class="col-md-4">
+                  <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Change Birthday</h4>
+                  </div>
+                  <a href="#" class="list-group-item">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder={{birthday}}>
+                    </div>
+                  </a>
+                  <br>
+              </div>
 	  </div>
 	  <div class="row">
-	    <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Save Changes</button>
+	    <div class="col-md-4">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Change Email</h4>
+              </div>
+              <a href="#" class="list-group-item">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder={{email}}>
+                </div>
+              </a>
+              <br>
+            </div>
+	    <div class="col-md-4">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Change Affiliation</h4>
+              </div>
+              <a href="#" class="list-group-item">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder={{affiliation}}>
+                </div>
+              </a>
+              <br>
+            </div>
+	    <div class="col-md-4">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Change Password</h4>
+              </div>
+              <a href="#" class="list-group-item">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder={{password}}>
+                </div>
+              </a>
+              <br>
+            </div>
 	  </div>
-	</div>
+	  <div class="row">
+	      <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Save Changes</button>
+	        </div>
+	        </div>
       </div>
     </script>
   </body>
@@ -72,7 +101,7 @@
       $.getScript("./js/templates.js")
     ).done(function(){
       var user_edit_template = Handlebars.compile($('#user_edit-content').html());
-      pageData.page_header = "Change Your Trip's Information";
+      pageData.page_header = "Change Your User Information";
       pageData.page_body = user_edit_template({});
       if ($.cookie("username")) {
         pageData.username = $.cookie("username");
@@ -95,8 +124,8 @@
     dataType: 'json',
     success: function(json) {
       if (json.status == 'Success') {
-    pageData.page_header = json.user.tripname;
-    pageData.page_body = userBody(json.user);
+    pageData.page_header = json.user.username;
+    pageData.page_body = tripBody(json.user);
     build_page();
       }
     }
