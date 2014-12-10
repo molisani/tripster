@@ -20,7 +20,7 @@
                 </div>
                 <a href="#" class="list-group-item">
                   <div class="input-group">
-                    <input type="text" size="100" class="form-control" value="{{aboutme}}">
+                    <input type="text" class="form-control" value="{{aboutme}}" id="aboutme-input">
                   </div>
                 </a>
                 <br>
@@ -31,7 +31,7 @@
 		  </div>
 		  <a href="#" class="list-group-item">  
 		    <div class="input-group">
-		      <input type="text" class="form-control" value="{{interests}}">
+		      <input type="text" class="form-control" value="{{interests}}" id="interests-input">
 		    </div>
 		  </a>
 	          <br>
@@ -44,7 +44,7 @@
                   </div>
                   <a href="#" class="list-group-item">
                     <div class="input-group">
-                      <input type="text" class="form-control" value="{{birthday}}">
+                      <input type="text" class="form-control" value="{{birthday}}" id="birthday-input">
                     </div>
                   </a>
                   <br>
@@ -55,7 +55,7 @@
               </div>
               <a href="#" class="list-group-item">
                 <div class="input-group">
-                  <input type="text" class="form-control" value="{{email}}">
+                  <input type="text" class="form-control" value="{{email}}" id="email-input">
                 </div>
               </a>
               <br>
@@ -66,14 +66,14 @@
               </div>
               <a href="#" class="list-group-item">
                 <div class="input-group">
-                  <input type="text" class="form-control" value="{{affiliation}}">
+                  <input type="text" class="form-control" value="{{affiliation}}" id="affiliation-input">
                 </div>
               </a>
               <br>
             </div>
 	  </div>
 	  <div class="row">
-	      <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Save Changes</button>
+	      <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin" id="user-info-btn">Save Changes</button>
 	  </div>
 	</div>
       </div>
@@ -86,12 +86,12 @@
             </div>
             <a href="#" class="list-group-item">
               <div class="input-group">
-		<input type="text" class="form-control" placeholder="New Password">
+		<input type="text" class="form-control" placeholder="New Password" id="password-input">
               </div>
             </a>
 	  </div>
 	  <div class="col-md-4">
-	    <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin">Update Password</button>
+	    <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin" id="user-password-btn">Update Password</button>
 	  </div>
 	</div>
       </div>
@@ -138,6 +138,50 @@
     }
       });
     }
+
+    $(document).on("click", '#user-password-btn', function(e){
+      if ($('#password-input').val() == "") return;
+      $.ajax({
+        url: '../api/user.py',
+        type: 'post',
+        data: {
+          action: 'change_password',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          password: $('#password-input').val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
+    $(document).on("click", '#user-info-btn', function(e){
+      $.ajax({
+        url: '../api/user.py',
+        type: 'post',
+        data: {
+          action: 'update_info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          birthday: $('#birthday-input').val(),
+          email: $('#email-input').val(),
+          about_me: $('#aboutme-input').val(),
+          interests: $('#interests-input').val(),
+          affiliation: $('#affiliation-input').val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
       
     });
   </script>
