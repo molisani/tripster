@@ -64,7 +64,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "Create New Trip",
+      pageData.page_header = "<h1>Create New Trip</h1>",
       pageData.page_body = $('#main-content').html()
 
       if ($.cookie("username")) {
@@ -87,7 +87,7 @@
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./edit_trip.html?id=" + json.id;
+            //window.location = "./trip_edit.html?id=" + json.id;
           }
         }
       });
