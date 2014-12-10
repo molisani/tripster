@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Handlebars -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+  </head>
+
+  <body>
+    <section id="main-content">
+		<div class="panel-body">
+			<div class="container-fluid">
+				<div class="row">
+					<!-- must check if image or video... if image, do this:  -->
+					<div>
+						<img src="http://upload.wikimedia.org/wikipedia/commons/c/cf/Bar_Harbor_ME_dusk.jpg" class="img-responsive">
+					</div>
+					<!-- else if video do this: -->
+					<!-- for videos, need to change the watch?v= to embed/ -->
+					<div class="embed-responsive embed-responsive-16by9">
+						<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/a7SouU3ECpU"></iframe>
+					</div>
+					<br>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<div class="list-group">
+							<a href="#" class="list-group-item active">
+							<h4 class="list-group-item-heading">Likes</h4>
+							<a href="#" class="list-group-item">My info</a>
+							</a>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="list-group">
+							<a href="#" class="list-group-item active">
+							<h4 class="list-group-item-heading">Comments</h4>
+							<a href="#" class="list-group-item">My info</a>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+      </div>
+    </section>
+  </body>
+
+  <script src="js/field_utils.js"></script>
+  <script src="js/jquery.cookie.min.js"></script>
+  <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+  <script type="text/javascript">
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.page_header = "[[location]]",
+      pageData.page_body = $('#main-content').html(),
+      pageData.page_sidebar = $('#sidebar-content').html()
+
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+        sidebarData.username = $.cookie("username");
+      }
+
+      build_page();
+      load_sidebar();
+
+      var content = $_GET('id');
+      if (trip != "null") {
+        $.ajax({
+          url: '../api/content.py',
+          type: 'post',
+          data: {
+            action: 'get_content_info',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            content_id: content
+          },
+          dataType: 'json',
+          success: function(json) {
+            if (json.status == 'Success') {
+              pageData.page_header = json.content.location;
+              build_page();
+            }
+          }
+        });
+      }
+    });
+  </script>
+</html>

@@ -30,7 +30,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "Welcome to Tripster!";
+      pageData.page_header = "<h1>Welcome to Tripster!</h1>";
       pageData.page_body = $('#main-content').html();
 
       if ($.cookie("username")) {

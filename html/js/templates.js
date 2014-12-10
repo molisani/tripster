@@ -10,7 +10,14 @@ function build_sidebar() {
     build_page();
 }
 
+function display_error(err) {
+    console.log(err);
+    $('body').append(Handlebars.templates['result-modal.tmpl'](err));
+    $('#result-modal').modal({show: true, keyboard: true});
+}
+
 function load_sidebar() {
+    var err = null;
     $.when(
         $.ajax({
             url: '../api/user.py',
@@ -22,7 +29,13 @@ function load_sidebar() {
                 id: $.cookie('user_id')
             },
             dataType: 'json',
-            success: function(json) { sidebarData.friends = json.friends; }
+            success: function(json) { 
+                if (json.status == "Success") {
+                    sidebarData.friends = json.friends;
+                } else {
+                    err = json;
+                }
+            }
         }),
         $.ajax({
             url: '../api/trip.py',
@@ -33,7 +46,17 @@ function load_sidebar() {
                 token: $.cookie('token')
             },
             dataType: 'json',
-            success: function(json) { sidebarData.trips = json.trips; }
+            success: function(json) { 
+                if (json.status == "Success") {
+                    sidebarData.trips = json.trips; 
+                } else {
+                    err = json;
+                }
+            }
         })
-    ).done(function() { build_sidebar(); });
+    ).done(function() { 
+        if (err != null) {
+            display_error(err);
+        } else build_sidebar();
+    });
 }

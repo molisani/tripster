@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="col-sm-2">
-        <a href="./create_trip.html" class="btn btn-primary navbar-btn" id="create-trip-btn">Create New Trip</a>
+        <a href="./trip_create.html" class="btn btn-primary navbar-btn" id="create-trip-btn">Create New Trip</a>
       </div>
       {{/if}}
       <div class="col-sm-3 {{#unless username}}col-sm-offset-7{{/unless}}">
@@ -25,7 +25,7 @@
           <ul class="nav navbar-nav">
             <li>
               {{#if username}}
-              <a href="./edit_user?id={{user_id}}">Logged in as <b>{{username}}</b></a>
+              <a href="./user_edit.html?id={{user_id}}"><b>{{username}}</b></a>
               {{else}}
               <a href="./login.html">Login</a>
               {{/if}}
@@ -41,9 +41,7 @@
   <div class="row">
     <div class="col-sm-{{#if page_sidebar}}9{{else}}12{{/if}}">
       {{#if page_header}}
-      <div class="page-header">
-        <h1>{{{page_header}}}</h1>
-      </div>
+      <div class="page-header">{{{page_header}}}</div>
       {{/if}}
       <div class="panel panel-default">{{{page_body}}}</div>
     </div>

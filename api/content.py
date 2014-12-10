@@ -73,11 +73,13 @@ elif (validate_token(post('user_id'), post('token'))):
             content = {}
             content_info = execute_query("Select * From content Where id = \"%s\"" % (content_id))
             if len(content_info) > 0:
-                content['status'] = 'Success'
+                data['status'] = 'Success'
                 content['id'] = content_id
                 content['album_id'] = content_info[0][1]
-                content['location_id'] = content_info[0][2]
-                content['url'] = content_info[0][3]
+                content['location'] = execute_query("Select locationname From locations Where id = \"%s\"" %(content_info[0][2]))[0][0]
+                url = content_info[0][3]
+                url = url.replace("watch?v=","embed/")
+                content['url'] = url
                 content['type'] = content_info[0][4]
                 likes_query = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
                 likes = []
@@ -98,8 +100,8 @@ elif (validate_token(post('user_id'), post('token'))):
                     content['comments'] = comments
                 
             else:
-                content['status'] = 'Failure'
-                content['message'] = 'No content found with given id'
+                data['status'] = 'Failure'
+                data['message'] = 'No content found with given id'
             data['content'] = content
         else:
             data['status'] = 'Failure'
@@ -124,10 +126,10 @@ elif (validate_token(post('user_id'), post('token'))):
             album = {}
             album_info = execute_query("Select * From albums Where id = \"%s\"" % (album_id))
             if len(album_info) > 0:
-                album['status'] = 'Success'
+                data['status'] = 'Success'
                 album['id'] = album_id
                 album['trip_id'] = album_info[0][1]
-                album['creator_id'] = album_info[0][2]
+                album['creator'] = execute_query("Select fullname From users Where id = \"%s\"" % (album_info[0][2]))[0][0]
                 album['albumname'] = album_info[0][3]
                 album['privacy'] = album_info[0][4]
                 
@@ -136,14 +138,16 @@ elif (validate_token(post('user_id'), post('token'))):
                 for content in content_query:
                     c = {}
                     c['content_id'] = content[0]
-                    c['url'] = content[3]
+                    url = content[3]
+                    url = str.replace("watch?v=","embed/")
+                    c['url'] = url
                     contents+= [c]
                     
                 if len(contents) > 0:
                     album['contents'] = contents
                 
             else: 
-                album['status'] = 'Failure'
+                data['status'] = 'Failure'
                 album['message'] = 'No album found for that id'
             data['album'] = album
         else:

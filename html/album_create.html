@@ -13,19 +13,11 @@
     <section id="main-content">
       <div class="container-fluid">
         <br>
-        <form class="form-horizontal" role="form" id="new-trip-form" action="javascript:void(0);">
+        <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
           <input type="hidden" name="action" value="create">
           <div class="form-group">
             <div class="col-sm-12">
-              <input type="text" class="form-control" name="tripname" placeholder="Trip Name">
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="startdate" placeholder="Start Date YYYY-MM-DD">
-            </div>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="enddate" placeholder="End Date YYYY-MM-DD">
+              <input type="text" class="form-control" name="albumname" placeholder="Album Name">
             </div>
           </div>
           <div class="form-group">
@@ -47,7 +39,7 @@
               <br></br>
               <br></br>
               <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-trip-btn">Create Trip</button>
+                <button type="submit" class="btn btn-success" id="new-album-btn">Create Album</button>
               </div>
             </div>
           </div>
@@ -64,7 +56,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "Create New Trip",
+      pageData.page_header = "Create New Album",
       pageData.page_body = $('#main-content').html()
 
       if ($.cookie("username")) {
@@ -75,18 +67,18 @@
       build_page();
       load_sidebar();
     });
-    $(document).on("click", '#new-trip-btn', function(e) {
-      newTrip = formData('#new-trip-form');
-      newTrip.privacy = $('#vis-options[class*="active"] input').attr("value");
-      console.log(newTrip);
+    $(document).on("click", '#new-album-btn', function(e) {
+      newAlbum = formData('#new-album-form');
+      newAlbum.privacy = $('#vis-options[class*="active"] input').attr("value");
+      console.log(newAlbum);
       $.ajax({
-        url: '../api/trip.py',
+        url: '../api/content.py',
         type: 'post',
-        data: newTrip,
+        data: newAlbum,
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./edit_trip.html?id=" + json.id;
+            //window.location = "./edit_album.html?id=" + json.id;
           }
         }
       });

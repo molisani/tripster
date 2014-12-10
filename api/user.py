@@ -51,6 +51,11 @@ elif has_fields(['user_id', 'token']):
                     user['id'] = post('id')
                     user['username'] = info[0][1]
                     user['fullname'] = info[0][3]
+                    user['birthday'] = str(info[0][6])
+                    user['email'] = info[0][7]
+                    user['aboutme'] = info[0][8]
+                    user['interests'] = info[0][9]
+                    user['affiliation'] = info[0][10]
                     data['user'] = user
             else:
                 data['status'] = 'Failure'
@@ -88,7 +93,7 @@ elif has_fields(['user_id', 'token']):
                 data['message'] = 'Insufficient information given'
         elif post('action') == "send_request":
             if has_fields(['id']):
-                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('friend_id')))
+                execute_query("INSERT INTO friends (user1_id, user2_id) VALUES (\"%s\", \"%s\")" % (user_id, post('id')))
                 data['status'] = 'Success'
                 data['message'] = 'Successfully added friend request.'
             else:

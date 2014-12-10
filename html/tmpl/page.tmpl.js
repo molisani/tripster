@@ -9,7 +9,7 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   var stack1, buffer = "      <div class=\"col-sm-5\">\r\n        <div class=\"navbar-form navbar-right\">\r\n          <div class=\"input-group\">\r\n            <form id=\"search-form\" action=\"javascript:void(0);\">\r\n              <input id=\"search-query\" type=\"text\" class=\"form-control\" ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.q : depth0), {"name":"if","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + ">\r\n            </form>\r\n            <span class=\"input-group-btn\">\r\n              <button id=\"search-submit\" class=\"btn btn-default\" type=\"button\">Search</button>\r\n            </span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-sm-2\">\r\n        <a href=\"./create_trip.html\" class=\"btn btn-primary navbar-btn\" id=\"create-trip-btn\">Create New Trip</a>\r\n      </div>\r\n";
+  return buffer + ">\r\n            </form>\r\n            <span class=\"input-group-btn\">\r\n              <button id=\"search-submit\" class=\"btn btn-default\" type=\"button\">Search</button>\r\n            </span>\r\n          </div>\r\n        </div>\r\n      </div>\r\n      <div class=\"col-sm-2\">\r\n        <a href=\"./trip_create.html\" class=\"btn btn-primary navbar-btn\" id=\"create-trip-btn\">Create New Trip</a>\r\n      </div>\r\n";
 },"6":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "placeholder=\""
@@ -19,9 +19,9 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   return "col-sm-offset-7";
   },"10":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "              <a href=\"./edit_user?id="
+  return "              <a href=\"./user_edit.html?id="
     + escapeExpression(((helper = (helper = helpers.user_id || (depth0 != null ? depth0.user_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"user_id","hash":{},"data":data}) : helper)))
-    + "\">Logged in as <b>"
+    + "\"><b>"
     + escapeExpression(((helper = (helper = helpers.username || (depth0 != null ? depth0.username : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"username","hash":{},"data":data}) : helper)))
     + "</b></a>\r\n";
 },"12":function(depth0,helpers,partials,data) {
@@ -50,10 +50,10 @@ templates['page.tmpl'] = template({"1":function(depth0,helpers,partials,data) {
   },"19":function(depth0,helpers,partials,data) {
   return "12";
   },"21":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, buffer = "      <div class=\"page-header\">\r\n        <h1>";
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, buffer = "      <div class=\"page-header\">";
   stack1 = ((helper = (helper = helpers.page_header || (depth0 != null ? depth0.page_header : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"page_header","hash":{},"data":data}) : helper));
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "</h1>\r\n      </div>\r\n";
+  return buffer + "</div>\r\n";
 },"23":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, buffer = "    <div class=\"col-sm-3\">\r\n      <div class=\"panel panel-default\">";
   stack1 = ((helper = (helper = helpers.page_sidebar || (depth0 != null ? depth0.page_sidebar : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"page_sidebar","hash":{},"data":data}) : helper));

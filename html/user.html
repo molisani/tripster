@@ -1,66 +1,108 @@
 <html>
-  <head>
-    <!-- jQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <!-- Handlebars -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-  </head>
+<head>
+  <!-- jQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!-- Handlebars -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+</head>
 
-  <body>
-    <section id="main-content">
-      <div class="panel-body">
-        <div class="container-fluid">
-          <div class="row">
-            <p>Most of the stuff will go here.</p>
+<body>
+  <script id="main-content" type="text/x-handlebars-template">>
+    <div class="panel-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="list-group">
+	      <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">About Me</h4>
+              </div>
+	      <div class="list-group-item">{{aboutme}}</div>
+            </div>
+          </div>
+	  <div class="col-md-6">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Interests</h4>
+              </div>
+              <div class="list-group-item">{{interests}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+	  <div class="col-md-4">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Birthday</h4>
+              </div>
+              <div class="list-group-item">{{birthday}}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Email</h4>
+              </div>
+              <div class="list-group-item">{{email}}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Affiliation</h4>
+              </div>
+              <div class="list-group-item">{{affiliation}}</div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
-  </body>
-
-  <script src="js/field_utils.js"></script>
-  <script src="js/jquery.cookie.min.js"></script>
-  <script src="tmpl/page.tmpl.js" id="page-template"></script>
-  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
-  <script type="text/javascript">
-    $.when(
-      $.getScript("./js/templates.js")
-    ).done(function(){
-      pageData.page_header = "[[username]]",
-      pageData.page_body = $('#main-content').html(),
-      pageData.page_sidebar = $('#sidebar-content').html()
-
-      if ($.cookie("username")) {
-        pageData.username = $.cookie("username");
-        sidebarData.username = $.cookie("username");
-      }
-
-      build_page();
-      load_sidebar();
-
-      var trip = $_GET('id');
-      if (trip != "null") {
-        $.ajax({
-          url: '../api/user.py',
-          type: 'post',
-          data: {
-            action: 'info',
-            user_id: $.cookie('user_id'),
-            token: $.cookie('token'),
-            id: trip
-          },
-          dataType: 'json',
-          success: function(json) {
-            if (json.status == 'Success') {
-              pageData.page_header = json.user.fullname;
-              build_page();
-            }
-          }
-        });
-      }
-    });
+    </div>
   </script>
-</html>
+</body>
+
+<script src="js/field_utils.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="tmpl/page.tmpl.js" id="page-template"></script>
+<script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+<script type="text/javascript">
+$.when(
+  $.getScript("./js/templates.js")
+  ).done(function(){
+    var userBody = Handlebars.compile($('#main-content').html());
+    pageData.page_header = "[[username]]";
+    pageData.page_body = userBody({});
+
+    if ($.cookie("username")) {
+      pageData.username = $.cookie("username");
+      sidebarData.username = $.cookie("username");
+    }
+
+    build_page();
+    load_sidebar();
+
+    var user = $_GET('id');
+    if (user != "null") {
+      $.ajax({
+        url: '../api/user.py',
+        type: 'post',
+        data: {
+          action: 'info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: user
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            pageData.page_header = "<h1>" + json.user.fullname + "<h1>" +'<button type="button" class="btn btn-success btn-xs">Friends</button>';
+            pageData.page_body = userBody(json.user);
+            build_page();
+          }
+        }
+      });
+    }
+  });
+  </script>
+  </html>
