@@ -51,7 +51,7 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'recommend_locations':
         #recommends 5 locations based on user_id where
         #users friends have been and user hasn't
-        location_query = execute_query("Select id, rating From locations l Inner Join (Select Distinct V.location_id From takes T Inner Join ( Select Distinct F.user2_id From users U Inner Join friends F on U.id = F.user1_id Where U.id = \"%s\") FR on FR.user2_id = T.user_id Inner Join visits V on V.trip_id = T.trip_id Where V.location_id Not In  (Select Distinct V.location_id From users U Inner Join takes T on T.user_id = U.id Inner Join visits V on V.trip_id = T.trip_id Where U.id = \"%s\")) locs on l.id = locs.location_id Order By rating Desc" % (user_id, user_id))
+        location_query = execute_query("SELECT id, rating FROM locations l INNER JOIN (SELECT DISTINCT V.location_id FROM takes T INNER JOIN ( SELECT DISTINCT F.user2_id FROM users U INNER JOIN friends F on U.id = F.user1_id WHERE U.id = \"%s\") FR on FR.user2_id = T.user_id INNER JOIN visits V on V.trip_id = T.trip_id WHERE V.location_id Not In  (SELECT DISTINCT V.location_id FROM users U INNER JOIN takes T on T.user_id = U.id INNER JOIN visits V on V.trip_id = T.trip_id WHERE U.id = \"%s\")) locs on l.id = locs.location_id ORDER BY rating Desc" % (user_id, user_id))
         if len(location_query) > 0:
             rec_locs = {}
             locations = []
@@ -65,7 +65,7 @@ elif (validate_token(post('user_id'), post('token'))):
         #if no locations returned, returns top five locations
         #that user hasn't been to
         else:
-            location_query = execute_query("Select id, rating From locations Where id not in (Select Distinct v.location_id From takes t Inner Join visits v on v.trip_id = t.trip_id Where user_id = \"%s\") Order By rating" % (user_id))
+            location_query = execute_query("SELECT id, rating FROM locations WHERE id not in (SELECT DISTINCT v.location_id FROM takes t INNER JOIN visits v on v.trip_id = t.trip_id WHERE user_id = \"%s\") ORDER BY rating" % (user_id))
             if len(location_query) > 0:
                 rec_locs = {}
                 locations = []
@@ -79,6 +79,19 @@ elif (validate_token(post('user_id'), post('token'))):
             else:
                 data['status'] = 'Failure'
                 data['message'] = 'No available locations to recommend'
+    elif action == 'recommend_friends':
+        query = execute_query("SELECT user2_id, count(user2_id) as c from friends f1 INNER JOIN (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") ff on ff.u2 = f1.user1_id WHERE user2_id <> \"%s\" AND user2_id not in (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") GROUP BY user2_id ORDER BY c" % (user_id, user_id, user_id))
+        if len(query) > 0:
+            data['status'] = 'Success'
+            data['rec_id'] = query[0][0]
+        else:
+            query = execute_query("SELECT id from users WHERE id <> \"%s\" AND id not in (SELECT user2_id from friends WHERE user1_id = \"%s\")" % (user_id, user_id))
+            if len(query) > 0:
+                data['status'] = 'Success'
+                data['rec_id'] = query[0][0]
+            else:
+                data['status'] = 'Failure'
+                data['message'] = 'No available friends to recommend'
     else:
         data['status'] = 'Failure'
         data['message'] = 'No action specified' 
