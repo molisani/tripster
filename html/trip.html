@@ -39,9 +39,9 @@
             {{/each}}
             <div class="list-group-item">
               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Write new comment...">
+                <input type="text" class="form-control" placeholder="Write new comment..." id="trip-comment-input">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Submit</button>
+                  <button class="btn btn-default" type="button" id="trip-comment-btn">Submit</button>
                 </span>
               </div>
             </div>
@@ -208,6 +208,27 @@ $.when(
         }
       });
     }
+
+    $(document).on("click", '#trip-comment-btn', function(e){
+      if ($('#trip-comment-input').val() == "") return;
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'comment',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          comment: $('#trip-comment-input').val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
 
     $(document).on("click", '#leave-btn', function(e) {
       $.ajax({
