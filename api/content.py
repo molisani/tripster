@@ -79,30 +79,33 @@ elif (validate_token(post('user_id'), post('token'))):
                 content['location'] = execute_query("Select locationname From locations Where id = \"%s\"" %(content_info[0][2]))[0][0]
                 url = content_info[0][3]
                 url = url.replace("watch?v=","embed/")
-                content['url'] = url
+                if content_info[0][4] == "Image":
+                    content['image_url'] = url
+                elif content_info[0][4] == "Video":
+                    content['video_url'] = url
                 content['type'] = content_info[0][4]
                 likes_query = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
-                likes = []
-                for like in likes_query:
-                    l = {}
-                    l['user_id'] = like[0]
-                    likes += [l]
-                if len(likes) > 0:
-                    content['likes'] = likes
-                comments_query = execute_query("Select user_id, comment From content_comments Where content_id = \"%s\"" % (content_id))
+                content['likes'] = len(likes_query)
+                # likes = []
+                # for like in likes_query:
+                #     l = {}
+                #     l['user_id'] = like[0]
+                #     likes += [l]
+                # if len(likes) > 0:
+                #     content['likes'] = likes
+                comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id Where content_id = \"%s\"" % (content_id))
                 comments = []
                 for comment in comments_query:
                     c = {}
-                    c['user_id'] = comment[0]
+                    c['fullname'] = comment[0]
                     c['comment'] = comment[1]
                     comments+= [c]
                 if len(comments) > 0:
                     content['comments'] = comments
-                
+                data['content'] = content
             else:
                 data['status'] = 'Failure'
                 data['message'] = 'No content found with given id'
-            data['content'] = content
         else:
             data['status'] = 'Failure'
             data['message'] = 'No content_id given'
@@ -138,13 +141,10 @@ elif (validate_token(post('user_id'), post('token'))):
                 for content in content_query:
                     c = {}
                     c['content_id'] = content[0]
-                    url = content[3]
-                    url = str.replace("watch?v=","embed/")
-                    c['url'] = url
+                    c['url'] = content[3].replace("watch?v=","embed/")
                     contents+= [c]
-                    
                 if len(contents) > 0:
-                    album['contents'] = contents
+                    album['content'] = contents
                 
             else: 
                 data['status'] = 'Failure'

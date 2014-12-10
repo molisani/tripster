@@ -13,6 +13,9 @@ function build_sidebar() {
 function display_error(err) {
     console.log(err);
     $('body').append(Handlebars.templates['result-modal.tmpl'](err));
+    $.cookie('username', '', {expires: -1});
+    $.cookie('user_id', '', {expires: -1});
+    $.cookie('token', '', {expires: -1});
     $('#result-modal').modal({show: true, keyboard: true});
 }
 

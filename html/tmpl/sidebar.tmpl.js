@@ -35,7 +35,7 @@ templates['sidebar.tmpl'] = template({"1":function(depth0,helpers,partials,data)
   return buffer + "</td></tr>\r\n";
 },"7":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "<a href=\"./edit_trip.html?id="
+  return "<a href=\"./trip_edit.html?id="
     + escapeExpression(((helper = (helper = helpers.trip_id || (depth0 != null ? depth0.trip_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trip_id","hash":{},"data":data}) : helper)))
     + "\"><b>[Edit]</b></a>";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {

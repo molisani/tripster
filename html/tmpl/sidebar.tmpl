@@ -29,7 +29,7 @@
   <thead></thead>
   <tbody>
     {{#each trips}}
-    <tr><td><a href="./trip.html?id={{trip_id}}" class="success">{{tripname}}</a> {{#if creator_id}}<a href="./edit_trip.html?id={{trip_id}}"><b>[Edit]</b></a>{{/if}}</td></tr>
+    <tr><td><a href="./trip.html?id={{trip_id}}" class="success">{{tripname}}</a> {{#if creator_id}}<a href="./trip_edit.html?id={{trip_id}}"><b>[Edit]</b></a>{{/if}}</td></tr>
     {{/each}}
   </tbody>
 </table>

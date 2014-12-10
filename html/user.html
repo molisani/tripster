@@ -95,6 +95,7 @@ $.when(
         },
         dataType: 'json',
         success: function(json) {
+          console.log(json);
           if (json.status == 'Success') {
             pageData.page_header = "<h1>" + json.user.fullname + "<h1>" +'<button type="button" class="btn btn-success btn-xs">Friends</button>';
             pageData.page_body = userBody(json.user);
