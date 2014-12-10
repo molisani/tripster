@@ -214,6 +214,17 @@ elif validate_token(user_id, post('token')):
         else:
             data['status'] = 'Failure'
             data['message'] = 'Insufficient information given'
+    # Remember to check for permissions
+    elif action == 'change_name':
+        if has_fields(['id','name']):
+            trip_id = post('id')
+            trip_name = post('name')
+            execute_query("UPDATE trips SET tripname= \"%s\" WHERE trips.id = \"%s\"" % (trip_name, trip_id))
+            data['status'] = 'Success'
+            data['message'] = 'Updated trip name'
+        else:
+            data['status'] = 'Failure'
+            data['message'] = 'Insufficient information given'
     elif action == 'comment':
         #requires trip_id as id and the comment
         if has_fields(['id','comment']):
