@@ -1,104 +1,94 @@
 <html>
-  <head>
-    <!-- jQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <!-- Handlebars -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-  </head>
+<head>
+  <!-- jQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!-- Handlebars -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+</head>
 
-  <body>
-    <script id="main-content"type="text/x-handlebars-template">
-      <div class="panel-body">
-        <div class="container-fluid">
-          <div class="row">
-		    {{#each trips}}
-            <div class="well well-sm">
-			    <h3>{{tripname}}</h3>
-				<div class="row">				
-				  <div class="col-xs-6 col-md-4">
-					<a href="#" class="thumbnail">
-					  <img data-src="holder.js/100%x180" alt="Picture from this trip">
-					</a>
-				  </div>	
-				<div class="col-xs-6 col-md-4">
-				  <div class="list-group">
-				    <a href="#" class="list-group-item active">
-					  Who's Going?
-					</a>
-					<a href="#" class="list-group-item">
-					  {{#each users_attending}}
-					    {{fullname}}
-						<br>
-					  {{/each}}
-					</a>
-				  </div>
-				</div>
-				<div class="col-xs-6 col-md-4">
-				  <div class="list-group">
-				    <a href="#" class="list-group-item active">
-					  Where?
-					</a>
-					<a href="#" class="list-group-item">
-					  {{#each locations}}
-					    {{locationname}}
-						<br>
-                      {{/each}}						
-					</a>
-				  </div>
-				</div>
-			  </div>
-			</div>
-			{{/each}}
-          </div>		  
-        </div>
+<body>
+  <section id="main-content"type="text/x-handlebars-template">
+    <div class="panel-body">
+      <div class="container-fluid">
+        <div class="row">
+          {{#each trips}}
+          <div class="well well-sm">
+            <h3>{{tripname}}</h3>
+            <div class="row">				
+              <div class="col-md-4">
+                <a href="#" class="thumbnail">
+                  <img data-src="holder.js/100%x180" alt="Picture from this trip">
+                </a>
+              </div>	
+              <div class="col-md-4">
+                <div class="list-group">
+                  <div class="list-group-item active">Who's Going?</div>
+                  {{#each users_attending}}
+                  <a href="./user.html?id={{user_id}}" class="list-group-item">{{fullname}}</a>
+                  {{/each}}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="list-group">
+                  <div class="list-group-item active">Where?</div>
+                  {{#each locations}}
+                  <a href="./location.html?id={{location_id}}" class="list-group-item">{{locationname}}</a>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>		  
       </div>
-    </script>
-  </body>
+    </div>
+  </section>
+</body>
 
-  <script src="js/field_utils.js"></script>
-  <script src="js/jquery.cookie.min.js"></script>
-  <script src="tmpl/page.tmpl.js" id="page-template"></script>
-  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
-  <script src="tmpl/result-modal.tmpl.js" id="result-modal-template"></script>
-  <script type="text/javascript">
-    $.when(
-      $.getScript("./js/templates.js")
-    ).done(function(){
-      var pageBody = Handlebars.compile($('#main-content').html());
+<script src="js/field_utils.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="tmpl/page.tmpl.js" id="page-template"></script>
+<script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+<script src="tmpl/result-modal.tmpl.js" id="result-modal-template"></script>
+<script type="text/javascript">
+$.when(
+  $.getScript("./js/templates.js")
+  ).done(function(){
+    var pageBody = Handlebars.compile($('#main-content').html());
 	  //var requestHeader = Handlebars.compile($'#newsfeed-template').html());
-      pageData.page_header = "Welcome";
-      pageData.page_body = pageBody({});
+  pageData.page_header = "Welcome";
+  pageData.page_body = pageBody({});
 
-      if ($.cookie("username")) {
-        pageData.username = $.cookie("username");
-        pageData.user_id = $.cookie("user_id");
-        sidebarData.username = $.cookie("username");
+  if ($.cookie("username")) {
+    pageData.username = $.cookie("username");
+    pageData.user_id = $.cookie("user_id");
+    sidebarData.username = $.cookie("username");
+  }
+
+  build_page();
+  load_sidebar();
+
+  $.ajax({
+    url: '../api/newsfeed.py',
+    type: 'post',
+    data: {
+      action: 'info',
+      user_id: $.cookie('user_id'),
+      token: $.cookie('token')
+    },
+    dataType: 'json',
+    success: function(json) {
+      if (json.status == 'Success') {
+        pageData.page_header = "<h1>Welcome To Tripster</h1>";
+        pageData.page_body = pageBody(json);
+        build_page();
       }
+    }
+  });
 
-      build_page();
-      load_sidebar();
-	  
-      $.ajax({
-        url: '../api/newsfeed.py',
-        type: 'post',
-        data: {
-          action: 'info',
-          user_id: $.cookie('user_id'),
-          token: $.cookie('token')
-        },
-        dataType: 'json',
-        success: function(json) {
-          if (json.status == 'Success') {
-            pageData.page_header = "Welcome To Tripster";
-            pageData.page_body = pageBody(json.trip);
-            build_page();
-          }
-        }
-      });
-	
-    });
+});
   </script>
-</html>
+  </html>
