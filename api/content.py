@@ -73,7 +73,9 @@ elif (validate_token(post('user_id'), post('token'))):
                 data['status'] = 'Success'
                 content['id'] = content_id
                 content['album_id'] = content_info[0][1]
-                content['location'] = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))[0][0]
+                location_q = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))
+                if len(location_q) > 0:
+                    content['location'] = location_q[0][0]
                 url = content_info[0][3]
                 url = url.replace("watch?v=","embed/")
                 content['thumb_url'] = url
