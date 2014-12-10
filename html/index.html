@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <script id="main-content">
+    <section id="main-content">
       <div class="panel-body">
         <div class="container-fluid">
           <div class="row">
@@ -55,7 +55,7 @@
           </div>		  
         </div>
       </div>
-    </script>
+    </section>
   </body>
 
   <script src="js/field_utils.js"></script>
@@ -67,8 +67,9 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
+      var pageBody = Handlebars.compile($('#main-content').html());
       pageData.page_header = "Welcome to Tripster!";
-      pageData.page_body = $('#main-content').html();
+      pageData.page_body = pageBody({});
 
       if ($.cookie("username")) {
         pageData.username = $.cookie("username");
@@ -79,8 +80,6 @@
       build_page();
       load_sidebar();
 	  
-	  var trip = $_GET('id');
-    if (trip != "null") {
       $.ajax({
         url: '../api/newsfeed.py',
         type: 'post',
@@ -88,7 +87,7 @@
           action: 'info',
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
-          id: trip
+          trip_id: 1
         },
         dataType: 'json',
         success: function(json) {
@@ -99,7 +98,6 @@
           }
         }
       });
-    }
 	
     });
   </script>

@@ -51,7 +51,7 @@ templates['sidebar.tmpl'] = template({"1":function(depth0,helpers,partials,data)
     + "\"><b>[Edit]</b></a>";
 },"11":function(depth0,helpers,partials,data) {
   var stack1, buffer = "<div class=\"panel-body\" style=\"padding-top: 0px;\">\r\n  <br style=\"margin-top: 5px;\"></br>\r\n  <span class=\"label label-warning\">Have you ever been to?</span>\r\n</div>\r\n<table class=\"table\">\r\n  <thead></thead>\r\n  <tbody>\r\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rec_location : depth0), {"name":"each","hash":{},"fn":this.program(12, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rec_locations : depth0), {"name":"each","hash":{},"fn":this.program(12, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "  </tbody>\r\n</table>\r\n";
 },"12":function(depth0,helpers,partials,data) {

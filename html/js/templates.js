@@ -60,6 +60,25 @@ function load_sidebar() {
             }
         }),
         $.ajax({
+            url: '../api/tripster.py',
+            type: 'post',
+            data: {
+                action: 'recommend_locations',
+                user_id: $.cookie('user_id'),
+                token: $.cookie('token'),
+                id: $.cookie('user_id')
+            },
+            dataType: 'json',
+            success: function(json) { 
+                console.log(json);
+                if (json.status == "Success") {
+                    sidebarData.rec_locations = json.locations;
+                } else {
+                    err = json;
+                }
+            }
+        }),
+        $.ajax({
             url: '../api/trip.py',
             type: 'post',
             data: {

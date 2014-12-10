@@ -58,7 +58,7 @@ elif (validate_token(post('user_id'), post('token'))):
             for location in location_query:
                 l = {}
                 l['location_id'] = location[0]
-                l['location_name'] = location[2]
+                l['locationname'] = location[2]
                 locations+= [l]
             num_results = min (len(locations),5)
             data['status'] = 'Success'
@@ -73,7 +73,7 @@ elif (validate_token(post('user_id'), post('token'))):
                 for location in location_query:
                     l = {}
                     l['location_id'] = location[0]
-                    l['location_name'] = location[2]
+                    l['locationname'] = location[2]
                     locations+= [l]
                 num_results = min (len(locations),5)
                 data['status'] = 'Success'
