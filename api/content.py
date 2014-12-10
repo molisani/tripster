@@ -15,10 +15,10 @@ elif (validate_token(post('user_id'), post('token'))):
         #requires a trip_id, albumname, and privacy setting
         if has_fields (['trip_id', 'albumname', 'privacy']):
             query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (post('trip_id'), user_id, post('albumname'), post('privacy')))
-            data['status'] = 'success'
+            data['status'] = 'Success'
             data['message'] = 'Added album to trip'
         else:
-            data['status'] = 'failure'
+            data['status'] = 'Failure'
             data['message'] = 'Attempting to add an album without a trip id, albumname, or privacy flag'
     
     elif action == 'add_content':
@@ -26,44 +26,48 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields (['album_id', 'url', 'type']):
             if has_permissions(user_id, album = post('album_id'), edit = True):
                 query = execute_query("INSERT INTO content (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"% (post('album_id'), post('url'), post ('type')))
-                data['status'] = 'success'
+                data['status'] = 'Success'
                 data['message'] = 'Added content to album'
             else:
-                data['status'] = 'failure'
+                data['status'] = 'Failure'
                 data['message'] = 'Failure: does not have editing permissions on this album'    
         else:
-            data['status'] = 'failure'
+            data['status'] = 'Failure'
             data['message'] = 'Failed to add content, check album_id, url, and type'
     
-    elif action == 'like_content':
+    elif action == 'toggle_like':
         #requires a content_id
         if has_fields (['content_id']):
-            query = execute_query ("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id')))
-            update_rating = execute_query("Call update_content_likes(\"%s\")" % (content_id))
-            data['status'] = 'success'
+            already_likes = len(execute_query("SELECT * FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\"" % (user_id, post('content_id')))) > 0
+            if (already_likes):
+                execute_query("DELETE FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\""% (user_id, post('content_id')))
+            else: 
+                execute_query("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id')))
+            update_rating = execute_query("CALL update_content_likes(\"%s\")" % (post('content_id')))
+            data['status'] = 'Success'
             data['message'] = 'Added like to content'
         else:
-            data['status'] = 'failure'
+            data['status'] = 'Failure'
             data['message'] = 'Failure, no content_id submitted'
     
     elif action == 'comment_content':
         #requires a content_id and a comment
         if has_fields (['content_id','comment']):
             query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
-            data['status'] = 'success'
+            data['status'] = 'Success'
             data['message'] = 'Added comment to content'
         else:
-            data['status'] = 'failure'
+            data['status'] = 'Failure'
             data['message'] = 'Failure, no content_id or comment submitted'
     
     elif action == 'set_album_privacy':
         #requires an album_id and a privacy setting
         if has_fields (['album_id', 'privacy']):
             query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" % (post('album_id'), post('privacy')))
-            data['status'] = 'success'
+            data['status'] = 'Success'
             data['message'] = 'Updated album privacy'
         else:
-            data['status'] = 'failure'
+            data['status'] = 'Failure'
             data['message'] = 'Failure, no album_id or privacy submitted'
             
     elif action == 'get_content_info':
@@ -86,13 +90,8 @@ elif (validate_token(post('user_id'), post('token'))):
                 content['type'] = content_info[0][4]
                 likes_query = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
                 content['likes'] = len(likes_query)
-                # likes = []
-                # for like in likes_query:
-                #     l = {}
-                #     l['user_id'] = like[0]
-                #     likes += [l]
-                # if len(likes) > 0:
-                #     content['likes'] = likes
+                if (int(user_id),) in likes_query:
+                    content['liked'] = user_id
                 comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id Where content_id = \"%s\"" % (content_id))
                 comments = []
                 for comment in comments_query:

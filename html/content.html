@@ -35,11 +35,24 @@
             <div class="list-group-item"><i>{{fullname}} says...</i><br>&nbsp;&nbsp;&nbsp;<b>{{comment}}</b></div>
             {{/each}}
             <div class="list-group-item">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Write new comment...">
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">Submit</button>
-                </span>
+              <div class="row">
+                <div class="col-md-10">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Write new comment...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Submit</button>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="input-group pull-right">
+                    {{#if liked}}
+                    <button class="btn btn-default" type="button" id="content-like-btn">Liked</button>
+                    {{else}}
+                    <button class="btn btn-primary" type="button" id="content-like-btn">Like</button>
+                    {{/if}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -58,7 +71,6 @@ $.when(
   $.getScript("./js/templates.js")
   ).done(function(){
     var contentBody = Handlebars.compile($('#main-content').html());
-    pageData.page_header = "[[content]]";
     pageData.page_body = contentBody({});
 
     if ($.cookie("username")) {
@@ -83,13 +95,31 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = json.content.location;
             pageData.page_body = contentBody(json.content);
             build_page();
           }
         }
       });
     }
+
+    $(document).on("click", '#content-like-btn', function(e){
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+          action: 'toggle_like',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          content_id: content
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
   });
   </script>
   </html>
