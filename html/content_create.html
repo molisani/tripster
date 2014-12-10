@@ -21,7 +21,7 @@
 			      <div class="input-group">
                     <input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
 			        <span class="input-group-btn">
-                      <button class="btn btn-success" type="submit" href="./album.html?id={{album_id}}"
+                      <button class="btn btn-success" type="submit" 
 					  id="new-content-btn">Add Content</button>
                     </span>
 				  </div>
@@ -112,7 +112,9 @@
           dataType: 'json',
           success: function(json){
             if (json.status = "Success") {
-              location.reload();
+			  console.log("blah");
+			  window.location = "./album.html?id=" + album;
+             // location.reload();
             }
           }
 		})
