@@ -56,6 +56,19 @@ elif has_fields(['user_id', 'token']):
                     user['aboutme'] = info[0][8]
                     user['interests'] = info[0][9]
                     user['affiliation'] = info[0][10]
+                    friends = execute_query("SELECT friends.user1_id FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (post('id')))
+                    user['friends'] = friends
+                    if (int(user_id),) in friends:
+                        user['are_friends'] = True
+                    else:
+                        rec_reqs = execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (user_id, user_id))
+                        if (int(post('id')),) in rec_reqs:
+                            user['received_request'] = True
+                        else:
+                            sent_reqs = execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (post('id'), post('id')))
+                            if (int(user_id),) in sent_reqs:
+                                user['sent_request'] = True
+
                     data['user'] = user
             else:
                 data['status'] = 'Failure'
@@ -128,10 +141,10 @@ elif has_fields(['user_id', 'token']):
             data['message'] = 'Successfully updated user information'
         elif post('action') == 'unfriend':
             if has_fields(['id']):
-                execute_query("DELETE FROM friends WHERE user1_id = \"%s\" AND user2_id = \"%s\"" % (user_id, post('friend_id')))
-                execute_query("DELETE FROM friends WHERE user2_id = \"%s\" AND user1_id = \"%s\"" % (user_id, post('friend_id')))
+                execute_query("DELETE FROM friends WHERE user1_id = \"%s\" AND user2_id = \"%s\"" % (user_id, post('id')))
+                execute_query("DELETE FROM friends WHERE user2_id = \"%s\" AND user1_id = \"%s\"" % (user_id, post('id')))
                 data['status'] = 'Success'
-                data['message'] = 'Successfully added friend request.'
+                data['message'] = 'Successfully deleted friendship'
             else:
                 data['status'] = 'Failure'
                 data['message'] = 'Insufficient information given'
