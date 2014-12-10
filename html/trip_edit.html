@@ -27,7 +27,8 @@
               </a>
               <a href="#" class="list-group-item">                
                 <input type="radio" name="optradio"> Only trip members</input>
-              </a>
+              </a>  
+			  <button type="button" class="btn btn-primary btn-sm RbtnMargin" id="save-changes-btn">Update Privacy</button>
             </div>
           </div>				
           <div class="col-md-4">
@@ -37,6 +38,9 @@
             <a href="#" class="list-group-item">  
               <div class="input-group">
                 <input type="text" class="form-control" value="{{tripname}}">
+				  <span class="input-group-btn">
+					<button class="btn btn-default" type="button">Go!</button>
+				  </span>
               </div>
             </a>
             <br>
@@ -46,16 +50,14 @@
               <div class="list-group-item active">
                 <h4 class="list-group-item-heading">Kick People Out</h4>
               </div>
-              {{#each users_attending}}
-              <a href="./user.html?id={{user_id}}" class="list-group-item">
-                <input type="checkbox" name="options" id="option1"> {{fullname}}
-              </a>
-              {{/each}}
-            </div>
+			   {{#each users_attending}}
+			    <a href="./user.html?id={{user_id}}" class="list-group-item">
+				  <input type="checkbox" name="options" id="option1"> {{fullname}}
+				</a>			  
+				{{/each}}  
+			    <button type="button" class="btn btn-primary btn-sm RbtnMargin" id="save-changes-btn">Remove From Trip</button>
+			  </div>
           </div>
-        </div>
-        <div class="row">
-          <button type="button" class="btn btn-primary pull-right btn-sm RbtnMargin" id="save-changes-btn">Save Changes</button>
         </div>
       </div>
     </div>
