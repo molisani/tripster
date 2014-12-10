@@ -16,8 +16,8 @@ elif (validate_token(post('user_id'), post('token'))):
         user = post('user_id')
         trips_query = execute_query("SELECT DISTINCT T.trip_id FROM takes T INNER JOIN friends F ON F.user2_id = T.user_id WHERE F.user1_id = \"%s\"" % (user))
         trips = []
+        data['trips'] = trips
         for trip in trips_query:
-            t = {}
             trip_id = trip[0]
 #           trips += [t]
 #           data['trips'] = trips
@@ -43,6 +43,7 @@ elif (validate_token(post('user_id'), post('token'))):
                     u['fullname'] = user[3]
                     users+= [u]
                     trip['users_attending'] = users
+			      
                         
                 #locations associated
                 l_query = execute_query("Select * From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
@@ -57,15 +58,14 @@ elif (validate_token(post('user_id'), post('token'))):
                         l['country'] = location[4]
                         l['rating'] = str(location[5])
                         locations+=[l]
-                        trip['locations'] = locations
-                        data['trip'] = trip
-                else:
-                        data['status'] = 'Failure'
-                        data['message'] = 'There are no trips with that id'
-            else:
-                data['status'] = 'Failure'
-                data['message'] = 'Trip ID was not included in request.'
-else:
-    data['status'] = 'Failure'
-    data['message'] = 'Token authentication failed. Token may have expired.'                
+                        trip['locations'] = locations						
+                data['trips'].append(trip)
+                data['status'] = 'Success'
+            #else:
+          #      data['status'] = 'Failure'
+            #    data['message'] = 'Trip ID was not included in request.'
+    else:
+        data['status'] = 'Failure'
+        data['message'] = 'Token authentication failed. Token may have expired.'    
+	
 export_json(data)
