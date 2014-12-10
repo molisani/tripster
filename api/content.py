@@ -65,12 +65,12 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields(['content_id']):
             content_id = post('content_id')
             content = {}
-            content_info = execute_query("Select * From content Where id = \"%s\"" % (content_id))
+            content_info = execute_query("SELECT * From content WHERE id = \"%s\"" % (content_id))
             if len(content_info) > 0:
                 data['status'] = 'Success'
                 content['id'] = content_id
                 content['album_id'] = content_info[0][1]
-                content['location'] = execute_query("Select locationname From locations Where id = \"%s\"" %(content_info[0][2]))[0][0]
+                content['location'] = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))[0][0]
                 url = content_info[0][3]
                 url = url.replace("watch?v=","embed/")
                 if content_info[0][4] == "Image":
@@ -78,11 +78,11 @@ elif (validate_token(post('user_id'), post('token'))):
                 elif content_info[0][4] == "Video":
                     content['video_url'] = url
                 content['type'] = content_info[0][4]
-                likes_query = execute_query("Select user_id From content_likes Where content_id = \"%s\"" % (content_id))
+                likes_query = execute_query("SELECT user_id From content_likes WHERE content_id = \"%s\"" % (content_id))
                 content['likes'] = len(likes_query)
                 if (int(user_id),) in likes_query:
                     content['liked'] = user_id
-                comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id Where content_id = \"%s\"" % (content_id))
+                comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id WHERE content_id = \"%s\"" % (content_id))
                 comments = []
                 for comment in comments_query:
                     c = {}
@@ -120,7 +120,7 @@ elif (validate_token(post('user_id'), post('token'))):
             if albumname <> "":
                 query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (album_id, albumname))
             if privacy <> "":
-                query = execute_query("UPDATE albums SET privacy = \"%s\" Where albums.id = \"%s\"" % (album_id, privacy))
+                query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (album_id, privacy))
             data['status'] = 'Success'
             data['message'] = 'Updated album'
         else:
@@ -132,16 +132,16 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields(['album_id']):
             album_id = post('album_id')
             album = {}
-            album_info = execute_query("Select * From albums Where id = \"%s\"" % (album_id))
+            album_info = execute_query("SELECT * From albums WHERE id = \"%s\"" % (album_id))
             if len(album_info) > 0:
                 data['status'] = 'Success'
                 album['id'] = album_id
                 album['trip_id'] = album_info[0][1]
-                album['creator'] = execute_query("Select fullname From users Where id = \"%s\"" % (album_info[0][2]))[0][0]
+                album['creator'] = execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0]
                 album['albumname'] = album_info[0][3]
                 album['privacy'] = album_info[0][4]
                 
-                content_query = execute_query("Select * From content Where album_id = \"%s\"" % (album_id))
+                content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
                 contents = []
                 for content in content_query:
                     c = {}
@@ -161,9 +161,9 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'delete_content':
         if has_fields(['content_id']):
 			content_id = post('content_id')
-            query = execute_query("DELETE content_likes.* From content_likes Where content_likes.content_id = \"%s\"" % (content_id))
-			query1 = execute_query("DELETE content_comments.* From content_comments Where content_comments.content_id = \"%s\"" % (content_id))
-			query = execute_query("DELETE content.* From content Where id = \"%s\"" % (content_id))
+            query = execute_query("DELETE content_likes.* From content_likes WHERE content_likes.content_id = \"%s\"" % (content_id))
+			query1 = execute_query("DELETE content_comments.* From content_comments WHERE content_comments.content_id = \"%s\"" % (content_id))
+			query = execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
             data['status'] = 'Success'
             data['message'] = 'Content deleted'
         else:
@@ -172,10 +172,10 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'delete_album':
         if has_fields(['album_id']):
             album_id = post('album_id')
-            query = execute_query("DELETE content_likes.* From content_likes Inner Join content on content.id = content_likes.content_id Where content.album_id = \"%s\"" % (album_id))
-            query1 = execute_query("DELETE content_comments.* From content_comments Inner Join content on content.id = content_comments.content_id Where content.album_id = \"%s\"" % (album_id))
-            query2 = execute_query("DELETE content.* From content Where content.album_id = \"%s\"" % (album_id))
-            query3 = execute_query("DELETE albums.* From albums Where id = \"%s\"" % (album_id))
+            query = execute_query("DELETE content_likes.* From content_likes INNER JOIN content ON content.id = content_likes.content_id WHERE content.album_id = \"%s\"" % (album_id))
+            query1 = execute_query("DELETE content_comments.* From content_comments INNER JOIN content ON content.id = content_comments.content_id WHERE content.album_id = \"%s\"" % (album_id))
+            query2 = execute_query("DELETE content.* From content WHERE content.album_id = \"%s\"" % (album_id))
+            query3 = execute_query("DELETE albums.* From albums WHERE id = \"%s\"" % (album_id))
             data['status'] = 'Success'
             data['status'] = 'Deleted all rows associated with album'
         else:

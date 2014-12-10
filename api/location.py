@@ -43,7 +43,7 @@ elif (validate_token(post('user_id'), post('token'))):
             data['status'] = 'Success'
             location = {}
             location_id = post('id')
-            location_info = execute_query("Select * From locations Where id = \"%s\"" % (location_id))
+            location_info = execute_query("SELECT * FROM locations WHERE id = \"%s\"" % (location_id))
             if len(location_info) > 0:
                 location['id'] = location_id
                 location['latitude'] = location_info[0][1]
