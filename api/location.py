@@ -70,7 +70,11 @@ elif (validate_token(post('user_id'), post('token'))):
             data['status'] = 'Failure'
             data['message'] = 'No ID given for this location'
             
-    
+    elif action == 'get_all_locations':
+        locations = []
+        location_query = execute_query("SELECT * FROM locations"))
+        for location in location_query:
+            #get info for all location_id's
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'

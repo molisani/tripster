@@ -27,6 +27,8 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields (['album_id', 'url', 'type']):
             if has_permissions(user_id, album = post('album_id'), edit = True):
                 query = execute_query("INSERT INTO content (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"% (post('album_id'), post('url'), post ('type')))
+                
+
                 data['status'] = 'Success'
                 data['message'] = 'Added content to album'
             else:

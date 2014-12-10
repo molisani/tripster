@@ -81,8 +81,9 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
+      var contentBody = Handlebars.compile($('#main-content').html());
       pageData.page_header = "Add Content",
-      pageData.page_body = $('#main-content').html()
+      pageData.page_body = contentBody;
 
       if ($.cookie("username")) {
         pageData.username = $.cookie("username");
@@ -112,6 +113,7 @@
           dataType: 'json',
           success: function(json){
             if (json.status = "Success") {
+              pageData.page_body = contentBody(json.content);
 			  window.location = "./album.html?id=" + album;
              // location.reload();
             }
