@@ -10,46 +10,56 @@
 </head>
 
 <body>
-  <section id="main-content">
+  <script id="main-content" type="text/x-handlebars-template">>
     <div class="panel-body">
       <div class="container-fluid">
         <div class="row">
           <div class="col-md-6">
-	    <h4><span class="label label-primary">About Me</span></h4>
-            <ul class="list-group">
-              <li class="list-group-item">My info</li>
-            </ul>
+            <div class="list-group">
+	      <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">About Me</h4>
+              </div>
+	      <div class="list-group-item">{{aboutme}}</div>
+            </div>
           </div>
-          <div class="col-md-6">
-	    <h4><span class="label label-primary">Interests</span></h4>
-            <ul class="list-group">
-              <li class="list-group-item">My interests</li>
-            </ul>
+	  <div class="col-md-6">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Interests</h4>
+              </div>
+              <div class="list-group-item">{{interests}}</div>
+            </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
-	    <h4><span class="label label-primary">Birthday</span></h4>
-            <ul class="list-group">
-              <li class="list-group-item">My birthday</li>
-            </ul>
+	  <div class="col-md-4">
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Birthday</h4>
+              </div>
+              <div class="list-group-item">{{birthday}}</div>
+            </div>
           </div>
           <div class="col-md-4">
-	    <h4><span class="label label-primary">Email</span></h4>
-            <ul class="list-group">
-              <li class="list-group-item">My email</li>
-            </ul>
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Email</h4>
+              </div>
+              <div class="list-group-item">{{email}}</div>
+            </div>
           </div>
           <div class="col-md-4">
-	    <h4><span class="label label-primary">Affiliation</span></h4>
-            <ul class="list-group">
-              <li class="list-group-item">My affiliation</li>
-            </ul>
+            <div class="list-group">
+              <div href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading">Affiliation</h4>
+              </div>
+              <div class="list-group-item">{{affiliation}}</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </script>
 </body>
 
 <script src="js/field_utils.js"></script>
@@ -60,9 +70,9 @@
 $.when(
   $.getScript("./js/templates.js")
   ).done(function(){
-    pageData.page_header = "[[username]]",
-    pageData.page_body = $('#main-content').html(),
-    pageData.page_sidebar = $('#sidebar-content').html()
+    var userBody = Handlebars.compile($('#main-content').html());
+    pageData.page_header = "[[username]]";
+    pageData.page_body = userBody({});
 
     if ($.cookie("username")) {
       pageData.username = $.cookie("username");
@@ -72,8 +82,8 @@ $.when(
     build_page();
     load_sidebar();
 
-    var trip = $_GET('id');
-    if (trip != "null") {
+    var user = $_GET('id');
+    if (user != "null") {
       $.ajax({
         url: '../api/user.py',
         type: 'post',
@@ -81,12 +91,13 @@ $.when(
           action: 'info',
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
-          id: trip
+          id: user
         },
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            pageData.page_header = "<h2>" + json.user.fullname + "<h2>" +'<button type="button" class="btn btn-success btn-xs">Friends</button>';
+            pageData.page_header = "<h1>" + json.user.fullname + "<h1>" +'<button type="button" class="btn btn-success btn-xs">Friends</button>';
+            pageData.page_body = userBody(json.user);
             build_page();
           }
         }
