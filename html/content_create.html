@@ -1,125 +1,126 @@
 <html>
-  <head>
-    <!-- jQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <!-- Handlebars -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-  </head>
+<head>
+  <!-- jQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!-- Handlebars -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+</head>
 
-  <body>
-    <section id="main-content" type="text/x-handlebars-template">
-	  <div class="panel-body">
-        <div class="container-fluid">
-          <br>
-          <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
-            <input type="hidden" name="action" value="create">
-		      <div class="row">
-                <div class="col-md-12">
-			      <div class="input-group">
-                    <input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
-			        <span class="input-group-btn">
-                      <button class="btn btn-success" type="submit" 
-					  id="new-content-btn">Add Content</button>
-                    </span>
-				  </div>
-                </div>
-			  </div>
-            <div class="form-group">
-		      <div class="row">
-                <div class="col-md-8">
-				  <div class = "pull-left">
-			        <div>
-			          &nbsp;&nbsp;&nbsp;
-			        </div>
-			      </div>
-				  <div class="pull-left">
-                    <h4>Type</h4>
-                    <div class="btn-group" data-toggle="buttons">
-                      <label class="btn btn-default active" id="vis-options">
-                        <input type="radio" autocomplete="off" value="Image"> Image</input>
-                      </label>
-                      <label class="btn btn-default" id="vis-options">
-                        <input type="radio" autocomplete="off" value="Video"> Video</input>
-                      </label>
-                    </div>
-				  </div>
-			    <div class = "pull-left">
-			      <div>
-			        &nbsp;&nbsp;&nbsp;
-			      </div>
-			    </div>
-			    <div class="pull-left">
-			      <h4>Location</h4>
-			      <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    Select A Location <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      {{#each location_select}}
-                      <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
-                      {{/each}}
-                      <li class="divider"></li>
-                      <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
-                    </ul>
-				  </div>
-			    </div>
-		    </div>
-          </form>
+<body>
+  <section id="main-content" type="text/x-handlebars-template">
+   <div class="panel-body">
+    <div class="container-fluid">
+      <br>
+      <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
+        <input type="hidden" name="action" value="create">
+        <div class="row">
+          <div class="col-md-12">
+           <div class="input-group">
+            <input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
+            <span class="input-group-btn">
+              <button class="btn btn-success" type="submit" 
+              id="new-content-btn">Add Content</button>
+            </span>
+          </div>
         </div>
-	  </div>
-    </section>
-  </body>
+      </div>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-8">
+            <div class = "pull-left">
+             <div>
+               &nbsp;&nbsp;&nbsp;
+             </div>
+           </div>
+           <div class="pull-left">
+            <h4>Type</h4>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default active" id="vis-options">
+                <input type="radio" autocomplete="off" value="Image"> Image</input>
+              </label>
+              <label class="btn btn-default" id="vis-options">
+                <input type="radio" autocomplete="off" value="Video"> Video</input>
+              </label>
+            </div>
+          </div>
+          <div class = "pull-left">
+           <div>
+             &nbsp;&nbsp;&nbsp;
+           </div>
+         </div>
+         <div class="pull-left">
+           <h4>Location</h4>
+           <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              Select A Location <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {{#each location_select}}
+              <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
+              {{/each}}
+              <li class="divider"></li>
+              <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</section>
+</body>
 
-  <script src="js/field_utils.js"></script>
-  <script src="js/jquery.cookie.min.js"></script>
-  <script src="tmpl/page.tmpl.js" id="page-template"></script>
-  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
-  <script type="text/javascript">
-    $.when(
-      $.getScript("./js/templates.js")
-    ).done(function(){
-      var contentBody = Handlebars.compile($('#main-content').html());
-      pageData.page_header = "Add Content",
-      pageData.page_body = contentBody;
+<script src="js/field_utils.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="tmpl/page.tmpl.js" id="page-template"></script>
+<script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+<script type="text/javascript">
+$.when(
+  $.getScript("./js/templates.js")
+  ).done(function(){
+    var contentBody = Handlebars.compile($('#main-content').html());
+    pageData.page_header = "Add Content",
+    pageData.page_body = contentBody;
 
-      if ($.cookie("username")) {
-        pageData.username = $.cookie("username");
-        sidebarData.username = $.cookie("username");
-      }
+    if ($.cookie("username")) {
+      pageData.username = $.cookie("username");
+      sidebarData.username = $.cookie("username");
+    }
 
-      build_page();
-      load_sidebar();
-    });
-	var album = $_GET('album_id');
-	
+    build_page();
+    load_sidebar();
+
+    var album = $_GET('album_id');
+    
     $(document).on("click", '#new-content-btn', function(e) {
-	  if($('#url').val() == "") return;
-	  
-	  if (album != "null"){
-        $.ajax({
-          url: '../api/content.py',
-          type: 'post',
-          data: {
-		  	action: 'add_content',
-		  	user_id: $.cookie('user_id'),
-			token: $.cookie('token'),
-			album_id: album,
-			url: $('#url').val(),
-			type: $('#vis-options[class*="active"] input').attr("value")
-		  },
-          dataType: 'json',
-          success: function(json){
-            if (json.status = "Success") {
-              pageData.page_body = contentBody(json.content);
-			  window.location = "./album.html?id=" + album;
-             // location.reload();
-            }
-          }
-		})
-      };
+     if($('#url').val() == "") return;
+     
+     if (album != "null"){
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+         action: 'add_content',
+         user_id: $.cookie('user_id'),
+         token: $.cookie('token'),
+         album_id: album,
+         url: $('#url').val(),
+         type: $('#vis-options[class*="active"] input').attr("value")
+       },
+       dataType: 'json',
+       success: function(json){
+        if (json.status = "Success") {
+          pageData.page_body = contentBody(json.content);
+          window.location = "./album.html?id=" + album;
+        }
+      }
     });
-  </script>
+    }
+  });
+  });
+
+</script>
 </html>
