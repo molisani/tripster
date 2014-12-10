@@ -16,6 +16,7 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields (['trip_id', 'albumname', 'privacy']):
             query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (post('trip_id'), user_id, post('albumname'), post('privacy')))
             data['status'] = 'Success'
+            data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
             data['message'] = 'Added album to trip'
         else:
             data['status'] = 'Failure'
@@ -73,11 +74,17 @@ elif (validate_token(post('user_id'), post('token'))):
                 content['location'] = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))[0][0]
                 url = content_info[0][3]
                 url = url.replace("watch?v=","embed/")
+                content['thumb_url'] = url
                 if content_info[0][4] == "Image":
                     content['image_url'] = url
                 elif content_info[0][4] == "Video":
                     content['video_url'] = url
+                    
                 content['type'] = content_info[0][4]
+                if content['type'] == 'Video':
+                    index = url.find('=')
+                    content['thumb_url'] = "http://img.youtube.com/vi/" + url[:index] + "/default.jpg"
+                    
                 likes_query = execute_query("SELECT user_id From content_likes WHERE content_id = \"%s\"" % (content_id))
                 content['likes'] = len(likes_query)
                 if (int(user_id),) in likes_query:
