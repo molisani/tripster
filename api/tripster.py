@@ -51,13 +51,14 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'recommend_locations':
         #recommends 5 locations based on user_id where
         #users friends have been and user hasn't
-        location_query = execute_query("SELECT id, rating FROM locations l INNER JOIN (SELECT DISTINCT V.location_id FROM takes T INNER JOIN ( SELECT DISTINCT F.user2_id FROM users U INNER JOIN friends F on U.id = F.user1_id WHERE U.id = \"%s\") FR on FR.user2_id = T.user_id INNER JOIN visits V on V.trip_id = T.trip_id WHERE V.location_id Not In  (SELECT DISTINCT V.location_id FROM users U INNER JOIN takes T on T.user_id = U.id INNER JOIN visits V on V.trip_id = T.trip_id WHERE U.id = \"%s\")) locs on l.id = locs.location_id ORDER BY rating Desc" % (user_id, user_id))
+        location_query = execute_query("SELECT id, rating, locationname FROM locations l INNER JOIN (SELECT DISTINCT V.location_id FROM takes T INNER JOIN ( SELECT DISTINCT F.user2_id FROM users U INNER JOIN friends F on U.id = F.user1_id WHERE U.id = \"%s\") FR on FR.user2_id = T.user_id INNER JOIN visits V on V.trip_id = T.trip_id WHERE V.location_id Not In  (SELECT DISTINCT V.location_id FROM users U INNER JOIN takes T on T.user_id = U.id INNER JOIN visits V on V.trip_id = T.trip_id WHERE U.id = \"%s\")) locs on l.id = locs.location_id ORDER BY rating Desc" % (user_id, user_id))
         if len(location_query) > 0:
             rec_locs = {}
             locations = []
             for location in location_query:
                 l = {}
                 l['location_id'] = location[0]
+                l['location_name'] = location[2]
                 locations+= [l]
             num_results = min (len(locations),5)
             data['status'] = 'Success'
@@ -65,13 +66,14 @@ elif (validate_token(post('user_id'), post('token'))):
         #if no locations returned, returns top five locations
         #that user hasn't been to
         else:
-            location_query = execute_query("SELECT id, rating FROM locations WHERE id not in (SELECT DISTINCT v.location_id FROM takes t INNER JOIN visits v on v.trip_id = t.trip_id WHERE user_id = \"%s\") ORDER BY rating" % (user_id))
+            location_query = execute_query("SELECT id, rating, locationname FROM locations WHERE id not in (SELECT DISTINCT v.location_id FROM takes t INNER JOIN visits v on v.trip_id = t.trip_id WHERE user_id = \"%s\") ORDER BY rating" % (user_id))
             if len(location_query) > 0:
                 rec_locs = {}
                 locations = []
                 for location in location_query:
                     l = {}
                     l['location_id'] = location[0]
+                    l['location_name'] = location[2]
                     locations+= [l]
                 num_results = min (len(locations),5)
                 data['status'] = 'Success'
@@ -83,11 +85,13 @@ elif (validate_token(post('user_id'), post('token'))):
         query = execute_query("SELECT user2_id, count(user2_id) as c from friends f1 INNER JOIN (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") ff on ff.u2 = f1.user1_id WHERE user2_id <> \"%s\" AND user2_id not in (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") GROUP BY user2_id ORDER BY c" % (user_id, user_id, user_id))
         if len(query) > 0:
             data['status'] = 'Success'
+            data['rec_name'] =  execute_query("SELECT fullname FROM users WHERE id = \"%s\"" % (query[0][0]))[0][0]
             data['rec_id'] = query[0][0]
         else:
             query = execute_query("SELECT id from users WHERE id <> \"%s\" AND id not in (SELECT user2_id from friends WHERE user1_id = \"%s\")" % (user_id, user_id))
             if len(query) > 0:
                 data['status'] = 'Success'
+                data['rec_name'] =  execute_query("SELECT fullname FROM users WHERE id = \"%s\"" % (query[0][0]))[0][0]
                 data['rec_id'] = query[0][0]
             else:
                 data['status'] = 'Failure'
