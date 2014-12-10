@@ -59,16 +59,6 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = 'Failure'
             data['message'] = 'Failure, no content_id or comment submitted'
-    
-    elif action == 'set_album_privacy':
-        #requires an album_id and a privacy setting
-        if has_fields (['album_id', 'privacy']):
-            query = execute_query("UPDATE albums SET privacy =  \"%s\" WHERE albums.id = \"%s\"" % (post('album_id'), post('privacy')))
-            data['status'] = 'Success'
-            data['message'] = 'Updated album privacy'
-        else:
-            data['status'] = 'Failure'
-            data['message'] = 'Failure, no album_id or privacy submitted'
             
     elif action == 'get_content_info':
         #requires a content_id
@@ -121,17 +111,21 @@ elif (validate_token(post('user_id'), post('token'))):
             data['status'] = "Failure"
             data['message'] = "No content_id or location_id given"
     
-    elif action == 'change_album_name':
+    elif action == 'edit_album':
         #requires an album_id and an albumname
-        if has_fields(['album_id','albumname']):
+        if has_fields(['album_id']):
             album_id = post('album_id')
             albumname = post('albumname')
-            query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (album_id, albumname))
+            privacy = post('privacy')
+            if albumname <> "":
+                query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (album_id, albumname))
+            if privacy <> "":
+                query = execute_query("UPDATE albums SET privacy = \"%s\" Where albums.id = \"%s\"" % (album_id, privacy))
             data['status'] = 'Success'
-            data['message'] = 'Updated album name'
+            data['message'] = 'Updated album'
         else:
             data['status'] = 'Failure'
-            data['message'] = 'Failure, no album id or albumname given'
+            data['message'] = 'Failure, no album id given'
     
     elif action == 'get_album_content':
         #requires an album_id
@@ -164,6 +158,26 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             data['status'] = 'Failure'
             data['message'] = 'No album_id given'
+	elif action == 'delete_content':
+		if has_fields(['content_id']):
+			query = execute_query("DELETE * From content Where id = \"%s\"" % (post(content_id)))
+			data['status'] = 'Success'
+			data['message'] = 'Content deleted'
+		else:
+			data['status'] = 'Failure'
+			data['message'] = 'No content id given to delete'
+	elif action == 'delete_album':
+		if has_fields(['album_id']):
+			album_id = post('album_id')
+			query = execute_query("DELETE content_likes.* From content_likes Inner Join content on content.id = content_likes.content_id Where content.album_id = \"%s\"" % (album_id))
+			query1 = execute_query("DELETE content_comments.* From content_comments Inner Join content on content.id = content_comments.content_id Where content.album_id = \"%s\"" % (album_id))
+			query2 = execute_query("DELETE * From content Where content.album_id = \"%s\"" % (album_id))
+			query3 = execute_query("DELETE * From albums Where id = \"%s\"" % (album_id))
+			data['status'] = 'Success'
+			data['status'] = 'Deleted all rows associated with album'
+		else:
+			data['status'] = 'Failure'
+			data['message'] = 'No album_id given to delete'
 else:
     data['status'] = 'Failure'
     data['message'] = 'Token authentication failed. Token may have expired.'

@@ -40,7 +40,7 @@
               <br></br>
               <br></br>
               <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-album-btn">Create Album</button>
+                <button type="submit" class="btn btn-success" id="new-album-btn">Update Album</button>
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "Edit Album",
+      pageData.page_header = "<h1>Edit Album</h1>",
       pageData.page_body = $('#main-content').html()
 
       if ($.cookie("username")) {
