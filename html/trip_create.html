@@ -17,15 +17,15 @@
           <input type="hidden" name="action" value="create">
           <div class="form-group">
             <div class="col-sm-12">
-              <input type="text" class="form-control" name="tripname" placeholder="Trip Name">
+              <input type="text" class="form-control" name="tripname" id="tripname-input" placeholder="Trip Name">
             </div>
           </div>
           <div class="form-group">
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="startdate" placeholder="Start Date YYYY-MM-DD">
+              <input type="text" class="form-control" name="startdate" id="startdate-input" placeholder="Start Date YYYY-MM-DD">
             </div>
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="enddate" placeholder="End Date YYYY-MM-DD">
+              <input type="text" class="form-control" name="enddate" id="enddate-input" placeholder="End Date YYYY-MM-DD">
             </div>
           </div>
           <div class="form-group">
@@ -83,11 +83,19 @@
       $.ajax({
         url: '../api/trip.py',
         type: 'post',
-        data: newTrip,
+        data: {
+            action: 'create',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            trip_name: $('#tripname-input').val(),
+            start_date: $('#startdate-input').val(),
+            end_date: $('#enddate-input').val(),
+            privacy: newTrip.privacy
+        },
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./trip_edit.html?id=" + json.id;
+            window.location = "./trip_edit.html?id=" + json.id;
           }
         }
       });

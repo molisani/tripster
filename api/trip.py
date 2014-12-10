@@ -158,7 +158,7 @@ elif validate_token(user_id, post('token')):
                 trip[item] = post(item)
             execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
                           % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
-            result = execute_query("SELECT trips.id FROM trips WHERE trips.tripname = \"%s\")" % (trip_name))
+            result = execute_query("SELECT trips.id FROM trips WHERE trips.tripname = \"%s\"" % (trip_name))
             data['status'] = 'Success'
             data['id'] = result[0][0]
             data['message'] = 'Added trip'
