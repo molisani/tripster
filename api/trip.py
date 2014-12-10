@@ -172,7 +172,7 @@ elif validate_token(user_id, post('token')):
                     new_status = 0
                 execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
             else:
-                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 1))
+                execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
             data['status'] = 'Success'
             data['message'] = 'User successfully invited to trip (or added if already requested)'
         else:
