@@ -67,5 +67,5 @@ elif (validate_token(post('user_id'), post('token'))):
     else:
         data['status'] = 'Failure'
         data['message'] = 'Token authentication failed. Token may have expired.'    
-	
+
 export_json(data)
