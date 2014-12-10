@@ -172,7 +172,7 @@ elif (validate_token(post('user_id'), post('token'))):
             query = execute_query("DELETE content_likes.* From content_likes Inner Join content on content.id = content_likes.content_id Where content.album_id = \"%s\"" % (album_id))
             query1 = execute_query("DELETE content_comments.* From content_comments Inner Join content on content.id = content_comments.content_id Where content.album_id = \"%s\"" % (album_id))
             query2 = execute_query("DELETE content.* From content Where content.album_id = \"%s\"" % (album_id))
-            query3 = execute_query("DELETE * From albums Where id = \"%s\"" % (album_id))
+            query3 = execute_query("DELETE albums.* From albums Where id = \"%s\"" % (album_id))
             data['status'] = 'Success'
             data['status'] = 'Deleted all rows associated with album'
         else:
