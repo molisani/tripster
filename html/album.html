@@ -1,0 +1,128 @@
+<html>
+  <head>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- Handlebars -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
+  </head>
+
+  <body>
+    <section id="main-content">
+      <div class="panel-body">
+        <div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+				<div class="col-md-3">
+					<a href="#" class="thumbnail">
+					<img data-src="holder.js/100%x180" alt="...">
+					</a>
+				</div>
+			</div>
+		</div>
+	  </div>
+        </div>
+      </div>
+    </section>
+  </body>
+
+  <script src="js/field_utils.js"></script>
+  <script src="js/jquery.cookie.min.js"></script>
+  <script src="tmpl/page.tmpl.js" id="page-template"></script>
+  <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
+  <script type="text/javascript">
+    $.when(
+      $.getScript("./js/templates.js")
+    ).done(function(){
+      pageData.page_header = "[[albumname]]",
+      pageData.page_body = $('#main-content').html(),
+      pageData.page_sidebar = $('#sidebar-content').html()
+
+      if ($.cookie("username")) {
+        pageData.username = $.cookie("username");
+        sidebarData.username = $.cookie("username");
+      }
+
+      build_page();
+      load_sidebar();
+
+      var album = $_GET('id');
+      if (album != "null") {
+        $.ajax({
+          url: '../api/content.py',
+          type: 'post',
+          data: {
+            action: 'get_album_content',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            album_id: album
+          },
+          dataType: 'json',
+          success: function(json) {
+            if (json.status == 'Success') {
+              pageData.page_header = json.album.albumname;
+              build_page();
+            }
+          }
+        });
+      }
+	  
+    });
+  </script>
+</html>
