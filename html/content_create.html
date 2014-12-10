@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <section id="main-content">
+    <section id="main-content" type="text/x-handlebars-template">
 	  <div class="panel-body">
         <div class="container-fluid">
           <br>
@@ -19,9 +19,10 @@
 		      <div class="row">
                 <div class="col-md-12">
 			      <div class="input-group">
-                    <input type="text" class="form-control" name="albumname" placeholder="URL">
+                    <input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
 			        <span class="input-group-btn">
-                      <button class="btn btn-default" type="button" id="content-comment-btn">Add Content</button>
+                      <button class="btn btn-success" type="submit" href="./album.html?id={{album_id}}"
+					  id="new-content-btn">Add Content</button>
                     </span>
 				  </div>
                 </div>
@@ -91,18 +92,23 @@
       build_page();
       load_sidebar();
     });
-    $(document).on("click", '#new-album-btn', function(e) {
-      newAlbum = formData('#new-album-form');
-      newContent.type = $('#vis-options[class*="active"] input').attr("value");
-      console.log(newAlbum);
+    $(document).on("click", '#new-content-btn', function(e) {
+	  if($('#url').val() == "") return;
       $.ajax({
         url: '../api/content.py',
         type: 'post',
-        data: newAlbum,
+        data: {
+			action: 'add_content',
+			user_id: $.cookie('user_id'),
+			token: $.cookie('token'),
+			album_id: "",
+			url: $('#url').val(),
+			type: $('#vis-options[class*="active"] input').attr("value")
+		},
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./edit_album.html?id=" + json.id;
+            location.reload();
           }
         }
       });
