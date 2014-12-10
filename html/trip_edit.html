@@ -45,7 +45,7 @@
                 <h4 class="list-group-item-heading">Users Going</h4>Click user to remove from trip
               </div>
               {{#each users_attending}}
-              <a class="list-group-item" val="{{user_id}}">{{fullname}}</a>
+              <a name="{{user_id}}" class="list-group-item" id="remove-user" value="{{user_id}}">{{fullname}}</a>
               {{/each}}
             </div>
           </div>
@@ -137,7 +137,6 @@ $.when(
     });
 
     $(document).on("click", '#accept-btn', function(e) {
-      console.log(e);
       $.ajax({
         url: '../api/trip.py',
         type: 'post',
@@ -167,6 +166,27 @@ $.when(
           token: $.cookie('token'),
           id: trip,
           drop_user_id: $(e.target).val()
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
+    $(document).on("click", '#remove-user', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'leave',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          drop_user_id: $(e.target).attr('name')
         },
         dataType: 'json',
         success: function(json) {
