@@ -62,6 +62,7 @@ def content_info(c_id):
             comments+= [c]
         if len(comments) > 0:
             content['comments'] = comments
+        content['all_locations'] = getLocations()
     return content
 
 def update_content_location(loc_id, con_id):

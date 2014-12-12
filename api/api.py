@@ -15,6 +15,20 @@ db = MySQLdb.connect(
 
 db.autocommit(True)
 
+def getLocations():
+    a_locations = []
+    location_query = execute_query("SELECT * FROM locations")
+    if len(location_query) > 0:
+        for location in location_query:
+            l = {
+                'location_id': location[0],
+                'locationname': location[3],
+                'country': location[4],
+                'rating': str(location[5])
+                }
+            a_locations+=[l]
+    return a_locations
+
 def has_fields(keys):
     for key in keys:
         if key not in post_fields:

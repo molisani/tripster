@@ -95,18 +95,7 @@ def info(id):
             trip['locations'] = locations
                     
             #all locations
-            a_locations = []
-            location_query = execute_query("SELECT * FROM locations")
-            if len(location_query) > 0:
-                for location in location_query:
-                    l = {
-                      'location_id': location[0],
-                      'locationname': location[3],
-                      'country': location[4],
-                      'rating': str(location[5])
-                    }
-                    a_locations+=[l]
-                trip['all_locations'] = a_locations
+            trip['all_locations'] = getLocations()
             #get comments
             comments_query = execute_query("SELECT users.fullname, trip_comments.comment From trip_comments INNER JOIN users ON users.id = trip_comments.user_id Where trip_id = \"%s\"" % (trip_id))
             comments = []
