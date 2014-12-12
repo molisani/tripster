@@ -85,7 +85,7 @@ def has_permissions(user_id, album=None, trip=None, edit=False):
     else: 
         return False    
 
-def export_json(data={}, success=True,message=None):
+def export_json(data={}, success=True, message=None):
     data['status'] = 'Success' if success else 'Failure'
     if message is not None:
         data['message'] = message
