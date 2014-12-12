@@ -33,19 +33,18 @@ def content_info(c_id):
     content = {}
     content_info = execute_query("SELECT * From content WHERE id = \"%s\"" % (c_id))
     if len(content_info) > 0:
-        content['id'] = c_id
-        content['album_id'] = content_info[0][1]
+        content= {
+            'id': c_id,
+            'album_id': content_info[0][1],
+            'thumb_url': content_info[0][3].replace("watch?v=","embed/"),
+            'url': url,         
+            'type': content_info[0][4]
+        }    
+        
         location_q = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))
         if len(location_q) > 0:
             content['location'] = location_q[0][0]
-        url = content_info[0][3]
-        url = url.replace("watch?v=","embed/")
-          
-        type = content_info[0][4]
-        content['thumb_url'] = url
-        content['url'] = url         
-        content['type'] = type
-            
+        
         if content['type'] == 'Video':
             index = url.find('=')
             content['thumb_url'] = "http://img.youtube.com/vi/" + url[:index] + "/default.jpg"
@@ -63,15 +62,49 @@ def content_info(c_id):
             comments+= [c]
         if len(comments) > 0:
             content['comments'] = comments
-        data['content'] = content
+    return content
+
+def update_content_location(loc_id, con_id):
+    query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (loc_id,con_id))
+    export_json(data=data)
+    
+def edit_album(a_id,name,priv):
+    if albumname <> "":
+        query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (a_id, name))
+    if privacy <> "":
+        query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (a_id, priv))
     export_json(data=data)
 
-def update_content_location(con_id, loc_id):
-    query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))
+def album_content(a_id):
+    album = {}
+    album_info = execute_query("SELECT * From albums WHERE id = \"%s\"" % (album_id))
+    if len(album_info) > 0:
+        album= {
+            'id': album_id,
+            'trip_id': album_info[0][1],
+            'creator': execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0],
+            'albumname': album_info[0][3],
+            'privacy': album_info[0][4]
+        }
+        content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
+        contents = []
+        for content in content_query:
+            c = {}
+            c['content_id'] = content[0]
+            c['url'] = content[3].replace("watch?v=","embed/")
+            contents+= [c]
+        if len(contents) > 0:
+            album['content'] = contents
+    data['album'] = album
+    if len(album) > 0:
+        export_json(data=data)
+    else:
+        export_json(success=False,message='No album found with that id')
+    
     
 if (not has_fields(['user_id', 'token'])):
-    data['status'] = 'Failure'
-    data['message'] = 'User_ID and token not specified.'
+    export_json(success=False,message='User_ID and token not specified.')
+    
 elif (validate_token(post('user_id'), post('token'))):
     action = post('action')
     if action == 'add_album':
@@ -109,100 +142,52 @@ elif (validate_token(post('user_id'), post('token'))):
         #requires a content_id
         if has_fields(['content_id']):
             content_id = post('content_id')
-            content_info(content_id)
+            data['content'] = content_info(content_id)
+            if len(data['content']) > 0:
+                export_json(data=data)
             else:
-                export_json(success=False,message='No content found with given id')
+                export_json(success=False,message='No content found with that id')
         else:
-            export_json(success=False,'No content_id given')
+            export_json(success=False,message='No content_id given')
     
     elif action == 'tag_content_location':
         #requires a content_id and a location_id
         if has_fields(['content_id', 'location_id']):
-            content_id = post('content_id')
-            location_id = post ('location_id')
-            query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))
-            data['status'] = "Success"
-            data['message'] = "Updated content location"
+            update_content_location(post('location_id'),post('content_id'))
         else:
-            data['status'] = "Failure"
-            data['message'] = "No content_id or location_id given"
+            export_json(success=False,message="No content_id or location_id given")
     
     elif action == 'edit_album':
         #requires an album_id and an albumname
         if has_fields(['album_id']):
-            album_id = post('album_id')
-            albumname = post('albumname')
-            privacy = post('privacy')
-            if albumname <> "":
-                query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (album_id, albumname))
-            if privacy <> "":
-                query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (album_id, privacy))
-            data['status'] = 'Success'
-            data['message'] = 'Updated album'
+            edit_album(post('album_id'),post('albumname'),post('privacy'))
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'Failure, no album id given'
+            export_json(success=False,message='Failure, no album id given')
     
     elif action == 'get_album_content':
         #requires an album_id
         if has_fields(['album_id']):
             album_id = post('album_id')
-            album = {}
-            album_info = execute_query("SELECT * From albums WHERE id = \"%s\"" % (album_id))
-            if len(album_info) > 0:
-                data['status'] = 'Success'
-                album['id'] = album_id
-                album['trip_id'] = album_info[0][1]
-                album['creator'] = execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0]
-                album['albumname'] = album_info[0][3]
-                album['privacy'] = album_info[0][4]
-                
-                content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
-                contents = []
-                for content in content_query:
-                    c = {}
-                    c['content_id'] = content[0]
-                    c['url'] = content[3].replace("watch?v=","embed/")
-                    contents+= [c]
-                if len(contents) > 0:
-                    album['content'] = contents
-                
-            else: 
-                data['status'] = 'Failure'
-                album['message'] = 'No album found for that id'
-            data['album'] = album
+            album_content(album_id)
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'No album_id given'
+            export_json(success=False,message='No album_id given')
 			
     elif action == 'delete_content':
         if has_fields(['content_id']):
             content_id = post('content_id')
-            query = execute_query("DELETE content_likes.* From content_likes WHERE content_likes.content_id = \"%s\"" % (content_id))
-            query1 = execute_query("DELETE content_comments.* From content_comments WHERE content_comments.content_id = \"%s\"" % (content_id))
             query = execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
-            data['status'] = 'Success'
-            data['message'] = 'Content deleted'
+            export_json(data=data)
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'No content id given to delete'
+            export_json(success=False,message='No content id given to delete')
 			
     elif action == 'delete_album':
         if has_fields(['album_id']):
-            album_id = post('album_id')
-            query = execute_query("DELETE content_likes.* From content_likes INNER JOIN content ON content.id = content_likes.content_id WHERE content.album_id = \"%s\"" % (album_id))
-            query1 = execute_query("DELETE content_comments.* From content_comments INNER JOIN content ON content.id = content_comments.content_id WHERE content.album_id = \"%s\"" % (album_id))
-            query2 = execute_query("DELETE content.* From content WHERE content.album_id = \"%s\"" % (album_id))
-            query3 = execute_query("DELETE albums.* From albums WHERE id = \"%s\"" % (album_id))
-            data['status'] = 'Success'
-            data['status'] = 'Deleted all rows associated with album'
+            query = execute_query("DELETE albums.* From albums WHERE id = \"%s\"" % (post(album_id)))
+            export_json(data=data)
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'No album_id given to delete'
+            export_json(success=False,message='No album_id given to delete')
 else:
-    data['status'] = 'Failure'
-    data['message'] = 'Token authentication failed. Token may have expired.'
-export_json(data)
+    export_json(success=False,message='Token authentication failed. Token may have expired.')
 """add album to trip (tested)
 get content info (likes / comments) (tested)
 add content to album (tested)
