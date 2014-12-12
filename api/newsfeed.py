@@ -7,8 +7,7 @@ data = {}
 username = post('username')
 user_id = post('user_id')
 if (not has_fields(['user_id', 'token'])):
-    data['status'] = 'Failure'
-    data['message'] = 'User_ID and token not specified.'
+    export_json(success=False,message='User_ID and token not specified.')
 
 elif (validate_token(post('user_id'), post('token'))):
     action = post('action')    
@@ -19,10 +18,6 @@ elif (validate_token(post('user_id'), post('token'))):
         data['trips'] = trips
         for trip in trips_query:
             trip_id = trip[0]
-#           trips += [t]
-#           data['trips'] = trips
-#        for trip in trips:
-#            trip_id = trip[0]
             query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
             if len(query) > 0:
                 trip = {}
@@ -60,12 +55,10 @@ elif (validate_token(post('user_id'), post('token'))):
                         locations+=[l]
                         trip['locations'] = locations						
                 data['trips'].append(trip)
-                data['status'] = 'Success'
-            #else:
-          #      data['status'] = 'Failure'
-            #    data['message'] = 'Trip ID was not included in request.'
+                export_json(data=data)
+            else:
+                export_json(success=False,message= 'Trip ID was not included in request.')
     else:
-        data['status'] = 'Failure'
-        data['message'] = 'Token authentication failed. Token may have expired.'    
+        export_json(success=False,message='Token authentication failed. Token may have expired.')
 
 export_json(data)

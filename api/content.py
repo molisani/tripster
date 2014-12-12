@@ -138,7 +138,7 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             export_json(success=False,message='Failure, no content_id or comment submitted')
             
-    elif action == 'get_content_info':
+    elif action == 'content_info':
         #requires a content_id
         if has_fields(['content_id']):
             content_id = post('content_id')
@@ -150,7 +150,7 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             export_json(success=False,message='No content_id given')
     
-    elif action == 'tag_content_location':
+    elif action == 'tag_location':
         #requires a content_id and a location_id
         if has_fields(['content_id', 'location_id']):
             update_content_location(post('location_id'),post('content_id'))
@@ -164,7 +164,7 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             export_json(success=False,message='Failure, no album id given')
     
-    elif action == 'get_album_content':
+    elif action == 'album_content':
         #requires an album_id
         if has_fields(['album_id']):
             album_id = post('album_id')
