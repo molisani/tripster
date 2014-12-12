@@ -6,6 +6,69 @@ data = {}
 
 user_id = post('user_id')
 
+def add_album(trip_id,name,priv):
+    query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (trip_id, user_id, name, priv))
+    data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
+    export_json(data=data)
+
+def add_content(a_id, url, type, location):
+    query = execute_query("INSERT INTO content (album_id, location, url, type) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type)) 
+    data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
+    export_json(data=data)
+
+def toggle_like(cont_id):
+    already_likes = len(execute_query("SELECT * FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\"" % (user_id,cont_id))) > 0
+    if (already_likes):
+        execute_query("DELETE FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\""% (user_id, cont_id))
+    else: 
+        execute_query("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, cont_id))
+        update_rating = execute_query("CALL update_content_likes(\"%s\")" % (cont_id))
+    export_json(data=data)
+
+def comment(c_id, comment):
+    query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\",\"%s\")"% (user_id, c_id, comment))
+    export_json(data=data)
+    
+def content_info(c_id):
+    content = {}
+    content_info = execute_query("SELECT * From content WHERE id = \"%s\"" % (c_id))
+    if len(content_info) > 0:
+        content['id'] = c_id
+        content['album_id'] = content_info[0][1]
+        location_q = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))
+        if len(location_q) > 0:
+            content['location'] = location_q[0][0]
+        url = content_info[0][3]
+        url = url.replace("watch?v=","embed/")
+          
+        type = content_info[0][4]
+        content['thumb_url'] = url
+        content['url'] = url         
+        content['type'] = type
+            
+        if content['type'] == 'Video':
+            index = url.find('=')
+            content['thumb_url'] = "http://img.youtube.com/vi/" + url[:index] + "/default.jpg"
+                    
+        likes_query = execute_query("SELECT user_id From content_likes WHERE content_id = \"%s\"" % (content_id))
+        content['likes'] = len(likes_query)
+        if (int(user_id),) in likes_query:
+            content['liked'] = user_id
+        comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id WHERE content_id = \"%s\"" % (content_id))
+        comments = []
+        for comment in comments_query:
+            c = {}
+            c['fullname'] = comment[0]
+            c['comment'] = comment[1]
+            comments+= [c]
+        if len(comments) > 0:
+            content['comments'] = comments
+        data['content'] = content
+    export_json(data=data)
+
+def update_content_location(con_id, loc_id):
+    query = execute_query("UPDATE content SET location_id =  \"%s\" WHERE id =  \"%s\"" % (location_id,content_id))
+    
 if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
     data['message'] = 'User_ID and token not specified.'
@@ -14,101 +77,43 @@ elif (validate_token(post('user_id'), post('token'))):
     if action == 'add_album':
         #requires a trip_id, albumname, and privacy setting
         if has_fields (['trip_id', 'albumname', 'privacy']):
-            query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (post('trip_id'), user_id, post('albumname'), post('privacy')))
-            data['status'] = 'Success'
-            data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
-            data['message'] = 'Added album to trip'
+            add_album(post('trip_id'),post('albumname'),post('privacy'))
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'Attempting to add an album without a trip id, albumname, or privacy flag'
+            export_json(success=False,message='Insufficient information')
     
     elif action == 'add_content':
         #requires an album_id, a url, and a type
         if has_fields (['album_id', 'url', 'type']):
             if has_permissions(user_id, album = post('album_id'), edit = True):
-                query = execute_query("INSERT INTO content (album_id, url, type) VALUES (\"%s\",\"%s\",\"%s\")"% (post('album_id'), post('url'), post ('type')))
-                
-
-                data['status'] = 'Success'
-                data['message'] = 'Added content to album'
+                add_content(post('album_id'), post('location_id'), post('url'), post ('type'))
             else:
-                data['status'] = 'Failure'
-                data['message'] = 'Failure: does not have editing permissions on this album'    
+                export_json(success=False,message='Does not have editing permissions for this album')
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'Failed to add content, check album_id, url, and type'
+            export_json(success=False,message='Failed to add content, check album_id, url, and type')
     
     elif action == 'toggle_like':
         #requires a content_id
         if has_fields (['content_id']):
-            already_likes = len(execute_query("SELECT * FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\"" % (user_id, post('content_id')))) > 0
-            if (already_likes):
-                execute_query("DELETE FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\""% (user_id, post('content_id')))
-            else: 
-                execute_query("INSERT INTO content_likes (user_id, content_id) VALUES (\"%s\",\"%s\")"% (user_id, post('content_id')))
-            update_rating = execute_query("CALL update_content_likes(\"%s\")" % (post('content_id')))
-            data['status'] = 'Success'
-            data['message'] = 'Added like to content'
+            toggle_like(post('content_id'))
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'Failure, no content_id submitted'
+            export_json(success=False,message='Failure, no content_id submitted')
     
     elif action == 'comment':
         #requires a content_id and a comment
         if has_fields (['content_id','comment']):
-            query = execute_query ("INSERT INTO content_comments (user_id, content_id, comment) VALUES (\"%s\",\"%s\",\"%s\")"% (user_id, post('content_id'), post('comment')))
-            data['status'] = 'Success'
-            data['message'] = 'Added comment to content'
+            comment(post('content_id'),post('comment'))
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'Failure, no content_id or comment submitted'
+            export_json(success=False,message='Failure, no content_id or comment submitted')
             
     elif action == 'get_content_info':
         #requires a content_id
         if has_fields(['content_id']):
             content_id = post('content_id')
-            content = {}
-            content_info = execute_query("SELECT * From content WHERE id = \"%s\"" % (content_id))
-            if len(content_info) > 0:
-                data['status'] = 'Success'
-                content['id'] = content_id
-                content['album_id'] = content_info[0][1]
-                location_q = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))
-                if len(location_q) > 0:
-                    content['location'] = location_q[0][0]
-                url = content_info[0][3]
-                url = url.replace("watch?v=","embed/")
-                content['thumb_url'] = url
-                if content_info[0][4] == "Image":
-                    content['image_url'] = url
-                elif content_info[0][4] == "Video":
-                    content['video_url'] = url
-                    
-                content['type'] = content_info[0][4]
-                if content['type'] == 'Video':
-                    index = url.find('=')
-                    content['thumb_url'] = "http://img.youtube.com/vi/" + url[:index] + "/default.jpg"
-                    
-                likes_query = execute_query("SELECT user_id From content_likes WHERE content_id = \"%s\"" % (content_id))
-                content['likes'] = len(likes_query)
-                if (int(user_id),) in likes_query:
-                    content['liked'] = user_id
-                comments_query = execute_query("SELECT users.fullname, content_comments.comment From content_comments INNER JOIN users ON users.id = content_comments.user_id WHERE content_id = \"%s\"" % (content_id))
-                comments = []
-                for comment in comments_query:
-                    c = {}
-                    c['fullname'] = comment[0]
-                    c['comment'] = comment[1]
-                    comments+= [c]
-                if len(comments) > 0:
-                    content['comments'] = comments
-                data['content'] = content
+            content_info(content_id)
             else:
-                data['status'] = 'Failure'
-                data['message'] = 'No content found with given id'
+                export_json(success=False,message='No content found with given id')
         else:
-            data['status'] = 'Failure'
-            data['message'] = 'No content_id given'
+            export_json(success=False,'No content_id given')
     
     elif action == 'tag_content_location':
         #requires a content_id and a location_id

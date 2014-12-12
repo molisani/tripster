@@ -85,7 +85,10 @@ def has_permissions(user_id, album=None, trip=None, edit=False):
     else: 
         return False    
 
-def export_json(d):
+def export_json(data={}, success=True,message=None):
+    data['status'] = 'Success' if success else 'Failure'
+    if message is not None:
+        data['message'] = message
     print "Content-Type: application/json\n"
-    print json.JSONEncoder(indent=2).encode(d)
+    print json.JSONEncoder(indent=2).encode(data)
     db.close()
