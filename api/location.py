@@ -6,6 +6,22 @@ data = {}
 
 user_id = post('user_id')
 
+def create(locationname, country, latitude, longitude):
+    execute_query("INSERT INTO locations (locationname, country) VALUES (\"%s\", \"%s\")" % (locationname, country))
+    data['id'] = execute_query("SELECT LAST_INSERT_ID()")
+    export_json(data=data)
+
+def rate(id, rating):
+    execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, id, rating))
+
+def info(id):
+    pass
+
+def visit(id, trip_id):
+    execute_query("INSERT INTO visits (trip_id, location_id) VALUES (\"%s\", \"%s\")" % (trip_id, id))
+    export_json()
+
+
 if (not has_fields(['user_id', 'token'])):
     data['status'] = 'Failure'
     data['message'] = 'User_ID and token not specified.'
@@ -17,7 +33,6 @@ elif (validate_token(post('user_id'), post('token'))):
         if has_fields (['name','country']):
             name = post('name')
             country = post('country')
-            query = execute_query("INSERT INTO locations (locationname, country) VALUES (\"%s\",\"%s\")" % (name, country))
             data['status'] = 'Success'
             data['message'] = 'Added a new location'
         else:

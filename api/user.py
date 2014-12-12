@@ -25,14 +25,14 @@ def login(username, password):
 
 # 0: not friends, 1: friends, 2: received request, 3: sent request
 def friend_status(id1, id2):
-    friends = execute_query("SELECT friends.user1_id FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (id))
-    if (int(user_id),) in friends:
+    friends = execute_query("SELECT friends.user1_id FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (id1))
+    if (int(id1),) in friends:
         return 1
     else:
-        if (int(post('id')),) in execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (user_id, user_id)):
+        if (int(id2),) in execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (id1, id1)):
             return 2
         else:
-            if (int(user_id),) in execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (id, id)):
+            if (int(id1),) in execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (id2, id2)):
                 return 3
     return 0
 def info(id):
@@ -62,7 +62,7 @@ def info(id):
         export_json(success=False, message="The specified user does not exist.")
 def list_friends(id):
     data['friends'] = []
-    for f in execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % id)
+    for f in execute_query("SELECT friends.user1_id, users.username, users.fullname FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (id)):
         friend = {
             'user_id': f[0],
             'username': f[1],
@@ -77,7 +77,7 @@ def list_requests():
     data['requests'] = []
     for r in execute_query("SELECT myfriends.user1_id, users.fullname FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (user_id, user_id)):
         request = {
-            'user_id': r[0]
+            'user_id': r[0],
             'fullname': r[1]
         }
         data['requests'] += [request]
@@ -138,7 +138,7 @@ elif has_fields(['user_id', 'token']):
                 unfriend(id)
             else:
                 export_json(success=False, message="Insufficient information given to process this request.")
-        elif action == "update_password"
+        elif action == "update_password":
             if has_fields(['password']):
                 password = post('password')
                 update_password(password)
