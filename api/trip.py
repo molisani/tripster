@@ -97,6 +97,18 @@ elif validate_token(user_id, post('token')):
                             locations+=[l]
                         trip['locations'] = locations
                     
+                    #all locations
+                    a_locations = []
+                    location_query = execute_query("SELECT * FROM locations")
+                    if len(location_query) > 0:
+                        for location in location_query:
+                            l = {}
+                            l['location_id'] = location[0]
+                            l['locationname'] = location[3]
+                            l['country'] = location[4]
+                            l['rating'] = str(location[5])
+                            a_locations+=[l]
+                        trip['all_locations'] = a_locations
                     #get comments
                     comments_query = execute_query("SELECT users.fullname, trip_comments.comment From trip_comments INNER JOIN users ON users.id = trip_comments.user_id Where trip_id = \"%s\"" % (trip_id))
                     comments = []
