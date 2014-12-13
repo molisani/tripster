@@ -24,30 +24,27 @@ def info(id):
             }        
             #users attending
             u_query = execute_query("SELECT * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\" AND t.status = \"0\"" % (trip_id))
-            users = []
+            trip['users_attending'] = []
             for user in u_query:
                 u = {
                     'user_id': user[0],
                     'fullname': user[3]
                 }
-                users+= [u]
-            trip['users_attending'] = users
+                trip['users_attending'] += [u]
 
             #users requested
             r_query = execute_query("SELECT * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\" AND t.status = \"2\"" % (trip_id))
-            req_users = []
+            trip['users_requested'] = []
             for r in r_query:
                 req = {
                     'user_id': r[0],
                     'fullname': r[3]
                 }
-            req_users+= [req]
-            trip['users_requested'] = req_users
+                trip['users_requested'] += [req]
                     
             #albums associated
             a_query = execute_query("Select * From albums Where trip_id = \"%s\"" % (trip_id))
-            albums = []
-                    
+            trip['albums'] = []  
             for album in a_query:
                 a = {
                     'album_id': album[0],
@@ -55,69 +52,61 @@ def info(id):
                     'albumname': album[3],
                     'privacy': album[4]
                 }
-            albums+=[a]
-            trip['albums'] = albums
+                trip['albums'] += [a]
                     
             #expenses associated
             expense_query = execute_query("Select * From expenses Where trip_id = \"%s\"" % (trip_id))
-            if len(expense_query) > 0:
-                expenses = []
-                for ex in expense_query:
-                    e = {
-                        'expense_id': ex[0],
-                        'trip_id': ex[1],
-                        'expense_user': expense_user[0][0],
-                        'description': ex[3],
-                        'cost': str(ex[4])
-                    }
-                    expense_user = ex[2]
-                    if expense_user == "":
-                        expense_user = 'No User tagged'
-                    else:
-                        expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
-                    expenses += [e]
-            trip['expenses'] = expenses
+            trip['expenses'] = []
+            for ex in expense_query:
+                e = {
+                    'expense_id': ex[0],
+                    'trip_id': ex[1],
+                    'expense_user': expense_user[0][0],
+                    'description': ex[3],
+                    'cost': str(ex[4])
+                }
+                expense_user = ex[2]
+                if expense_user == "":
+                    expense_user = 'No User tagged'
+                else:
+                    expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
+                trip['expenses'] += [e]
                     
             #locations associated
             l_query = execute_query("Select * From locations l Inner Join visits v on v.location_id = l.id Where v.trip_id = \"%s\"" % (trip_id))
-            if len(l_query) > 0:
-                locations = []
-                for location in l_query:
-                    l = {
-                      'location_id': location[0],
-                      'lat': location[1],
-                      'long': location[2],
-                      'locationname': location[3],
-                      'country': location[4],
-                      'rating': str(location[5])
-                    }
-                    locations+=[l]
-            trip['locations'] = locations
+            trip['locations'] = []
+            for location in l_query:
+                l = {
+                  'location_id': location[0],
+                  'lat': location[1],
+                  'long': location[2],
+                  'locationname': location[3],
+                  'country': location[4],
+                  'rating': str(location[5])
+                }
+                trip['locations'] += [l]
                     
             #all locations
-            trip['all_locations'] = getLocations()
+            trip['all_locations'] = getLocations()  #?
             #get comments
             comments_query = execute_query("SELECT users.fullname, trip_comments.comment From trip_comments INNER JOIN users ON users.id = trip_comments.user_id Where trip_id = \"%s\"" % (trip_id))
-            comments = []
+            trip['comments'] = []
             for comment in comments_query:
                 c = {
                     'fullname': comment[0],
                     'comment': comment[1]
                 }
-                comments+= [c]
-            if len(comments) > 0:
-                trip['comments'] = comments
+                trip['comments'] += [c]
                     
             #get all users
-            us_query = execute_query("Select id, fullname From users")
-            all_users = []
+            us_query = execute_query("SELECT id, fullname FROM users")
+            trip['all_users'] = []
             for user in us_query:
                 u = {
                     'user_id': user[0],
                     'fullname': user[1]
                 }
-                all_users += [u]
-            trip['all_users'] = all_users
+                trip['all_users'] += [u]
 
             status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
             if len(status) > 0:
@@ -139,14 +128,13 @@ def info(id):
         export_json(success=False,message='User does not have the correct permissions for this trip.')
 
 def list():
-    trips = []
+    data['trips'] = []
     for t in execute_query("SELECT trips.id, trips.tripname, trips.creator_id FROM trips INNER JOIN takes ON takes.trip_id = trips.id WHERE takes.user_id = \"%s\"" % (user_id)):
         trip = {}
         trip['trip_id'] = t[0]
         trip['tripname'] = t[1]
         if (str(t[2]) == user_id): trip['creator_id'] = t[2]
-        trips += [trip]
-    data['trips'] = trips
+        data['trips'] += [trip]
     export_json(data=data)
 
 def create(trip_name):
@@ -157,7 +145,6 @@ def create(trip_name):
         trip[item] = post(item)
     execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
                    % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
-    data['status'] = 'Success'
     trip_id = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     data['id'] = trip_id
     execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%d\", \"%s\", \"0\")" % (trip_id, user_id))
@@ -172,7 +159,7 @@ def invite(invitee_id, t_id):
         execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
     else:
         execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
-    export_json(data=data)
+    export_json()
     
 def request(id):
     status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
@@ -183,7 +170,7 @@ def request(id):
         execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, user_id, trip_id))
     else:
         execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 2))
-    export_json(data=data)
+    export_json()
 
 def rate(rating,id):
     already_rated = len(execute_query("SELECT * FROM trip_ratings WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (user_id, trip_id))) > 0
@@ -192,7 +179,7 @@ def rate(rating,id):
     else:
         execute_query("INSERT INTO trip_ratings (user_id, trip_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, trip_id, trip_rating))
     update_rating = execute_query("CALL update_trip_rating(\"%s\")" % (trip_id))
-    export_json(data=data)    
+    export_json()    
     
 if (not has_fields(['user_id', 'token'])):
     export_json(success=False,message='UserId and token not specified.')
