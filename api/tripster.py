@@ -72,7 +72,7 @@ def rec_locations():
             data['locations'] = locations[0:num_results]
             export_json(data=data)
         else:
-            export_json(success=False,message='No available locations to recommend')
+            export_json(message='No available locations to recommend')
 
 def rec_friends():
     query = execute_query("SELECT user2_id, count(user2_id) as c from friends f1 INNER JOIN (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") ff on ff.u2 = f1.user1_id WHERE user2_id <> \"%s\" AND user2_id not in (SELECT user2_id as u2 from friends f WHERE f.user1_id = \"%s\") GROUP BY user2_id ORDER BY c" % (user_id, user_id, user_id))
