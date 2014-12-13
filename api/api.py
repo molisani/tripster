@@ -16,7 +16,7 @@ post_fields = cgi.FieldStorage()
 db = MySQLdb.connect(
     unix_socket='/cloudsql/tripster-fall14:db-1',
     user='root',
-    database='MyDB')
+    db='MyDB')
 
 db.autocommit(True)
 
