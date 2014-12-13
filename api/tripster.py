@@ -87,7 +87,7 @@ def rec_friends():
             data['rec_id'] = query[0][0]
             export_json(data=data)
         else:
-            export_json(success=False,message='No available friends to recommend')
+            export_json(message='No available friends to recommend')
 
 if (not has_fields(['user_id', 'token'])):
     export_json(success=False,message='User_ID and token not specified.')
