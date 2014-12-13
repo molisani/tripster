@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from api import *
+execfile("api/api.py")
 
 data = {}
 

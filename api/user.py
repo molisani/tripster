@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from datetime import datetime
-from api import *
+execfile("api/api.py")
 
 data = {}
 user_id = post('user_id')
