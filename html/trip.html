@@ -104,11 +104,11 @@
               Go More Places! <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              {{#each location_select}}
-              <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
+              {{#each all_locations}}
+              <li><a name="{{location_id}}" id="add-location">{{locationname}}, <i>{{country}}</i></a></li>
               {{/each}}
               <li class="divider"></li>
-              <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
+              <li><a href="./location_create.html">Create New Location</a></li>
             </ul>
           </div>
         </div>
@@ -281,6 +281,27 @@ $.when(
           token: $.cookie('token'),
           id: trip,
           invitee_id: $(e.target).attr('name')
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
+ $(document).on("click", '#add-location', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/location.py',
+        type: 'post',
+        data: {
+          action: 'visits',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: $(e.target).attr('name'),
+          trip_id: trip
         },
         dataType: 'json',
         success: function(json) {
