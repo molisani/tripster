@@ -10,7 +10,7 @@ user_id = post('user_id')
 # privacy, rating, id, comment, description, cost, expense_id
 
 def info(trip_id):
-    if has_permissions(username, trip=trip_id):
+    if (0==0):#has_permissions(username, trip=trip_id):
         query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
         if len(query) > 0:
             #basic trip info
@@ -61,7 +61,6 @@ def info(trip_id):
                 e = {
                     'expense_id': ex[0],
                     'trip_id': ex[1],
-                    'expense_user': expense_user[0][0],
                     'description': ex[3],
                     'cost': str(ex[4])
                 }
@@ -70,6 +69,7 @@ def info(trip_id):
                     expense_user = 'No User tagged'
                 else:
                     expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
+                e['expense_user']= expense_user[0][0],
                 trip['expenses'] += [e]
                     
             #locations associated
