@@ -28,6 +28,7 @@ elif (validate_token(post('user_id'), post('token'))):
                 trip['todo_list'] = query[0][5]
                 trip['privacy'] = query[0][6]
                 trip['rating'] = str(query[0][7])
+                trip['thumb_url'] = query[0][8]
                          
                 #users attending
                 u_query = execute_query("Select * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\"" % (trip_id))
@@ -56,7 +57,9 @@ elif (validate_token(post('user_id'), post('token'))):
                         trip['locations'] = locations						
                 data['trips'].append(trip)
         export_json(data=data)
+        
     else:
         export_json(success=False,message='Token authentication failed. Token may have expired.')
+        
 else:
     export_json(success=False,message='Token authentication failed. Token may have expired.')
