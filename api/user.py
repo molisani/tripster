@@ -36,7 +36,7 @@ def friend_status(id1, id2):
                 return 3
     return 0
 def info(id):
-    result = execute_query("SELECT * FROM users WHERE user.id = \"%s\"" % (id))
+    result = execute_query("SELECT * FROM users WHERE id = \"%s\"" % (id))
     if len(result) > 0:
         info = result[0]
         user = {
