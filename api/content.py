@@ -11,13 +11,13 @@ def add_album(trip_id,name,priv):
     data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
     export_json(data=data)
 
-def add_content(a_id, url, type, location):
+def add_content(a_id, url, type1, location):
     url = url.replace("watch?v=","embed/")
     thumb = url
-    if type == 'Video':
+    if type1 == 'Video':
         index = url.find('embed/')
         thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/default.jpg"
-    query = execute_query("INSERT INTO content (album_id, location, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type,thumb)) 
+    query = execute_query("INSERT INTO content (album_id, location, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type1,thumb)) 
     query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
     if len(query) > 0:
         if query[0][0] == '':
