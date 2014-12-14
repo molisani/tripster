@@ -7,11 +7,12 @@ data = {}
 user_id = post('user_id')
 
 def create(locationname, country, latitude, longitude):
-    execute_query("INSERT INTO locations (locationname, country) VALUES (\"%s\", \"%s\")" % (locationname, country))
-    data['id'] = execute_query("SELECT LAST_INSERT_ID()")
+    execute_query("INSERT INTO locations (latitude, longitude, locationname, country) VALUES (\"%s\",\"%s\",\"%s\", \"%s\")" % (latitude,longitude,locationname, country))
+    data['id'] = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     export_json(data=data)
 def rate(id, rating):
     execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, id, rating))
+    update_rating = execute_query("CALL update_location_rating(\"%s\")" % (id))
     export_json()
 def info(id):
     result = execute_query("SELECT * FROM locations where id = \"%s\"" % (id))
@@ -23,15 +24,17 @@ def info(id):
             'longitude': info[2],
             'locationname': info[3],
             'country': info[4],
-            'rating': info[5],
+            'rating': str(info[5]),
             'content': []
         }
+        
         for c in execute_query("SELECT * FROM content WHERE location_id = \"%s\"" % (id)):
             content = {
                 'content_id': c[0],
-                'url': c[3].replace("watch?v=", "embed/")
+                'url': c[6]
             }
-            location['content'] = content
+            location['content'].append(content)
+        data['location'] = location
         export_json(data=data)
     else:
         export_json(success=False, message="The specified location does not exist.")
@@ -43,7 +46,7 @@ if has_fields(['user_id', 'token']):
     if validate_token(user_id, post('token')):
         action = post('action')
         if action == "create":
-            if has_fields(['locationname', 'country', 'latitude', 'longitude']):
+            if has_fields(['locationname', 'country']):
                 locationname = post('locationname')
                 country = post('country')
                 latitude = post('latitude')

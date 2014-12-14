@@ -13,6 +13,10 @@ def info(trip_id):
     if (0==0):#has_permissions(username, trip=trip_id):
         query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
         if len(query) > 0:
+            #update trip thumbnail
+            up_query = execute_query("SELECT thumbnail_url FROM albums WHERE trip_id = \"%s\"" % (trip_id))
+            if len(up_query) > 0:
+                execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (up_query[0][0],trip_id))
             #basic trip info
             trip = {
                 'tripname': query[0][2],

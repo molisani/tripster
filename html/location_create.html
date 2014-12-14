@@ -13,42 +13,27 @@
     <section id="main-content">
       <div class="container-fluid">
         <br>
-        <form class="form-horizontal" role="form" id="new-trip-form" action="javascript:void(0);">
+        <form class="form-horizontal" role="form" id="new-location-form" action="javascript:void(0);">
           <input type="hidden" name="action" value="create">
           <div class="form-group">
-            <div class="col-sm-12">
-              <input type="text" class="form-control" name="tripname" placeholder="Trip Name">
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="startdate" placeholder="Start Date YYYY-MM-DD">
-            </div>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="enddate" placeholder="End Date YYYY-MM-DD">
-            </div>
-          </div>
-          <div class="form-group">
             <div class="col-sm-8">
-              <h4>Visibility</h4>
-              <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default active" id="vis-options">
-                  <input type="radio" autocomplete="off" value="0"> Public
-                </label>
-                <label class="btn btn-default" id="vis-options">
-                  <input type="radio" autocomplete="off" value="1"> Private
-                </label>
-                <label class="btn btn-danger" id="vis-options">
-                  <input type="radio" autocomplete="off" value="2"> Only Me
-                </label>
-              </div>
+              <input type="text" class="form-control" name="locationname" id="name-input" placeholder="Location Name">
             </div>
-            <div class="col-sm-4 pull-right">
-              <br></br>
-              <br></br>
-              <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-trip-btn">Create Trip</button>
-              </div>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="country" id="country-input" placeholder="Country">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-6">
+              <input type="text" class="form-control" name="latitude" id="lat-input" placeholder="Latitude">
+            </div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" name="longitude" id="long-input" placeholder="Longitude">
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="span 12 centered">
+                <button type="submit" class="btn btn-success" id="new-location-btn">Create location</button>
             </div>
           </div>
         </form>
@@ -65,7 +50,7 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "Create New Trip",
+      pageData.page_header = "<h1>Create New Location</h1>",
       pageData.page_body = $('#main-content').html()
 
       if ($.cookie("username")) {
@@ -77,18 +62,25 @@
       build_page();
       load_sidebar();
     });
-    $(document).on("click", '#new-trip-btn', function(e) {
-      newTrip = formData('#new-trip-form');
-      newTrip.privacy = $('#vis-options[class*="active"] input').attr("value");
-      console.log(newTrip);
+    $(document).on("click", '#new-location-btn', function(e) {
+      newlocation = formData('#new-location-form');
+      console.log(newlocation);
       $.ajax({
-        url: '../api/trip.py',
+        url: '../api/location.py',
         type: 'post',
-        data: newTrip,
+        data: {
+            action: 'create',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            locationname: $('#name-input').val(),
+            country: $('#country-input').val(),
+            latitude: $('lat-input').val(),
+            longitude: $('long-input').val()
+        },
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./edit_trip.html?id=" + json.id;
+            window.location = "./location.html?id=" + json.id;
           }
         }
       });
