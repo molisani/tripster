@@ -20,7 +20,8 @@ def info(trip_id):
                 'enddate': str(query[0][4]),
                 'todo_list': query[0][5],
                 'privacy': query[0][6],
-                'rating': str(query[0][7])
+                'rating': str(query[0][7]),
+                'thumb_url': query[0][8]
             }        
             #users attending
             u_query = execute_query("SELECT * From users u Inner Join takes t on t.user_id = u.id Where t.trip_id = \"%s\" AND t.status = \"0\"" % (trip_id))
@@ -142,8 +143,9 @@ def create(trip_name):
     trip = {}
     for item in trip_fields:
         trip[item] = post(item)
-    execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")"
-                   % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]]))
+    thumb = 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg'
+    execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating, thumb_url) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\"), \"%s\")"
+                   % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]],thumb))
     trip_id = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     data['id'] = trip_id
     execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%d\", \"%s\", \"0\")" % (trip_id, user_id))

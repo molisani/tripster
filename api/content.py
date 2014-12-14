@@ -22,6 +22,8 @@ def add_content(a_id, url, type1, location):
     if len(query) > 0:
         if query[0][0] == '':
             execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
+            trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
+            execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
     data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
     export_json(data=data)
 
