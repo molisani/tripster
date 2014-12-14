@@ -58,6 +58,11 @@ if has_fields(['user_id', 'token']):
                 rate(id, rating)
             else:
                 export_json(success=False, message="Insufficient information given to process this request.")
+        elif action == "visits"
+            if has_fields(['id', 'trip_id']):
+                visits(post('id'), post('trip_id'))
+            else:
+                export_json(success=False, message="Insufficient information given to process this request.")
         elif action == "info":
             if has_fields(['id']):
                 id = post('id')
