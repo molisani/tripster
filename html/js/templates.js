@@ -26,7 +26,7 @@ function load_sidebar() {
             url: '../api/user.py',
             type: 'post',
             data: {
-                action: 'get_friends',
+                action: 'list_friends',
                 user_id: $.cookie('user_id'),
                 token: $.cookie('token'),
                 id: $.cookie('user_id')
