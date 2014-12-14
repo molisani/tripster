@@ -58,11 +58,11 @@
               Select A Location <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              {{#each location_select}}
-              <li><a href="#">{{location_select_locationname}}, <i>{{location_select_country}}</i></a></li>
+              {{#each all_locations}}
+              <li><a name="{{location_id}}" id="add-location">{{locationname}}, <i>{{country}}</i></a></li>
               {{/each}}
               <li class="divider"></li>
-              <li><a href="./create_location.html?trip_id={{trip_id}}">Create New Location</a></li>
+              <li><a href="./location_create.html">Create New Location</a></li>
             </ul>
           </div>
         </div>
@@ -95,7 +95,31 @@ $.when(
     load_sidebar();
 
     var album = $_GET('album_id');
+    {
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+          action: 'content_info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          content_id: '1'
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            pageData.page_body = contentBody(json.content);
+            build_page();
+          }
+        }
+      });
+    }
     
+    var location;
+    $(document).on("click", '#add-location', function(e) {
+      location = $(e.target).attr('name');
+    });
+
     $(document).on("click", '#new-content-btn', function(e) {
      if($('#url').val() == "") return;
      
@@ -109,6 +133,7 @@ $.when(
          token: $.cookie('token'),
          album_id: album,
          url: $('#url').val(),
+         location_id = location,
          type: $('#vis-options[class*="active"] input').attr("value")
        },
        dataType: 'json',
