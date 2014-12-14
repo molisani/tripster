@@ -12,7 +12,16 @@ def add_album(trip_id,name,priv):
     export_json(data=data)
 
 def add_content(a_id, url, type, location):
-    query = execute_query("INSERT INTO content (album_id, location, url, type) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type)) 
+    url = url.replace("watch?v=","embed/")
+    thumb = url
+    if type == 'Video':
+        index = url.find('embed/')
+        thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/default.jpg"
+    query = execute_query("INSERT INTO content (album_id, location, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type,thumb)) 
+    query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
+    if len(query) > 0:
+        if query[0][0] == '':
+            execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
     data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
     export_json(data=data)
 
@@ -36,19 +45,18 @@ def content_info(c_id):
         content= {
             'id': c_id,
             'album_id': content_info[0][1],
-            'thumb_url': content_info[0][3].replace("watch?v=","embed/"),
-            'url': url,         
+            'url': content_info[0][3],         
+            'thumb_url': content_info[0][6],
             'type': content_info[0][4]
-        }    
-        
+        }
+        if (content_info[0][4] == 'Image'):
+            content['image_url'] = content_info[0][3]
+        else:
+            content['video_url'] = content_info[0][3]
         location_q = execute_query("SELECT locationname From locations WHERE id = \"%s\"" %(content_info[0][2]))
         if len(location_q) > 0:
             content['location'] = location_q[0][0]
-        
-        if content['type'] == 'Video':
-            index = url.find('=')
-            content['thumb_url'] = "http://img.youtube.com/vi/" + url[:index] + "/default.jpg"
-                    
+              
         likes_query = execute_query("SELECT user_id From content_likes WHERE content_id = \"%s\"" % (content_id))
         content['likes'] = len(likes_query)
         if (int(user_id),) in likes_query:
@@ -85,6 +93,7 @@ def album_content(a_id):
             'trip_id': album_info[0][1],
             'creator': execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0],
             'albumname': album_info[0][3],
+            'thumb_url': album_info[0][5],
             'privacy': album_info[0][4]
         }
         content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
@@ -92,7 +101,11 @@ def album_content(a_id):
         for content in content_query:
             c = {}
             c['content_id'] = content[0]
-            c['url'] = content[3].replace("watch?v=","embed/")
+            if (content[4] == 'Image'):
+                c['image_url'] = content[3]
+            else:
+                c['video_url'] = content[3]
+            c['thumb_url'] = content[6]
             contents+= [c]
         if len(contents) > 0:
             album['content'] = contents
@@ -105,6 +118,7 @@ def album_content(a_id):
     
 if (not has_fields(['user_id', 'token'])):
     export_json(success=False,message='User_ID and token not specified.')
+        
     
 elif (validate_token(post('user_id'), post('token'))):
     action = post('action')
