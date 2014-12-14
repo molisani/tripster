@@ -100,14 +100,11 @@ elif (validate_token(post('user_id'), post('token'))):
             search(q)
         else:
             export_json(success=False,message='No search query specified')
-
     elif action == 'recommend_locations':
-        rec_locs()
-        
+        rec_locations()
     elif action == 'recommend_friends':
         rec_friends()
     else:
         export_json(success=False,message='No action specified')
-        
 else:
     export_json(success=False,message='Token authentication failed. Token may have expired.')
