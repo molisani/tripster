@@ -55,10 +55,8 @@ elif (validate_token(post('user_id'), post('token'))):
                         locations+=[l]
                         trip['locations'] = locations						
                 data['trips'].append(trip)
-                export_json(data=data)
-            else:
-                export_json(success=False,message= 'Trip ID was not included in request.')
+        export_json(data=data)
     else:
         export_json(success=False,message='Token authentication failed. Token may have expired.')
-
-export_json(data)
+else:
+    export_json(success=False,message='Token authentication failed. Token may have expired.')
