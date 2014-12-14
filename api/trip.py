@@ -9,7 +9,7 @@ user_id = post('user_id')
 # possible fields for trip post: username, user_id, token, action, trip_name, creator_id, start_date, end_date, todo_list, 
 # privacy, rating, id, comment, description, cost, expense_id
 
-def info(id):
+def info(trip_id):
     if has_permissions(username, trip=trip_id):
         query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
         if len(query) > 0:
@@ -138,7 +138,6 @@ def list():
     export_json(data=data)
 
 def create(trip_name):
-    trip_name = post('trip_name')
     trip_fields = ['start_date', 'end_date', 'todo_list', 'privacy', 'rating']
     trip = {}
     for item in trip_fields:
