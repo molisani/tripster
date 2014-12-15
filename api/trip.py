@@ -179,7 +179,7 @@ def request(id):
         execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 2))
     export_json()
 
-def rate(rating,id):
+def rate(trip_rating,trip_id):
     already_rated = len(execute_query("SELECT * FROM trip_ratings WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (user_id, trip_id))) > 0
     if (already_rated):
         execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (trip_rating, user_id, trip_id))

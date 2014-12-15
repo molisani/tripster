@@ -11,7 +11,11 @@ def create(locationname, country, latitude, longitude):
     data['id'] = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     export_json(data=data)
 def rate(id, rating):
-    execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, id, rating))
+    already_rated = len(execute_query("SELECT * FROM location_ratings WHERE location_ratings.user_id = \"%s\" AND location_ratings.location_id = \"%s\"" % (user_id, id))) > 0
+    if (already_rated):
+        execute_query("UPDATE location_ratings SET rating = \"%s\" WHERE location_ratings.user_id = \"%s\" AND location_ratings.location_id = \"%s\"" % (rating,user_id,id))
+    else:    
+        execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, id, rating))
     update_rating = execute_query("CALL update_location_rating(\"%s\")" % (id))
     export_json()
 def info(id):
@@ -27,6 +31,9 @@ def info(id):
             'rating': str(info[5]),
             'content': []
         }
+        
+        rating = execute_query("SELECT location_ratings.rating FROM location_ratings WHERE location_ratings.location_id = \"%s\" AND location_ratings.user_id = \"%s\"" % (id, user_id))
+        location['user_rating'] = rating[0][0] if len(rating) > 0 else 0
         
         for c in execute_query("SELECT * FROM content WHERE location_id = \"%s\"" % (id)):
             content = {

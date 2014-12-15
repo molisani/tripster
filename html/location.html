@@ -68,6 +68,13 @@
         sidebarData.username = $.cookie("username");
       }
 
+    var rating = 0;
+    function starify_rating() {
+      for (var i = 1; i < rating + 1; i++) {
+        $('#rating-star[data-rating="' + i + '"]').attr('class', "glyphicon glyphicon-star");
+      }
+    }
+      
       build_page();
       load_sidebar();
 
@@ -88,13 +95,36 @@
               var name = json.location.locationname;
               if (json.location.country) name += ", <i>" + json.location.country + "</i>";
             //  json.location.location_id = location
+              rating = json.location.user_rating;
               pageData.page_header = name;
               pageData.page_body = locationBody(json.location)
               build_page();
+              starify_rating();
             }
           }
         });
       }
+      
+      $(document).on("click", '#rating-star', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/location.py',
+        type: 'post',
+        data: {
+          action: 'rate',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: location,
+          rating: $(e.target).attr('data-rating')
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
     });
   </script>
 </html>
