@@ -55,7 +55,9 @@ def info(trip_id):
                     'album_id': album[0],
                     'creator_id': album[2],
                     'albumname': album[3],
+                    'thumb_url': album[5],
                     'privacy': album[4]
+                    
                 }
                 trip['albums'] += [a]
                     
