@@ -58,7 +58,7 @@
             </div>
             Edit To-Do List
             <div class="input-group">
-              <input type="text" class="form-control" id="todo_add" value="{{todo_list}}">
+              <input type="text" class="form-control" id="todo_list" value="{{todo_list}}">
               <span class="input-group-btn">
                 <button class="btn btn-default" type="button" id="todo-btn">Update List</button>
               </span>
@@ -206,7 +206,7 @@ $.when(
     });
     
     $(document).on("click", '#todo-btn', function(e) {
-        var newTripName  = document.getElementById("trip_name").value;
+        var newList  = document.getElementById("todo_list").value;
       $.ajax({
         url: '../api/trip.py',
         type: 'post',
@@ -215,7 +215,7 @@ $.when(
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
           id: trip,
-          name: newTripName
+          todo_list: newList
         },
         dataType: 'json',
         success: function(json) {
