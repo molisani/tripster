@@ -238,9 +238,9 @@ $.when(
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
           id: trip,
+          expense_user: newExpenseUser,
           description: newExpenseDescription,
-          cost: newExpenseCost,
-          expense_user: newExpenseUser
+          cost: newExpenseCost
         },
         dataType: 'json',
         success: function(json) {
