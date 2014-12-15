@@ -306,7 +306,9 @@ elif validate_token(user_id, post('token')):
             description = post('description')
             cost = post('cost')
             expense_user = post('expense_user')
-            execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, expense_user, description, cost))
+            query = execute_query("SELECT id FROM users WHERE fullname LIKE \'%%%s%%\'" % (expense_user))
+            if len(query) > 0:
+                execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, query[0][0], description, cost))
             export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')
