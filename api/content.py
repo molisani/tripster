@@ -11,13 +11,13 @@ def add_album(trip_id,name,priv):
     data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
     export_json(data=data)
 
-def add_content(a_id, url, type1, location):
+def add_content(a_id, url, type1, loc):
     url = url.replace("watch?v=","embed/")
     thumb = url
     if type1 == 'Video':
         index = url.find('embed/')
         thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/default.jpg"
-    query = execute_query("INSERT INTO content (album_id, location, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, location, url, type1,thumb)) 
+    query = execute_query("INSERT INTO content (album_id, location_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, loc, url, type1,thumb)) 
     query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
     if len(query) > 0:
         if query[0][0] == '':
@@ -135,7 +135,7 @@ elif (validate_token(post('user_id'), post('token'))):
         #requires an album_id, a url, and a type
         if has_fields (['album_id', 'url', 'type']):
             if (0==0):#has_permissions(user_id, album = post('album_id'), edit = True):
-                add_content(post('album_id'), post('location_id'), post('url'), post ('type'))
+                add_content(post('album_id'), post('url'), post ('type'),post('location_id'))
             else:
                 export_json(success=False,message='Does not have editing permissions for this album')
         else:
