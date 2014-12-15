@@ -303,7 +303,7 @@ elif validate_token(user_id, post('token')):
         #optional description, cost, and expense_user
         if has_fields(['id']):
             trip_id = post('id')
-            description = post('description')
+            description = post('des')
             cost = post('cost')
             expense_user = post('expense_user')
             query = execute_query("SELECT id FROM users WHERE fullname LIKE \'%%%s%%\'" % (expense_user))

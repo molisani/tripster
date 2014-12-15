@@ -226,14 +226,11 @@ $.when(
       });
     });
     
-    var newExpenseDescription = document.getElementById("expense_name").value;
-    var newExpenseCost  = document.getElementById("expense_cost").value;
-    var newExpenseUser  = document.getElementById("expense_user").value;
-    
     $(document).on("click", '#expense-btn', function(e) {
-       // var newExpenseDescription = document.getElementById("expense_name").value;
-      //  var newExpenseCost  = document.getElementById("expense_cost").value;
-       // var newExpenseUser  = document.getElementById("expense_user").value;
+        var newExpenseDescription = document.getElementById("expense_name").value;
+        var newExpenseCost  = document.getElementById("expense_cost").value;
+        var newExpenseUser  = document.getElementById("expense_user").value;
+        
       $.ajax({
         url: '../api/trip.py',
         type: 'post',
@@ -243,7 +240,7 @@ $.when(
           token: $.cookie('token'),
           id: trip,
           expense_user: newExpenseUser,
-          description: newExpenseDescription,
+          des: newExpenseDescription,
           cost: newExpenseCost
         },
         dataType: 'json',
