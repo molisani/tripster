@@ -78,7 +78,7 @@
       build_page();
       load_sidebar();
 
-      var location = $_GET('id');
+      var loc = $_GET('id');
       if (location != "null") {
         $.ajax({
           url: '../api/location.py',
@@ -87,7 +87,7 @@
             action: 'info',
             user_id: $.cookie('user_id'),
             token: $.cookie('token'),
-            id: location
+            id: loc
           },
           dataType: 'json',
           success: function(json) {
@@ -114,7 +114,7 @@
           action: 'rate',
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
-          id: location,
+          id: loc,
           rating: $(e.target).attr('data-rating')
         },
         dataType: 'json',
