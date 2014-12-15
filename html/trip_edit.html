@@ -16,23 +16,51 @@
         <br>
         <div class="row">
           <div class="col-md-5">
-            <div class="btn-group" data-toggle="buttons">
+            <!-- <div class="btn-group" data-toggle="buttons" id="privacy-buttons">
               <label class="btn btn-default active" id="vis-options">
-                <input type="radio" autocomplete="off" value="0"> Public</input>
+                <input type="radio" autocomplete="off" id="privacy-0" value="0"> Public</input>
               </label>
               <label class="btn btn-default" id="vis-options">
-                <input type="radio" autocomplete="off" value="1"> Private</input>
+                <input type="radio" autocomplete="off" id="privacy-1" value="1"> Private</input>
               </label>
               <label class="btn btn-danger" id="vis-options">
-                <input type="radio" autocomplete="off" value="2"> Only Me</input>
+                <input type="radio" autocomplete="off" id="privacy-2" value="2"> Only Me</input>
               </label>
-            </div>
+            </div> -->
+            Change Privacy
+            <br>
+            <button class="btn btn-default" type="button" id="privacy-0">Make Public</button>
+            <br><br>
+            <button class="btn btn-default" type="button" id="privacy-1">Make Private</button>
+            <br><br>
+            <button class="btn btn-default" type="button" id="privacy-2">Make Personal (Only Me)</button>
           </div>
           <div class="col-md-7">
+            Change Trip Name
+            <br>
             <div class="input-group">
-              <input type="text" class="form-control" name="albumname" value="{{tripname}}">
+              <input type="text" class="form-control" id="trip_name" value="{{tripname}}">
               <span class="input-group-btn">
-                <button class="btn btn-default" type="button" id="save-btn">Save Changes</button>
+                <button class="btn btn-default" type="button" id="name-btn">Save Name</button>
+              </span>
+            </div>
+            <br>
+            <br>
+             Add Expense 
+            <br>
+            <div class="input-group">
+              <input type="text" class="form-control" id="expense_name" value="Description of Expense">
+              <input type="text" class="form-control" id="expense_cost" value="Price of Expense">
+              <input type="text" class="form-control" id="expense_user" value="User Responsible">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="expense-btn">Save Expense</button>
+              </span>
+            </div>
+            Edit To-Do List
+            <div class="input-group">
+              <input type="text" class="form-control" id="todo_add" value="{{todo_list}}">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="todo-btn">Update List</button>
               </span>
             </div>
           </div>
@@ -78,6 +106,7 @@
 <script src="tmpl/sidebar.tmpl.js" id="sidebar-template"></script>
 <script src="tmpl/result-modal.tmpl.js" id="result-modal-template"></script>
 <script type="text/javascript">
+
 $.when(
   $.getScript("./js/templates.js")
   ).done(function(){
@@ -114,27 +143,6 @@ $.when(
         }
       });
     }
-
-    $(document).on("click", '#save-changes-btn', function(e) {
-      $.ajax({
-        url: '../api/trip.py',
-        type: 'post',
-        data: {
-          action: 'info',
-          user_id: $.cookie('user_id'),
-          token: $.cookie('token'),
-          id: trip
-        },
-        dataType: 'json',
-        success: function(json) {
-          if (json.status == 'Success') {
-            pageData.page_header = json.trip.tripname;
-            pageData.page_body = trip_edit_template(json.trip);
-            build_page();
-          }
-        }
-      });
-    });
 
     $(document).on("click", '#accept-btn', function(e) {
       $.ajax({
@@ -175,6 +183,73 @@ $.when(
         }
       });
     });
+    
+     $(document).on("click", '#name-btn', function(e) {
+        var newTripName  = document.getElementById("trip_name").value;
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'change_name',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          name: newTripName
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+    
+    $(document).on("click", '#todo-btn', function(e) {
+        var newTripName  = document.getElementById("trip_name").value;
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'set_todo',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          name: newTripName
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+    
+    $(document).on("click", '#expense-btn', function(e) {
+        var newExpenseDescription = document.getElementById("expense_name").value;
+        var newExpenseCost  = document.getElementById("expense_cost").value;
+        var newExpenseUser  = document.getElementById("expense_user").value;
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'add_expense',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          description: newExpenseDescription,
+          cost: newExpenseCost,
+          expense_user: newExpenseUser
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
 
     $(document).on("click", '#remove-user', function(e) {
       console.log($(e.target));
@@ -196,6 +271,69 @@ $.when(
         }
       });
     });
+    
+    //Change privacy
+    $(document).on("click", '#privacy-0', function(e) {       
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'set_privacy',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          privacy: '0'
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+    $(document).on("click", '#privacy-1', function(e) {       
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'set_privacy',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          privacy: '1'
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+    $(document).on("click", '#privacy-2', function(e) {       
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'set_privacy',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: trip,
+          privacy: '2'
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+    
   });
 </script>
 </html>
