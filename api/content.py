@@ -15,7 +15,7 @@ def add_album(trip_id,name,priv):
         export_json(success=False, message="You do not have the proper permissions to perform this action.")
 
 def add_content(a_id, url, type1, loc):
-    if has_permissions(user_id, "albums", a_id, 1)
+    if has_permissions(user_id, "albums", a_id, 1):
         url = url.replace("watch?v=","embed/")
         thumb = url
         if type1 == 'Video':

@@ -10,6 +10,7 @@ def create(locationname, country, latitude, longitude):
     execute_query("INSERT INTO locations (latitude, longitude, locationname, country) VALUES (\"%s\",\"%s\",\"%s\", \"%s\")" % (latitude,longitude,locationname, country))
     data['id'] = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     export_json(data=data)
+
 def rate(id, rating):
     already_rated = len(execute_query("SELECT * FROM location_ratings WHERE location_ratings.user_id = \"%s\" AND location_ratings.location_id = \"%s\"" % (user_id, id))) > 0
     if (already_rated):
@@ -18,6 +19,7 @@ def rate(id, rating):
         execute_query("INSERT INTO location_ratings (user_id, location_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, id, rating))
     update_rating = execute_query("CALL update_location_rating(\"%s\")" % (id))
     export_json()
+
 def info(id):
     result = execute_query("SELECT * FROM locations where id = \"%s\"" % (id))
     if len(result) > 0:
@@ -45,6 +47,7 @@ def info(id):
         export_json(data=data)
     else:
         export_json(success=False, message="The specified location does not exist.")
+        
 def visits(id, trip_id):
     execute_query("INSERT INTO visits (trip_id, location_id) VALUES (\"%s\", \"%s\")" % (trip_id, id))
     export_json()

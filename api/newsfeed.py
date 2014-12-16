@@ -14,9 +14,10 @@ elif (validate_token(post('user_id'), post('token'))):
     if action == 'info':
         user = post('user_id')
         trips_query = execute_query("SELECT DISTINCT T.trip_id FROM takes T INNER JOIN friends F ON F.user2_id = T.user_id WHERE F.user1_id = \"%s\"" % (user))
-        trips = []
-        data['trips'] = trips
+        data['trips'] = []
         for trip in trips_query:
+            if not has_permissions(user_id, "trips", trip[0]):
+                continue
             trip_id = trip[0]
             query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
             if len(query) > 0:
@@ -54,9 +55,9 @@ elif (validate_token(post('user_id'), post('token'))):
                         l['locationname'] = location[3]
                         l['country'] = location[4]
                         l['rating'] = str(location[5])
-                        locations+=[l]
+                        locations += [l]
                         trip['locations'] = locations						
-                data['trips'].append(trip)
+                data['trips'] += [trip]
         export_json(data=data)
         
     else:
