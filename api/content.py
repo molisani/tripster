@@ -8,7 +8,8 @@ user_id = post('user_id')
 
 def add_album(trip_id,name,priv):
     if has_permissions(user_id, "trips", trip_id, 1):
-        query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (trip_id, user_id, name, priv))
+        thumb = 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg'
+        query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")"% (trip_id, user_id, name, priv,thumb))
         data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
         export_json(data=data)
     else:
@@ -214,7 +215,8 @@ elif (validate_token(post('user_id'), post('token'))):
             execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
             query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
             if len(query) > 0:
-                thumb = execute_query("SELECT thumbnail_url FROM content WHERE album_id = \"%s\"" % (a_id))[0][0]
+                thumb_q = execute_query("SELECT thumbnail_url FROM content WHERE album_id = \"%s\"" % (a_id))
+                thumb = thumb_q[0][0] if len(thumb_q) > 0 else 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg'
                 execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
                 trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
                 execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))

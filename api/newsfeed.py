@@ -16,7 +16,7 @@ elif (validate_token(post('user_id'), post('token'))):
         trips_query = execute_query("SELECT DISTINCT T.trip_id FROM takes T INNER JOIN friends F ON F.user2_id = T.user_id WHERE F.user1_id = \"%s\"" % (user))
         data['trips'] = []
         for trip in trips_query:
-            if not has_permissions(user_id, "trips", trip[0]):
+            if not has_permissions(user_id, "trips", trip[0],0):
                 continue
             trip_id = trip[0]
             query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
