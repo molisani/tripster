@@ -120,6 +120,9 @@ $.when(
        dataType: 'json',
        success: function(json){
         if (json.status = "Success") {
+          if (json.token_fail) {
+            window.location = "./login.html";
+          }
           pageData.page_body = contentBody(json.content);
           window.location = "./album.html?id=" + album;
         }

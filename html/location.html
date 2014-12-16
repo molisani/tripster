@@ -120,6 +120,9 @@
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }

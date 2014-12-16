@@ -104,6 +104,9 @@
           dataType: 'json',
           success: function(json) {
             if (json.status == 'Success') {
+              if (json.token_fail) {
+                window.location = "./login.html";
+              }
               embolden_results(json.users);
               embolden_results(json.trips);
               embolden_results(json.locations);
