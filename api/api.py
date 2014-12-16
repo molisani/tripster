@@ -99,51 +99,58 @@ def list_locations():
         locations += [location]
     return locations
 
-def has_permissions(user_id, table, id, add=False, edit=False):
-    if edit:
-        return len(execute_query("SELECT * FROM %s WHERE id = \"%s\" AND creator_id = \"%s\"" % (table, id, user_id))) > 0
-    else:
-        if table == "content":
-            id = execute_query("SELECT album_id FROM content WHERE id = \"%s\"" % (id))[0][0]
+# TRIP
+# Privacy:          0 - Public |      1 - TripOnly |        2 - Private
+#       VIEW            anyone          if invited         only creator
+# INVITE/ADD     going on trip       going on trip         only creator
+# ACCEPT/DEL      only creator        only creator         only creator
+
+# ALBUM
+# Privacy:          0 - Public |      1 - TripOnly |        2 - Private
+#       VIEW            anyone       going on trip         only creator
+#        ADD     going on trip       going on trip         only creator
+#        DEL      only creator        only creator         only creator
+
+def has_permissions(user_id, table, id, action):
+    if table == "content":
+        result = execute_query("SELECT album_id FROM content WHERE id = \"%s\"" (id))
+        if len(result) > 0:
+            album_id = result[0][0]
             table = "albums"
-        if table == "albums":
-            result = execute_query("SELECT trip_id, privacy FROM albums WHERE id = \"%s\"" % (id))
-            id = result[0][0]
+        else:
+            return False
+    else:
+        album_id = id
+    if table == "albums":
+        result = execute_query("SELECT trip_id, privacy FROM albums WHERE id = \"%s\"" % (album_id))
+        if len(result) > 0:
+            trip_id = result[0][0]
             privacy = result[0][1]
-            if privacy == 0:
-                return not add
-            elif privacy == 1:
-                status = execute_query("SELECT status FROM takes WHERE trip_id = \"%s\" AND user_id = \"%s\"" % (id, user_id))
-                if len(status) > 0:
-                    if add:
-                        return status[0][0] == 0
-                    else:
-                        return status[0][0] == 0 or status[0][0] == 1
-                else:
-                    return False
-            elif privacy == 2:
-                return len(execute_query("SELECT * FROM albums WHERE id = \"%s\" AND creator_id = \"%s\"" % (id, user_id))) > 0
-            else:
-                return False
-        if table == "trip":
-            result = execute_query("SELECT privacy FROM trips WHERE id = \"%s\"" % (id))
+        else:
+            return False
+    else:
+        trip_id = id
+    if table == "trips":
+        result = execute_query("SELECT privacy FROM trips WHERE id = \"%s\"" % (trip_id))
+        if len(result) > 0:
             privacy = result[0][0]
-            if privacy == 0:
-                return not add
-            elif privacy == 1:
-                status = execute_query("SELECT takes.status FROM takes WHERE trip_id = \"%s\" AND user_id = \"%s\"" % (id, user_id))
-                if len(access) > 0:
-                    if add:
-                        return status[0][0] == 0
-                    else:
-                        return status[0][0] == 0 or status[0][0] == 1
-                else:
-                    return False
-            elif privacy == 2:
-                return len(execute_query("SELECT * FROM trips WHERE id = \"%s\" AND creator_id = \"%s\"" % (id, user_id))) > 0
+        else: 
+            return False
+    try:
+        privacy
+    except NameError:
+        return False
+    else:
+        if action == 2 or privacy == 2:
+            return len(execute_query("SELECT * FROM %s WHERE creator_id = \"%s\" AND id = \"%s\"" % (table, user_id, id))) > 0
+        elif action == 0 and privacy == 0:
+            return True
+        else:
+            result = execute_query("SELECT status FROM takes WHERE user_id = \"%s\" AND trip_id = \"%s\"" % (user_id, trip_id))
+            if len(result) > 0:
+                return result[0][0] == 0 or (result[0][0] == 1 and privacy == 1)
             else:
                 return False
-        return False
 
 def export_json(data={}, success=True, message=None):
     data['status'] = 'Success' if success else 'Failure'
