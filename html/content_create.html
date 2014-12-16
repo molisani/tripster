@@ -11,66 +11,53 @@
 
 <body>
   <section id="main-content" type="text/x-handlebars-template">
-   <div class="panel-body">
-    <div class="container-fluid">
-      <br>
-      <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
-        <input type="hidden" name="action" value="create">
-        <div class="row">
-          <div class="col-md-12">
-           <div class="input-group">
-            <input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
-            <span class="input-group-btn">
-              <button class="btn btn-success" type="submit" 
-              id="new-content-btn">Add Content</button>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="row">
-          <div class="col-md-8">
-            <div class = "pull-left">
-             <div>
-               &nbsp;&nbsp;&nbsp;
-             </div>
-           </div>
-           <div class="pull-left">
-            <h4>Type</h4>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-default active" id="vis-options">
-                <input type="radio" autocomplete="off" value="Image"> Image</input>
-              </label>
-              <label class="btn btn-default" id="vis-options">
-                <input type="radio" autocomplete="off" value="Video"> Video</input>
-              </label>
+    <div class="panel-body">
+      <div class="container-fluid">
+	<br>
+	<form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
+          <input type="hidden" name="action" value="create">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="input-group">
+		<input type="text" class="form-control" id="url" name="albumname" placeholder="URL">
+		<span class="input-group-btn">
+		  <button class="btn btn-success" type="submit" 
+			  id="new-content-btn">Add Content</button>
+		</span>
+              </div>
+            </div>
+	  </div>
+	  <div class="form-group">
+            <div class="row">
+              <div class="col-md-8">
+		<div class = "pull-left">
+		  <div>
+		    &nbsp;&nbsp;&nbsp;
+		  </div>
+		</div>
+		<div class="pull-left">
+		  <h4>Type</h4>
+		  <div class="btn-group" data-toggle="buttons">
+		    <label class="btn btn-default active" id="vis-options">
+                      <input type="radio" autocomplete="off" value="Image"> Image</input>
+		    </label>
+		    <label class="btn btn-default" id="vis-options">
+                      <input type="radio" autocomplete="off" value="Video"> Video</input>
+		    </label>
+		  </div>
+		</div>
+		<div class = "pull-left">
+		  <div>
+		    &nbsp;&nbsp;&nbsp;
+		  </div>
+		</div>
+	      </div>
             </div>
           </div>
-          <div class = "pull-left">
-           <div>
-             &nbsp;&nbsp;&nbsp;
-           </div>
-         </div>
-         <div class="pull-left">
-           <h4>Location</h4>
-           <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-              Select A Location <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              {{#each all_locations}}
-              <li><a name="{{location_id}}" id="add-location">{{locationname}}, <i>{{country}}</i></a></li>
-              {{/each}}
-              <li class="divider"></li>
-              <li><a href="./location_create.html">Create New Location</a></li>
-            </ul>
-          </div>
-        </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
-</section>
+    </div>
+  </section>
 </body>
 
 <script src="js/field_utils.js"></script>
@@ -114,11 +101,6 @@ $.when(
         }
       });
     }
-    
-    var location;
-    $(document).on("click", '#add-location', function(e) {
-      location = $(e.target).attr('name');
-    });
 
     $(document).on("click", '#new-content-btn', function(e) {
      if($('#url').val() == "") return;
@@ -133,7 +115,6 @@ $.when(
          token: $.cookie('token'),
          album_id: album,
          url: $('#url').val(),
-         //location_id = '',
          type: $('#vis-options[class*="active"] input').attr("value")
        },
        dataType: 'json',
