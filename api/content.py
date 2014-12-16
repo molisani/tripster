@@ -238,7 +238,8 @@ elif (validate_token(post('user_id'), post('token'))):
         else:
             export_json(success=False,message='No album_id given to delete')
 else:
-    export_json(success=False,message='Token authentication failed. Token may have expired.')
+    data['token_fail']=True
+    export_json(data=data,message='Token authentication failed. Token may have expired.')
 """add album to trip (tested)
 get content info (likes / comments) (tested)
 add content to album (tested)

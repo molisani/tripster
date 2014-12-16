@@ -160,4 +160,5 @@ elif has_fields(['user_id', 'token']):
     else:
         export_json(success=False, message="Token validation failed, it may have expired.")
 else:
-    export_json(success=False, message="Insufficient information given to validate your identity.")
+    data['token_fail']=True
+    export_json(data=data,message='Token authentication failed. Token may have expired.')
