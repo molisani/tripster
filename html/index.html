@@ -16,10 +16,10 @@
         <div class="row">
           {{#each trips}}
           <div class="well well-sm">
-            <h3>{{tripname}}</h3>
+            <a href="./trip.html?id={{trip_id}}"><h3>{{tripname}}</h3></a>
             <div class="row">				
               <div class="col-md-4">
-                <a href="#" class="thumbnail">
+                <a class="thumbnail">
                   <img src="{{thumb_url}}" alt="...">
                 </a>
               </div>	

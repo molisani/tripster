@@ -96,7 +96,7 @@
               if (json.location.country) name += ", <i>" + json.location.country + "</i>";
             //  json.location.location_id = location
               rating = json.location.user_rating;
-              pageData.page_header = name;
+              pageData.page_header = "<h1>" + name + "</h1>";
               pageData.page_body = locationBody(json.location)
               build_page();
               starify_rating();

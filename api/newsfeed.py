@@ -22,6 +22,7 @@ elif (validate_token(post('user_id'), post('token'))):
             if len(query) > 0:
                 trip = {}
                 #basic trip info
+                trip['trip_id'] = trip_id
                 trip['tripname'] = query[0][2]
                 trip['startdate'] = str(query[0][3])
                 trip['enddate'] = str(query[0][4])
