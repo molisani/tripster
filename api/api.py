@@ -113,7 +113,7 @@ def list_locations():
 
 def has_permissions(user_id, table, id, action):
     if table == "content":
-        result = execute_query("SELECT album_id FROM content WHERE id = \"%s\"" (str(id)))
+        result = execute_query("SELECT album_id FROM content WHERE id = \"%s\"" % (id))
         if len(result) > 0:
             album_id = result[0][0]
             table = "albums"
