@@ -152,6 +152,27 @@
         }
       });
     });
+
+    $(document).on("click", '#delete-album-btn', function(e) {
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+          action: 'delete_album',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          album_id: album,
+          privacy: $('#vis-options[class*="active"] input').attr("value")
+        },
+        dataType: 'json',
+        success: function(json){
+          if (json.status = "Success") {
+              window.location = "./index.html"
+          }
+        }
+      });
+    });
+
   });
   </script>
 </html>
