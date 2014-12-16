@@ -55,6 +55,19 @@
                 </div>
               </div>
             </div>
+            <div class="pull-left">
+              <h4>Location</h4>
+              <div class="btn-group">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+		  Current content location: {{location}} <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+		  {{#each all_locations}}
+		  <li><a name="{{location_id}}" id="add-location">{{locationname}}, <i>{{country}}</i></a></li>
+		  {{/each}}
+		</ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -122,6 +135,28 @@ $.when(
         }
       });
     });
+
+  $(document).on("click", '#add-location', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+          action: 'tag_location',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          location_id: $(e.target).attr('name'),
+          content_id: content
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
+    });
+
 
     $(document).on("click", '#content-comment-btn', function(e){
       if ($('#content-comment-input').val() == "") return;
