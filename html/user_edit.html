@@ -131,7 +131,7 @@
     dataType: 'json',
     success: function(json) {
       if (json.status == 'Success') {
-    pageData.page_header = json.user.username;
+    pageData.page_header = "<h4>" + json.user.username + "</h4>";
     pageData.page_body = user_edit_template(json.user);
     build_page();
       }
