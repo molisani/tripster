@@ -84,10 +84,12 @@ def update_content_location(loc_id, con_id):
     export_json(data=data)
     
 def edit_album(a_id,name,priv):
-    if albumname <> "":
-        query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (a_id, name))
-    if privacy <> "":
-        query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (a_id, priv))
+    if name <> "":
+        query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (name,a_id))
+    elif privacy <> "":
+        query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv,a_id))
+    else:
+        query = execute_query("UPDATE albums SET albumname = \"%s\" AND privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv, name, a_id))
     export_json(data=data)
 
 def album_content(a_id):

@@ -10,7 +10,7 @@
   </head>
 
   <body>
-    <section id="main-content">
+    <section id="album-edit-content" type="text/x-handlebars-template">
       <div class="container-fluid">
         <br>
         <form class="form-horizontal" role="form" id="new-album-form" action="javascript:void(0);">
@@ -18,7 +18,7 @@
           <div class="form-group">
             <div class="col-sm-12">
 				<h4>Change Album Name To</h4>
-              <input type="text" class="form-control" name="albumname" placeholder="Album Name">
+              <input type="text" class="form-control" id="albumname" value="{{albumname}}">
             </div>
           </div>
           <div class="form-group">
@@ -36,20 +36,33 @@
                 </label>
               </div>
             </div>
-            <div class="col-sm-4 pull-right">
-              <br></br>
-              <br></br>
+          </div>
+          <div class="row">
+          <div class="col-sm-12">
+          <h4>Delete Content with Click</h4>
+          {{#each content}}
+          <div class="col-md-3">
+            <a value="{{content_id}}" id="content_click" class="thumbnail">
+              <img src="{{thumb_url}}" alt="...">
+            </a>
+          </div>
+          {{/each}}
+          </div>
+        </div>
+        <div class="row">
+           <div class="col-sm-4 pull-right">
+           <br></br>
               <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-album-btn">Delete Album</button>
+                <button type="submit" class="btn btn-success" id="delete-album-btn">Delete Album</button>
               </div>
 			  <div class="pull-right">
 				&nbsp;&nbsp;&nbsp;
 			  </div>
 			  <div class="pull-right">
-                <button type="submit" class="btn btn-success" id="new-album-btn">Update Album</button>
+                <button type="submit" class="btn btn-success" id="update-album-btn">Update Album</button>
               </div>
             </div>
-          </div>
+        </div>
         </form>
       </div>
     </section>
@@ -64,8 +77,9 @@
     $.when(
       $.getScript("./js/templates.js")
     ).done(function(){
-      pageData.page_header = "<h1>Edit Album</h1>",
-      pageData.page_body = $('#main-content').html()
+      var album_edit_template = Handlebars.compile($('#album-edit-content').html());
+      pageData.page_header = "<h1>Edit Album</h1>";
+      pageData.page_body = album_edit_template;
 
       if ($.cookie("username")) {
         pageData.username = $.cookie("username");
@@ -75,22 +89,49 @@
 
       build_page();
       load_sidebar();
-    });
-    $(document).on("click", '#new-album-btn', function(e) {
-      newAlbum = formData('#new-album-form');
-      newAlbum.privacy = $('#vis-options[class*="active"] input').attr("value");
-      console.log(newAlbum);
+      
+      var album = $_GET('id');
+      if (album != "null") {
+        $.ajax({
+          url: '../api/content.py',
+          type: 'post',
+          data: {
+            action: 'album_content',
+            user_id: $.cookie('user_id'),
+            token: $.cookie('token'),
+            album_id: album
+          },
+          dataType: 'json',
+          success: function(json) {
+            if (json.status == 'Success') {
+              pageData.page_header = "<h1>" + json.album.albumname + " <small>Editing</small></h1>";
+              pageData.page_body = album_edit_template(json.album);
+              build_page();
+            }
+          }    
+        });
+      } 
+    
+    $(document).on("click", '#update-album-btn', function(e) {
       $.ajax({
         url: '../api/content.py',
         type: 'post',
-        data: newAlbum,
+        data: {
+          action: 'edit_album',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          album_id: album,
+          albumname: $('#albumname').val(),
+          privacy: $('#vis-options[class*="active"] input').attr("value")
+        },
         dataType: 'json',
         success: function(json){
           if (json.status = "Success") {
-            //window.location = "./edit_album.html?id=" + json.id;
+            window.location = "./album.html?id=" + album;
           }
         }
       });
     });
+  });
   </script>
 </html>
