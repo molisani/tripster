@@ -7,29 +7,35 @@ data = {}
 user_id = post('user_id')
 
 def add_album(trip_id,name,priv):
-    query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (trip_id, user_id, name, priv))
-    data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
-    export_json(data=data)
+    if has_permissions(user_id, "trips", trip_id, 1):
+        query = execute_query("INSERT INTO albums (trip_id, creator_id, albumname, privacy) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")"% (trip_id, user_id, name, priv))
+        data['id'] = execute_query("SELECT id FROM albums WHERE trip_id = \"%s\" AND creator_id = \"%s\" AND albumname = \"%s\" AND privacy = \"%s\""% (post('trip_id'), user_id, post('albumname'), post('privacy')))[0][0]
+        export_json(data=data)
+    else:
+        export_json(success=False, message="You do not have the proper permissions to perform this action.")
 
 def add_content(a_id, url, type1, loc):
-    url = url.replace("watch?v=","embed/")
-    thumb = url
-    if type1 == 'Video':
-        index = url.find('embed/')
-        thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/hqdefault.jpg"
-    location_exists = len(execute_query("SELECT * FROM locations WHERE id = \"%s\"" % (loc))) > 0
-    if not location_exists:
-        query = execute_query("INSERT INTO content (album_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, url, type1,thumb)) 
+    if has_permissions(user_id, "albums", a_id, 1)
+        url = url.replace("watch?v=","embed/")
+        thumb = url
+        if type1 == 'Video':
+            index = url.find('embed/')
+            thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/hqdefault.jpg"
+        location_exists = len(execute_query("SELECT * FROM locations WHERE id = \"%s\"" % (loc))) > 0
+        if not location_exists:
+            query = execute_query("INSERT INTO content (album_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, url, type1,thumb)) 
+        else:
+            query = execute_query("INSERT INTO content (album_id, location_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, loc, url, type1,thumb)) 
+        query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
+        if len(query) > 0:
+            if query[0][0] == '':
+                execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
+                trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
+                execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
+        data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
+        export_json(data=data)
     else:
-        query = execute_query("INSERT INTO content (album_id, location_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, loc, url, type1,thumb)) 
-    query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
-    if len(query) > 0:
-        if query[0][0] == '':
-            execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
-            trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
-            execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
-    data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
-    export_json(data=data)
+        export_json(success=False, message="You do not have the proper permissions to perform this action.")
 
 def toggle_like(cont_id):
     already_likes = len(execute_query("SELECT * FROM content_likes WHERE content_likes.user_id = \"%s\" AND content_likes.content_id = \"%s\"" % (user_id,cont_id))) > 0
@@ -84,44 +90,50 @@ def update_content_location(loc_id, con_id):
     export_json(data=data)
     
 def edit_album(a_id,name,priv):
-    if name <> "":
-        query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (name,a_id))
-    elif privacy <> "":
-        query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv,a_id))
-    else:
-        query = execute_query("UPDATE albums SET albumname = \"%s\" AND privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv, name, a_id))
-    export_json(data=data)
-
-def album_content(a_id):
-    album = {}
-    album_info = execute_query("SELECT * From albums WHERE id = \"%s\"" % (album_id))
-    if len(album_info) > 0:
-        album= {
-            'id': album_id,
-            'trip_id': album_info[0][1],
-            'creator': execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0],
-            'albumname': album_info[0][3],
-            'thumb_url': album_info[0][5],
-            'privacy': album_info[0][4]
-        }
-        content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
-        contents = []
-        for content in content_query:
-            c = {}
-            c['content_id'] = content[0]
-            if (content[4] == 'Image'):
-                c['image_url'] = content[3]
-            else:
-                c['video_url'] = content[3]
-            c['thumb_url'] = content[6]
-            contents+= [c]
-        if len(contents) > 0:
-            album['content'] = contents
-    data['album'] = album
-    if len(album) > 0:
+    if has_permissions(user_id, "albums", a_id, 2):
+        if name <> "":
+            query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (name,a_id))
+        elif privacy <> "":
+            query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv,a_id))
+        else:
+            query = execute_query("UPDATE albums SET albumname = \"%s\" AND privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv, name, a_id))
         export_json(data=data)
     else:
-        export_json(success=False,message='No album found with that id')
+        export_json(success=False, message="You do not have the proper permissions to perform this action.")
+
+def album_content(a_id):
+    if has_permissions(user_id, "albums", a_id, 0):
+        album = {}
+        album_info = execute_query("SELECT * From albums WHERE id = \"%s\"" % (album_id))
+        if len(album_info) > 0:
+            album= {
+                'id': album_id,
+                'trip_id': album_info[0][1],
+                'creator': execute_query("SELECT fullname From users WHERE id = \"%s\"" % (album_info[0][2]))[0][0],
+                'albumname': album_info[0][3],
+                'thumb_url': album_info[0][5],
+                'privacy': album_info[0][4]
+            }
+            content_query = execute_query("SELECT * From content WHERE album_id = \"%s\"" % (album_id))
+            contents = []
+            for content in content_query:
+                c = {}
+                c['content_id'] = content[0]
+                if (content[4] == 'Image'):
+                    c['image_url'] = content[3]
+                else:
+                    c['video_url'] = content[3]
+                c['thumb_url'] = content[6]
+                contents+= [c]
+            if len(contents) > 0:
+                album['content'] = contents
+        data['album'] = album
+        if len(album) > 0:
+            export_json(data=data)
+        else:
+            export_json(success=False,message='No album found with that id')
+    else:
+        export_json(success=False, message="You do not have the proper permissions to perform this action.")
     
     
 if (not has_fields(['user_id', 'token'])):
@@ -140,10 +152,7 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'add_content':
         #requires an album_id, a url, and a type
         if has_fields (['album_id', 'url', 'type']):
-            if (0==0):#has_permissions(user_id, album = post('album_id'), edit = True):
-                add_content(post('album_id'), post('url'), post ('type'),post('location_id'))
-            else:
-                export_json(success=False,message='Does not have editing permissions for this album')
+            add_content(post('album_id'), post('url'), post ('type'),post('location_id'))
         else:
             export_json(success=False,message='Failed to add content, check album_id, url, and type')
     
@@ -165,11 +174,14 @@ elif (validate_token(post('user_id'), post('token'))):
         #requires a content_id
         if has_fields(['content_id']):
             content_id = post('content_id')
-            data['content'] = content_info(content_id)
-            if len(data['content']) > 0:
-                export_json(data=data)
+            if has_permissions(user_id, "content", content_id, 0):
+                data['content'] = content_info(content_id)
+                if len(data['content']) > 0:
+                    export_json(data=data)
+                else:
+                    export_json(success=False,message='No content found with that id')
             else:
-                export_json(success=False,message='No content found with that id')
+                export_json(success=False, message="You do not have the proper permissions to perform this action.")
         else:
             export_json(success=False,message='No content_id given')
     
