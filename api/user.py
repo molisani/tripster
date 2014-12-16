@@ -26,7 +26,7 @@ def login(username, password):
 # 0: not friends, 1: friends, 2: received request, 3: sent request
 def friend_status(id1, id2):
     friends = execute_query("SELECT friends.user1_id FROM friends INNER JOIN friends F2 ON F2.user1_id = friends.user2_id INNER JOIN users ON users.id = friends.user1_id WHERE friends.user1_id = F2.user2_id AND friends.user2_id = \"%s\"" % (id1))
-    if (int(id1),) in friends:
+    if (int(id2),) in friends:
         return 1
     else:
         if (int(id2),) in execute_query("SELECT myfriends.user1_id FROM (SELECT friends.user1_id FROM friends WHERE friends.user2_id = \"%s\") AS myfriends INNER JOIN users ON users.id = myfriends.user1_id WHERE myfriends.user1_id NOT IN (SELECT friends.user2_id FROM friends WHERE friends.user1_id = \"%s\")" % (id1, id1)):
@@ -50,6 +50,7 @@ def info(id):
             'affiliation': info[10]
         }
         friendship = friend_status(user_id, id)
+        user['friendship'] = friendship
         if friendship == 1:
             user['are_friends'] = True
         elif friendship == 2:

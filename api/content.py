@@ -16,7 +16,7 @@ def add_content(a_id, url, type1, loc):
     thumb = url
     if type1 == 'Video':
         index = url.find('embed/')
-        thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/default.jpg"
+        thumb = "http://img.youtube.com/vi/" + url[index+6:] + "/hqdefault.jpg"
     location_exists = len(execute_query("SELECT * FROM locations WHERE id = \"%s\"" % (loc))) > 0
     if not location_exists:
         query = execute_query("INSERT INTO content (album_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, url, type1,thumb)) 
