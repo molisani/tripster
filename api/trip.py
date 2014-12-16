@@ -10,7 +10,7 @@ user_id = post('user_id')
 # privacy, rating, id, comment, description, cost, expense_id
 
 def info(trip_id):
-    if (0==0):#has_permissions(username, trip=trip_id):
+    if has_permissions(user_id, "trips",trip_id,0):
         query = execute_query("SELECT * FROM trips WHERE trips.id = \"%s\"" % (trip_id))
         if len(query) > 0:
             #update trip thumbnail
@@ -158,15 +158,18 @@ def create(trip_name):
     export_json(data=data)
 
 def invite(invitee_id, t_id):
-    status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, invitee))
-    new_status = 1
-    if len(status) > 0:
-        if status[0][0] == 2:
-            new_status = 0
-        execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
+    if not has_permissions(user_id,"trips",trip_id,1):
+        export_json(success=False,message='Does not have permission to invite')
     else:
-        execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
-    export_json()
+        status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, invitee))
+        new_status = 1
+        if len(status) > 0:
+            if status[0][0] == 2:
+                new_status = 0
+            execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
+        else:
+            execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
+        export_json()
     
 def request(id):
     status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
@@ -180,13 +183,16 @@ def request(id):
     export_json()
 
 def rate(trip_rating,trip_id):
-    already_rated = len(execute_query("SELECT * FROM trip_ratings WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (user_id, trip_id))) > 0
-    if (already_rated):
-        execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (trip_rating, user_id, trip_id))
-    else:
-        execute_query("INSERT INTO trip_ratings (user_id, trip_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, trip_id, trip_rating))
-    update_rating = execute_query("CALL update_trip_rating(\"%s\")" % (trip_id))
-    export_json()    
+    if not has_permissions(user_id,"trips",trip_id,1):
+        export_json(success=False,message='You do not have permissions to perform this act')
+    else:  
+        already_rated = len(execute_query("SELECT * FROM trip_ratings WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (user_id, trip_id))) > 0
+        if (already_rated):
+            execute_query("UPDATE trip_ratings SET rating = \"%s\" WHERE trip_ratings.user_id = \"%s\" AND trip_ratings.trip_id = \"%s\"" % (trip_rating, user_id, trip_id))
+        else:
+            execute_query("INSERT INTO trip_ratings (user_id, trip_id, rating) VALUES (\"%s\",\"%s\",\"%s\")" % (user_id, trip_id, trip_rating))
+        update_rating = execute_query("CALL update_trip_rating(\"%s\")" % (trip_id))
+        export_json()    
     
 if (not has_fields(['user_id', 'token'])):
     export_json(success=False,message='UserId and token not specified.')
