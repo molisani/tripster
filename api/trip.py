@@ -305,10 +305,7 @@ elif validate_token(user_id, post('token')):
             trip_id = post('id')
             description = post('des')
             cost = post('cost')
-            expense_user = post('expense_user')
-            query = execute_query("SELECT id FROM users WHERE fullname LIKE \'%%%s%%\'" % (expense_user))
-            if len(query) > 0:
-                execute_query("INSERT INTO expenses (trip_id, user_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\", \"%s\")" % (trip_id, query[0][0], description, cost))
+            execute_query("INSERT INTO expenses (trip_id, description, cost) VALUES (\"%s\", \"%s\", \"%s\")" % (trip_id, description, cost))
             export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')
@@ -318,7 +315,9 @@ elif validate_token(user_id, post('token')):
         if has_fields('expense_id', 'expense_user'):
             expense_id = post('expense_id')
             expense_user = post('expense_user')
-            execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (expense_user, expense_id))
+            query = execute_query("SELECT id FROM users WHERE fullname LIKE \'%%%s%%\'" % (expense_user))
+            if len(query) > 0:
+                execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (query[0][0], expense_id))
             export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')

@@ -51,7 +51,6 @@
             <div class="input-group">
               <input type="text" class="form-control" id="expense_name" placeholder="Description of Expense">
               <input type="text" class="form-control" id="expense_cost" placeholder="Price of Expense (just number)">
-              <input type="text" class="form-control" id="expense_user" placeholder="User Responsible">
               <span class="input-group-btn">
                 <button class="btn btn-default" type="button" id="expense-btn">Save Expense</button>
               </span>
@@ -229,7 +228,6 @@ $.when(
     $(document).on("click", '#expense-btn', function(e) {
         var newExpenseDescription = document.getElementById("expense_name").value;
         var newExpenseCost  = document.getElementById("expense_cost").value;
-        var newExpenseUser  = document.getElementById("expense_user").value;
         
       $.ajax({
         url: '../api/trip.py',
