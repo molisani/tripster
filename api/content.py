@@ -196,14 +196,28 @@ elif (validate_token(post('user_id'), post('token'))):
     elif action == 'delete_content':
         if has_fields(['content_id']):
             content_id = post('content_id')
-            query = execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
+            a_id = execute_query("SELECT album_id FROM content WHERE id = \"%s\"" % (content_id))[0][0]
+            execute_query("DELETE content.* From content WHERE id = \"%s\"" % (content_id))
+            query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
+            if len(query) > 0:
+                thumb = execute_query("SELECT thumbnail_url FROM content WHERE album_id = \"%s\"" % (a_id))[0][0]
+                execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
+                trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
+                execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
             export_json(data=data)
         else:
             export_json(success=False,message='No content id given to delete')
 			
     elif action == 'delete_album':
         if has_fields(['album_id']):
-            query = execute_query("DELETE albums.* From albums WHERE id = \"%s\"" % (post(album_id)))
+            trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (post(album_id)))[0][0]
+            execute_query("DELETE albums.* From albums WHERE id = \"%s\"" % (post(album_id)))
+            query = execute_query("SELECT thumbnail_url FROM albums WHERE trip_id = \"%s\"" % (trip_id))
+            if len(query) > 0:
+                execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (query[0][0],trip_id))
+            else:
+                thumb = 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg'
+                execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
             export_json(data=data)
         else:
             export_json(success=False,message='No album_id given to delete')
