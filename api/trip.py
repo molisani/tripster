@@ -312,18 +312,15 @@ elif validate_token(user_id, post('token')):
             
     elif action == 'claim_expense':
         #requires expense_id, expense_user_id as expense_user
-        if has_fields('expense_id', 'expense_user'):
+        if has_fields(['expense_id']):
             expense_id = post('expense_id')
-            expense_user = post('expense_user')
-            query = execute_query("SELECT id FROM users WHERE fullname LIKE \'%%%s%%\'" % (expense_user))
-            if len(query) > 0:
-                execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (query[0][0], expense_id))
+            execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (user_id, expense_id))
             export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')
             
     elif action == 'remove_expense':
-        if has_fields('expense_id'):
+        if has_fields(['expense_id']):
             expense_id = post('expense_id')
             execute_query("DELETE FROM expenses WHERE id = \"%s\"" % (expense_id))
             export_json(data=data)
