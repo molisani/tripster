@@ -42,8 +42,8 @@
           <h4>Delete Content with Click</h4>
           {{#each content}}
           <div class="col-md-3">
-            <a value="{{content_id}}" id="content_click" class="thumbnail">
-              <img src="{{thumb_url}}" alt="...">
+            <a class="thumbnail">
+              <img data-con="{{content_id}}" id="content_click" src="{{thumb_url}}" alt="...">
             </a>
           </div>
           {{/each}}
@@ -111,6 +111,26 @@
           }    
         });
       } 
+    
+    $(document).on("click", '#content_click', function(e) {
+      console.log($(e.target));
+      $.ajax({
+        url: '../api/content.py',
+        type: 'post',
+        data: {
+          action: 'delete_content',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          content_id: $(e.target).attr('data-con')
+        },
+        dataType: 'json',
+        success: function(json){
+          if (json.status = "Success") {
+            window.location = "./album_edit.html?id=" + album;
+          }
+        }
+      });
+    });
     
     $(document).on("click", '#update-album-btn', function(e) {
       $.ajax({

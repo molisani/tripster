@@ -66,7 +66,7 @@
               <h4 class="list-group-item-heading">Expenses</h4> Click expense to claim
             </div>
             {{#each expenses}}
-            <a value="{{expense_id}}" class="list-group-item">{{description}} <b>{{cost}}</b> ({{expense_user}})</a>
+            <a name="{{expense_id}}" id="claim-expense" class="list-group-item">{{description}} <b>{{cost}}</b> ({{expense_user}})</a>
             {{/each}}
           </div>
           <!-- <button type="button" class="btn btn-default">Add New Expense</button> -->
@@ -208,8 +208,24 @@ $.when(
       });
     }
     
-    $(document).on("click", '#expenses', function(e){
-        
+    $(document).on("click", '#claim-expense', function(e){
+        $.ajax({
+        url: '../api/trip.py',
+        type: 'post',
+        data: {
+          action: 'claim_expense',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          expense_id: $(e.target).attr('name')
+          
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            location.reload();
+          }
+        }
+      });
     });
 
     $(document).on("click", '#trip-comment-btn', function(e){
