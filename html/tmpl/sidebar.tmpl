@@ -54,8 +54,9 @@
   <thead></thead>
   <tbody>
     {{#each rec_locations}}
-    <tr><td><a href="./location.html?id={{location_id}}" class="success">{{locationname}}</td></tr>
+    <tr><td><a href="./location.html?id={{location_id}}">{{locationname}}</a></td></tr>
     {{/each}}
+    <tr><td><a href="./location_create.html">+ Create New Location</a></td></tr>
   </tbody>
 </table>
 {{/if}}

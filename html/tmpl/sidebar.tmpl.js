@@ -53,14 +53,14 @@ templates['sidebar.tmpl'] = template({"1":function(depth0,helpers,partials,data)
   var stack1, buffer = "<div class=\"panel-body\" style=\"padding-top: 0px;\">\r\n  <br style=\"margin-top: 5px;\"></br>\r\n  <span class=\"label label-warning\">Have you ever been to?</span>\r\n</div>\r\n<table class=\"table\">\r\n  <thead></thead>\r\n  <tbody>\r\n";
   stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.rec_locations : depth0), {"name":"each","hash":{},"fn":this.program(12, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "  </tbody>\r\n</table>\r\n";
+  return buffer + "    <tr><td><a href=\"./location_create.html\">+ Create New Location</a></td></tr>\r\n  </tbody>\r\n</table>\r\n";
 },"12":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "    <tr><td><a href=\"./location.html?id="
     + escapeExpression(((helper = (helper = helpers.location_id || (depth0 != null ? depth0.location_id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"location_id","hash":{},"data":data}) : helper)))
-    + "\" class=\"success\">"
+    + "\">"
     + escapeExpression(((helper = (helper = helpers.locationname || (depth0 != null ? depth0.locationname : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"locationname","hash":{},"data":data}) : helper)))
-    + "</td></tr>\r\n";
+    + "</a></td></tr>\r\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.username : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
