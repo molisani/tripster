@@ -279,7 +279,8 @@ elif validate_token(user_id, post('token')):
         if has_fields(['id','name']):
             trip_id = post('id')
             trip_name = post('name')
-            execute_query("UPDATE trips SET tripname= \"%s\" WHERE trips.id = \"%s\"" % (trip_name, trip_id))
+            if has_permissions(user_id,"trips",trip_id,2):
+                execute_query("UPDATE trips SET tripname= \"%s\" WHERE trips.id = \"%s\"" % (trip_name, trip_id))
             export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')
