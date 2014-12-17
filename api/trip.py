@@ -76,7 +76,7 @@ def info(trip_id):
                     expense_user = 'No User tagged'
                 else:
                     expense_user = execute_query("Select fullname From users where id = \"%s\"" % (expense_user))
-                e['expense_user']= expense_user[0][0],
+                e['expense_user']= expense_user,
                 trip['expenses'] += [e]
                     
             #locations associated
