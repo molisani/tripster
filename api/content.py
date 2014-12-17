@@ -92,12 +92,12 @@ def update_content_location(loc_id, con_id):
     
 def edit_album(a_id,name,priv):
     if has_permissions(user_id, "albums", a_id, 2):
-        if name <> "":
+        if name != "" and priv == "":
             query = execute_query("UPDATE albums SET albumname = \"%s\" WHERE albums.id = \"%s\"" % (name,a_id))
-        elif privacy <> "":
+        elif priv != "" and name == "":
             query = execute_query("UPDATE albums SET privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv,a_id))
         else:
-            query = execute_query("UPDATE albums SET albumname = \"%s\" AND privacy = \"%s\" WHERE albums.id = \"%s\"" % (priv, name, a_id))
+            query = execute_query("UPDATE albums SET albumname = \"%s\", privacy = \"%s\" WHERE albums.id = \"%s\"" % (name, priv, a_id))
         export_json(data=data)
     else:
         export_json(success=False, message="You do not have the proper permissions to perform this action.")
