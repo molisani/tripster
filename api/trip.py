@@ -158,28 +158,28 @@ def create(trip_name):
     export_json(data=data)
 
 def invite(invitee_id, t_id):
-    if not has_permissions(user_id,"trips",trip_id,1):
+    if not has_permissions(user_id,"trips",t_id,1):
         export_json(success=False,message='Does not have permission to invite')
     else:
-        status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, invitee))
+        status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (t_id, invitee_id))
         new_status = 1
         if len(status) > 0:
             if status[0][0] == 2:
                 new_status = 0
-            execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee, trip_id))
+            execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, invitee_id, t_id))
         else:
-            execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee, trip_id, 1))
+            execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (invitee_id, t_id, 1))
         export_json()
     
 def request(id):
-    status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (trip_id, user_id))
+    status = execute_query("SELECT takes.status FROM takes WHERE takes.trip_id = \"%s\" AND takes.user_id = \"%s\"" % (id, user_id))
     new_status = 2
     if len(status) > 0:
         if status[0][0] == 1:
             new_status = 0
-        execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, user_id, trip_id))
+        execute_query("UPDATE takes SET takes.status = \"%d\" WHERE takes.user_id = \"%s\" AND takes.trip_id = \"%s\"" % (new_status, user_id, id))
     else:
-        execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, trip_id, 2))
+        execute_query("INSERT INTO takes (user_id, trip_id, status) VALUES (\"%s\", \"%s\", \"%d\")" % (user_id, id, 2))
     export_json()
 
 def rate(trip_rating,trip_id):
@@ -320,8 +320,10 @@ elif validate_token(user_id, post('token')):
         #requires expense_id, expense_user_id as expense_user
         if has_fields(['expense_id']):
             expense_id = post('expense_id')
-            execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (user_id, expense_id))
-            export_json(data=data)
+            trip_id = execute_query("SELECT trip_id FROM expenses WHERE id = \"%s\"" % (expense_id))[0][0]
+            if has_permissions(user_id, "trips",trip_id,1):
+                execute_query("UPDATE expenses SET user_id = \"%s\" WHERE expenses.id = \"%s\"" % (user_id, expense_id))
+                export_json(data=data)
         else:
             export_json(success=False,message='Insufficient information given')
             

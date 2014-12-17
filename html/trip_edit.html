@@ -5,6 +5,7 @@
   <!-- Bootstrap -->
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./theme.min.css">
   <!-- Handlebars -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
 </head>
@@ -143,6 +144,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             pageData.page_header = "<h1>" + json.trip.tripname + " <small>Editing</small></h1>";
             pageData.page_body = trip_edit_template(json.trip);
             build_page();
@@ -165,6 +169,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -185,6 +192,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -206,6 +216,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -227,6 +240,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -252,7 +268,10 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
-            //location.reload();
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
+            location.reload();
           }
         }
       });
@@ -273,6 +292,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -295,6 +317,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
@@ -315,6 +340,9 @@ $.when(
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }

@@ -5,6 +5,7 @@
     <!-- Bootstrap -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./theme.min.css">
     <!-- Handlebars -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
   </head>
@@ -120,22 +121,25 @@
       var user = $_GET('id');
     if (user != "null") {
       $.ajax({
-    url: '../api/user.py',
-    type: 'post',
-    data: {
-      action: 'info',
-      user_id: $.cookie('user_id'),
-      token: $.cookie('token'),
-      id: user
-    },
-    dataType: 'json',
-    success: function(json) {
-      if (json.status == 'Success') {
-    pageData.page_header = "<h4>" + json.user.username + "</h4>";
-    pageData.page_body = user_edit_template(json.user);
-    build_page();
-      }
-    }
+        url: '../api/user.py',
+        type: 'post',
+        data: {
+          action: 'info',
+          user_id: $.cookie('user_id'),
+          token: $.cookie('token'),
+          id: user
+        },
+        dataType: 'json',
+        success: function(json) {
+          if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
+            pageData.page_header = "<h4>" + json.user.username + "</h4>";
+            pageData.page_body = user_edit_template(json.user);
+            build_page();
+          }
+        }
       });
     }
 
@@ -153,6 +157,9 @@
         dataType: 'json',
         success: function(json) {
           if (json.status == 'Success') {
+            if (json.token_fail) {
+              window.location = "./login.html";
+            }
             location.reload();
           }
         }
