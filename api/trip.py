@@ -150,8 +150,7 @@ def create(trip_name):
     for item in trip_fields:
         trip[item] = post(item)
     thumb = 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg'
-    execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating, thumb_url) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\"), \"%s\")"
-                   % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]],thumb))
+    execute_query("INSERT INTO trips (creator_id,tripname,startdate,enddate,todo_list,privacy,rating, thumb_url) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\"), \"%s\")" % (user_id, trip_name, trip[trip_fields[0]], trip[trip_fields[1]], trip[trip_fields[2]], trip[trip_fields[3]], trip[trip_fields[4]],thumb))
     trip_id = execute_query("SELECT LAST_INSERT_ID()")[0][0]
     data['id'] = trip_id
     execute_query("INSERT INTO takes (trip_id, user_id, status) VALUES (\"%d\", \"%s\", \"0\")" % (trip_id, user_id))
