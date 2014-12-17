@@ -33,7 +33,16 @@ def add_content(a_id, url, type1, loc):
                 execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
                 trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
                 execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))
-        data['id'] = execute_query("SELECT id FROM content WHERE album_id = \"%s\" AND url = \"%s\" AND type = \"%s\""  % (a_id, url, type))
+        id = execute_query("SELECT LAST_INSERT_ID()")[0][0]
+        data['id'] = id
+        
+        cache_url = save_image(url, a_id, id)
+        execute_query("UPDATE content SET url = \"%s\", backup_url = \"%s\", blobkey = \"%s\" WHERE id = \"%s\"" % (cache_url[1], url, cache_url[0],id))
+        query = execute_query("SELECT id,blobkey,backup_url FROM content WHERE blobkey IS NOT NULL AND album_id = \"%s\" ORDER BY id ASC" % (a_id))
+        if len(query) > 3:
+            delete_image(query[0][1], a_id, query[0][0])
+            execute_query("UPDATE content SET url = \"%s\", blobkey = NULL, backup_url = NULL WHERE id = \"%s\"" % (query[0][2],query[0][0]))
+
         export_json(data=data)
     else:
         export_json(success=False, message="You do not have the proper permissions to perform this action.")

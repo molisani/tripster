@@ -20,6 +20,12 @@ db = MySQLdb.connect(
 
 db.autocommit(True)
 
+def save_image(image_url, album_id, content_id):
+    return ("blobkey","http://www.mocha.co/wp-content/uploads/2010/09/trips-iphone-ipad-icon.png")
+    
+def delete_image(blobkey, album_id, content_id):
+    pass
+
 def getLocations():
     a_locations = []
     location_query = execute_query("SELECT * FROM locations")
