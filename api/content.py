@@ -29,7 +29,7 @@ def add_content(a_id, url, type1, loc):
             query = execute_query("INSERT INTO content (album_id, location_id, url, type,thumbnail_url) VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")" % (a_id, loc, url, type1,thumb)) 
         query = execute_query("SELECT thumbnail_url FROM albums WHERE id = \"%s\"" % (a_id))
         if len(query) > 0:
-            if query[0][0] == '':
+            if query[0][0] == 'http://www.gpb.org/sites/www.gpb.org/files/_field_production_main_image/roadtrip.jpg':
                 execute_query("UPDATE albums SET thumbnail_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,a_id))
                 trip_id = execute_query("SELECT trip_id FROM albums WHERE id = \"%s\"" % (a_id))[0][0]
                 execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (thumb,trip_id))

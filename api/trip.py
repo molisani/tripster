@@ -52,6 +52,8 @@ def info(trip_id):
             a_query = execute_query("Select * From albums Where trip_id = \"%s\"" % (trip_id))
             trip['albums'] = []  
             for album in a_query:
+                if not has_permissions(user_id, "albums", album[0],2):
+                    continue
                 a = {
                     'album_id': album[0],
                     'creator_id': album[2],
