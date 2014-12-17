@@ -149,7 +149,7 @@
         url: '../api/user.py',
         type: 'post',
         data: {
-          action: 'change_password',
+          action: 'update_password',
           user_id: $.cookie('user_id'),
           token: $.cookie('token'),
           password: $('#password-input').val()
@@ -176,7 +176,7 @@
           token: $.cookie('token'),
           birthday: $('#birthday-input').val(),
           email: $('#email-input').val(),
-          about_me: $('#aboutme-input').val(),
+          aboutme: $('#aboutme-input').val(),
           interests: $('#interests-input').val(),
           affiliation: $('#affiliation-input').val()
         },
