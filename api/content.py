@@ -40,8 +40,8 @@ def add_content(a_id, url, type1, loc):
         execute_query("UPDATE content SET url = \"%s\", backup_url = \"%s\", blobkey = \"%s\" WHERE id = \"%s\"" % (cache_url[1], url, cache_url[0],id))
         query = execute_query("SELECT id,blobkey,backup_url FROM content WHERE blobkey IS NOT NULL AND album_id = \"%s\" ORDER BY id ASC" % (a_id))
         if len(query) > 3:
-            delete_image(query[0][1], a_id, query[0][0])
             execute_query("UPDATE content SET url = \"%s\", blobkey = NULL, backup_url = NULL WHERE id = \"%s\"" % (query[0][2],query[0][0]))
+            delete_image(query[0][1], a_id, query[0][0])
 
         export_json(data=data)
     else:

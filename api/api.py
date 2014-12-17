@@ -1,30 +1,51 @@
+from __future__ import with_statement
+
+import os
 import cgi, cgitb, json
 import MySQLdb
 import random
 from datetime import datetime, timedelta
 
+import urllib
+import cloudstorage as gcs
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+from google.appengine.api.images import get_serving_url
+from google.appengine.api.images import delete_serving_url
+
 cgitb.enable()
 
 post_fields = cgi.FieldStorage()
 
-db = MySQLdb.connect(
-    host="***REMOVED***",
-    user="cis450",
-    passwd="***REMOVED***",
-    db="MyDB")
-
 # db = MySQLdb.connect(
-#     unix_socket='/cloudsql/tripster-fall14:db-1',
-#     user='root',
-#     db='MyDB')
+#     host="***REMOVED***",
+#     user="cis450",
+#     passwd="***REMOVED***",
+#     db="MyDB")
+
+db = MySQLdb.connect(
+    unix_socket='/cloudsql/tripster-fall14:db-1',
+    user='root',
+    db='MyDB')
+
 
 db.autocommit(True)
 
 def save_image(image_url, album_id, content_id):
-    return ("blobkey","http://www.mocha.co/wp-content/uploads/2010/09/trips-iphone-ipad-icon.png")
-    
+    filename = "/tripster-image-cache/album-%s-image-%s" % (album_id, content_id)
+    data = urllib.urlopen(image_url)
+    with gcs.open(filename, "w") as f:
+        while True:
+            chunk = data.read(16 * 1024)
+            if not chunk: break
+            f.write(chunk)
+    blobkey = blobstore.create_gs_key("/gs" + filename)
+    return (blobkey, get_serving_url(blobkey))
+
 def delete_image(blobkey, album_id, content_id):
-    pass
+    #delete_serving_url(blobkey)
+    #blobstore.delete(blobkey)
+    gcs.delete("/tripster-image-cache/album-%s-image-%s" % (album_id, content_id))
 
 def getLocations():
     a_locations = []
