@@ -19,6 +19,7 @@ def info(trip_id):
                 execute_query("UPDATE trips SET thumb_url =  \"%s\" WHERE id =  \"%s\"" % (up_query[0][0],trip_id))
             #basic trip info
             trip = {
+                'trip_id': trip_id,
                 'tripname': query[0][2],
                 'startdate': str(query[0][3]),
                 'enddate': str(query[0][4]),
