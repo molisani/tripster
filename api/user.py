@@ -146,15 +146,12 @@ elif has_fields(['user_id', 'token']):
             else:
                 export_json(success=False, message="Insufficient information given to process this request.")
         elif action == "update_info":
-            if has_fields(['birthday', 'email', 'aboutme', 'interests', 'affiliation']):
-                birthday = post('birthday')
-                email = post('email')
-                aboutme = post('aboutme')
-                interests = post('interests')
-                affiliation = post('affiliation')
-                update_info(birthday, email, aboutme, interests, affiliation)
-            else:
-                export_json(success=False, message="Insufficient information given to process this request.")
+            birthday = post('birthday')
+            email = post('email')
+            aboutme = post('aboutme')
+            interests = post('interests')
+            affiliation = post('affiliation')
+            update_info(birthday, email, aboutme, interests, affiliation)
         else:
             export_json(success=False, message="No action specified.")
     else:
